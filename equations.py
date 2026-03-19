@@ -6,11 +6,10 @@
 import numpy as np
 import jax.numpy as jnp
 
-from main import no_particles
+no_particles = 4
 
 # implements the discretized navier stokes equation for the ode solver
 def navier_stokes(q, t, m, rho, p, mu):
-    h = 1   # -> SPH smoothing length
     q_dot = np.array([])
 
     for a in range(0, no_particles):
@@ -21,8 +20,8 @@ def navier_stokes(q, t, m, rho, p, mu):
         v_a = q[2*a+1]
 
         for b in range(0, no_particles):
+            x_b = q[2*b]
             if (W(x_a, x_b) > 0 and not(a == b)):
-                x_b = q[2*b]
                 v_b = q[2*b+1]
 
                 pressure_term += m[b] * (
@@ -47,6 +46,7 @@ def navier_stokes(q, t, m, rho, p, mu):
 # kernel for a given point and a reference point
 # using C² Wendland kernel
 def W(x_a: jnp.array, x_b: jnp.array):
+    h = 1   # -> SPH smoothing length
     kernel_radius = 2
     sigma_W = 1
     h_dim = 1

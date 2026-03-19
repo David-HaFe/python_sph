@@ -16,12 +16,11 @@ gravity = np.array([0, -9.81])
 no_particles = 4
 
 # initialize grid
-positions = np.empty([])
-velocities = np.empty([])
+initial_condition = np.array([])
 
-for i in range(0, 3):
-    np.append(positions, jnp.array([i, i]))
-    np.append(velocities, jnp.array([-i, -i]))
+for i in range(0, 4):
+    np.append(initial_condition, jnp.array([i, i]))
+    np.append(initial_condition, jnp.array([-i, -i]))
 
 masses = np.full(no_particles, 1.0)
 densities = np.full(no_particles, 2.0)
@@ -37,7 +36,7 @@ solution = odeint(
                                densities,
                                pressures,
                                dynamic_viscosities),
-    np.array([positions, velocities]),
+    initial_condition,
     t,
 )
 
