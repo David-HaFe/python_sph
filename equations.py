@@ -6,6 +6,8 @@
 import numpy as np
 import jax.numpy as jnp
 
+from main import no_particles
+
 # implements the discretized navier stokes equation for the ode solver
 def navier_stokes(q, t, m, rho, p, mu):
     h = 1   # -> SPH smoothing length
