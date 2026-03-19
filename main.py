@@ -30,6 +30,4 @@ solution = odeint(
     t,
 )
 
-print(solution)
-
 

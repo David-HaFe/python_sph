@@ -44,6 +44,8 @@ def navier_stokes(q, t):
                     (mu[a] + mu[b])/(rho[a]*rho[b]) * jnp.dot(delta_x, delta_v)
                     / (jnp.dot(delta_x, delta_x) + .01*h**2)
                     ) * delta_W(x_a, x_b)
+                print(pressure_term)
+                print(viscosity_term)
 
         # fill solution array
         q_dot = np.append(q_dot, v_a)
