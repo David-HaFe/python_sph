@@ -19,23 +19,13 @@ no_particles = 4
 initial_condition = np.array([])
 
 for i in range(0, 4):
-    np.append(initial_condition, jnp.array([i, i]))
-    np.append(initial_condition, jnp.array([-i, -i]))
-
-masses = np.full(no_particles, 1.0)
-densities = np.full(no_particles, 2.0)
-pressures = np.full(no_particles, 1.0)
-dynamic_viscosities = np.full(no_particles, 1.0)
+    initial_condition = np.append(initial_condition, jnp.array([i, i]))
+    initial_condition = np.append(initial_condition, jnp.array([-i, -i]))
 
 # simulation
 t = np.linspace(0,1,100)
 solution = odeint(
-    lambda q, t: navier_stokes(q,
-                               t,
-                               masses,
-                               densities,
-                               pressures,
-                               dynamic_viscosities),
+    navier_stokes,
     initial_condition,
     t,
 )
