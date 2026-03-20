@@ -7,6 +7,8 @@ import numpy as np
 import jax.numpy as jnp
 import jax
 
+from diagnostics import diagnostics
+
 h = 1   # -> SPH smoothing length
 
 # implements the discretized navier stokes equation for the ode solver
@@ -29,7 +31,12 @@ def navier_stokes(q, t):
 
         for b in range(0, no_particles):
             x_b = q[2*b]
-            if (W(x_a, x_b) > 0 and not (a == b)):
+            particle_close_enough = W(x_a, x_b) > 0
+
+            if not (a == b):
+                diagnostics.register_particle(particle_close_enough)
+
+            if (particle_close_enough and not (a == b)):
                 v_b = q[2*b+1]
 
                 pressure_term += m[b] * (
@@ -44,8 +51,6 @@ def navier_stokes(q, t):
                     (mu[a] + mu[b])/(rho[a]*rho[b]) * jnp.dot(delta_x, delta_v)
                     / (jnp.dot(delta_x, delta_x) + .01*h**2)
                     ) * delta_W(x_a, x_b)
-                print(pressure_term)
-                print(viscosity_term)
 
         # fill solution array
         q_dot = np.append(q_dot, v_a)
@@ -60,8 +65,9 @@ def W(x_a: jnp.array, x_b: jnp.array):
     sigma_W = 1
     h_dim = 1
 
-    distance = jnp.linalg.norm(x_a - x_b)/h
+    distance = jnp.linalg.norm(x_a - x_b + 1e-8)/h
 
+    # if distance small enough, calculate kernel, else return 0
     return jnp.where(
         distance < kernel_radius,
         sigma_W/h_dim * (1 + 2*distance)*jnp.power((1 - .5*distance), 4),

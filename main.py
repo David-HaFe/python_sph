@@ -8,7 +8,9 @@ import numpy as np
 import jax.numpy as jnp
 from scipy.integrate import odeint
 import matplotlib as plt
+
 from equations import navier_stokes
+from diagnostics import diagnostics
 
 # constants
 rho_a = 1
@@ -22,12 +24,15 @@ for i in range(0, 4):
     initial_condition = np.append(initial_condition, jnp.array([i, i]))
     initial_condition = np.append(initial_condition, jnp.array([-i, -i]))
 
-# simulation
-t = np.linspace(0,1,100)
+#simulation
+t = np.linspace(0,1,20)
 solution = odeint(
     navier_stokes,
     initial_condition,
     t,
 )
+
+diagnostics.print_statistics()
+print(solution)
 
 
