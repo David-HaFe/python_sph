@@ -8,6 +8,7 @@ class Diagnostics():
     def __init__(self):
         self._accepted_particles = 0
         self._rejected_particles = 0
+        self._nan_instances = 0
 
     # can be called with the result of kernel rejection or acceptance to
     # get statistics for acceptance rate
@@ -20,10 +21,14 @@ class Diagnostics():
         else:
             self._rejected_particles += 1
 
+    def register_nan(self)
+        self._nan_instances += 1
+
     def print_statistics(self):
         accepted_percentage = self._accepted_particles/(
                 self._accepted_particles + self._rejected_particles)
         print("accepted percentage: " + str(accepted_percentage))
+        print("nan instances:       " + str(self._nan_instances))
 
 # create diagnostics class instance to pass to other files
 diagnostics = Diagnostics()
