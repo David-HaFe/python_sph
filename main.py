@@ -11,22 +11,25 @@ import matplotlib as plt
 import cProfile
 import pstats
 import io
+from math import floor
 
 from equations import navier_stokes
 from diagnostics import diagnostics
 from animation import animate_solution
 
-# constants
-rho_a = 1
-gravity = np.array([0, -9.81])
-no_particles = 4
-
 # initialize grid
 initial_condition = np.array([])
 
-for i in range(0, 4):
-    initial_condition = np.append(initial_condition, jnp.array([i, i]))
-    initial_condition = np.append(initial_condition, jnp.array([-i, -i]))
+for x in range(0, 4):
+    for y in range(0,4):
+        # position
+        initial_condition = np.append(initial_condition, np.array([.1*x, .1*y]))
+
+        # velocity
+        initial_condition = np.append(initial_condition, np.array([0, 0]))
+
+        # initial density
+        initial_condition = np.append(initial_condition, 1)
 
 # simulation
 t = np.linspace(0,1,20)

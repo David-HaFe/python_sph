@@ -10,8 +10,8 @@ import matplotlib.animation as animation
 def animate_solution(t, solution):
     # solution.shape is (n_timesteps, n_particles * dims * 2)
     # unpack all timesteps at once
-    no_particles = np.size(solution)//(4*len(t))
-    positions_over_time = solution.reshape(-1, no_particles, 4)[:, :, :2]
+    no_particles = np.size(solution)//(5*len(t))
+    positions_over_time = solution.reshape(-1, no_particles, 5)[:, :, :2]
 
     fig, ax = plt.subplots()
     ax.set_xlim(positions_over_time[:, :, 0].min() - 0.1,
