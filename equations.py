@@ -15,7 +15,7 @@ gravity = np.array([0, -9.81])
 # implements the discretized navier stokes equation for the ode solver
 # q consists of the triple [position,velocity,density] for each
 # particle, all concatenated like this one after the other
-def navier_stokes(q, t):
+def navier_stokes(t, q):
     diagnostics.time_navier_stokes()
     no_particles = np.size(q)//5
     q_dot = np.array([])
@@ -42,7 +42,8 @@ def navier_stokes(q, t):
             if not (a == b):
                 diagnostics.register_particle(particle_close_enough)
 
-            if (particle_close_enough and not (a == b)):
+            # if (particle_close_enough and not (a == b)):
+            if particle_close_enough:
 
                 # calculate dv/dt
                 v_b = jnp.array([q[5*b+2], q[5*b+3]])
@@ -79,7 +80,7 @@ def calculate_pressure(rho):
     c_0 = 10
     # TODO: maybe refine reference density, depending on what it turns
     #       out to be
-    rho_0 = 1
+    rho_0 = 1.1
     # TODO: find out what p_B actually is
     p_B = 0
 
