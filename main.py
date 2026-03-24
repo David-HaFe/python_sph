@@ -33,7 +33,7 @@ for x in range(0, x_limit):
 
 dummy_density = 100
 # initialize wall particles
-for x in range(-1, x_limit + 1):
+for x in range(0, x_limit + 1):
     # left wall
     initial_condition = np.append(initial_condition, np.array([x, -1]))
     # dummy values for velocity and density
@@ -59,7 +59,11 @@ for y in range(-1, y_limit+1):
 # simulation
 diagnostics.time_ode()
 sol = solve(
-    function=lambda t, q: navier_stokes(t, q, is_wall_particle),
+    function=lambda t, q: navier_stokes(
+        t=t,
+        q=q,
+        is_wall_particle=is_wall_particle,
+    ),
     initial_condition=initial_condition,
     dt=.01,
 )
