@@ -1,36 +1,63 @@
 
 
-import jax.numpy as jnp
-import jax
-
+import numpy as np
 from diagnostics import diagnostics
 
 # SPH smoothing length
 h = 1
+kernel_radius = 2
+sigma_W = 1
+h_dim = 1
 
 # kernel for a given point and a reference point
 # using C² Wendland kernel
-def W(x_a: jnp.array, x_b: jnp.array):
+def W(x_a: np.array, x_b: np.array):
     diagnostics.time_W()
-    kernel_radius = 2
-    sigma_W = 1
-    h_dim = 1
 
-    distance = jnp.linalg.norm(x_a - x_b + 1e-8)/h
+    distance = np.linalg.norm(x_a - x_b)/h
+
+    if distance < kernel_radius:
+        result = (sigma_W/h_dim) * (
+            .125*distance**5
+            - .9375*distance**4
+            + 2.5*distance**3
+            - 2.5*distance**2
+            + 1
+        )
+    else:
+        result = 0
 
     # if distance small enough, calculate kernel, else return 0
-    result = jnp.where(
-        distance < kernel_radius,
-        sigma_W/h_dim * (1 + 2*distance)*(1 - .5*distance)**4,
-        0.0,
-    )
+    # result = jnp.where(
+    #     distance < kernel_radius,
+    #     sigma_W/h_dim * (1 + 2*distance)*(1 - .5*distance)**4,
+    #     0.0,
+    # )
     diagnostics.time_W()
     return result
 
 # gradient of the kernel function
-def delta_W(x_a: jnp.array, x_b: jnp.array):
+def delta_W(x_a: np.array, x_b: np.array):
     diagnostics.time_delta_W()
-    result = jax.grad(W, argnums=1)(x_a, x_b)
+
+    distance = np.linalg.norm(x_a - x_b)/h
+
+    if distance < kernel_radius:
+        distance_x = (x_a[0] - x_b[0])/h
+        distance_y = (x_a[1] - x_b[1])/h
+        result = (sigma_W/h_dim) * np.array([
+            .625*distance_x**4
+            - .375*distance_x**3
+            + 7.5*distance_x**2
+            - 5*distance_x,
+            .625*distance_y**4
+            - .375*distance_y**3
+            + 7.5*distance_y**2
+            - 5*distance_y,
+        ])
+    else:
+        result = np.array([0, 0])
+
     diagnostics.time_delta_W()
     return result
 

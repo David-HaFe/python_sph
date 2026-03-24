@@ -4,7 +4,6 @@
 
 # import numpy as np
 import numpy as np
-import jax.numpy as jnp
 import sys
 
 from diagnostics import diagnostics
@@ -35,16 +34,14 @@ def navier_stokes(t, y):
 
     for a, (x_a, v_a, rho_a) in enumerate(zip(x, v, rho)):
         # reset everything and get new vectors
-        x_a = jnp.array(x_a)
-        v_a = jnp.array(v_a)
-        pressure_term = jnp.zeros(2)
-        viscosity_term = jnp.zeros(2)
+        pressure_term = np.zeros(2)
+        viscosity_term = np.zeros(2)
         rho_dot_a = 0
 
         p_a = calculate_pressure(rho_a)
 
         for b, (x_b, v_b, rho_b) in enumerate(zip(x, v, rho)):
-            x_b = jnp.array(x_b)
+            # x_b = np.array(x_b)
             particle_close_enough = W(x_a, x_b) > 0
 
             if not (a == b):
@@ -54,24 +51,24 @@ def navier_stokes(t, y):
             if (particle_close_enough and not (a == b)):
 
                 # calculate dv/dt
-                v_b = jnp.array(v_b)
+                # v_b = np.array(v_b)
                 p_b = calculate_pressure(rho_b)
 
                 pressure_term += m[b] * (
-                    p_b/jnp.power(rho_b, 2)
-                    + p_a/jnp.power(rho_a, 2)
+                    p_b/np.power(rho_b, 2)
+                    + p_a/np.power(rho_a, 2)
                     ) * delta_W(x_a, x_b)
 
                 delta_x = x_a - x_b
                 delta_v = v_a - v_b
 
                 viscosity_term += m[b] * (
-                    (mu[a] + mu[b])/(rho_a*rho_b) * jnp.dot(delta_x, delta_v)
-                    / (jnp.dot(delta_x, delta_x) + .01*h**2)
+                    (mu[a] + mu[b])/(rho_a*rho_b) * np.dot(delta_x, delta_v)
+                    / (np.dot(delta_x, delta_x) + .01*h**2)
                     ) * delta_W(x_a, x_b)
 
                 # calculate d(rho)/dt
-                rho_dot_a += m[b]/rho_b*jnp.dot(v_b - v_a, delta_W(x_a, x_b))
+                rho_dot_a += m[b]/rho_b*np.dot(v_b - v_a, delta_W(x_a, x_b))
 
         # fill solution array
         x_dot[a] = v_a
