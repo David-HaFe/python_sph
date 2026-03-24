@@ -75,15 +75,15 @@ def navier_stokes(t, y):
 
         # fill solution array
         x_dot[a] = v_a
-        v_dot[a] = - pressure_term + viscosity_term
+        v_dot[a] = gravity - pressure_term + viscosity_term
         rho_dot[a] = - rho_a * rho_dot_a
 
     x_dot = x_dot.reshape(-1, order="C")
     v_dot = v_dot.reshape(-1, order="C")
     y_dot = np.concatenate((x_dot, v_dot, rho_dot))
 
-    # sys.stdout.write(f"\r\033[K{t}")
-    # sys.stdout.flush()
+    sys.stdout.write(f"\r\033[K{t}")
+    sys.stdout.flush()
 
     diagnostics.time_navier_stokes()
     return y_dot

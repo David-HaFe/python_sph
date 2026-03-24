@@ -73,27 +73,31 @@ dummy_density = 100
 
 # simulation
 diagnostics.time_ode()
-sol = euler_forward(
-    function=navier_stokes,
-    initial_condition=y_0,
-    dt=.01,
-)
+
+# sol = euler_forward(
+#     function=navier_stokes,
+#     initial_condition=y_0,
+#     t_start=0,
+#     t_end=4,
+#     dt=.01,
+# )
 
 t_0 = 0
-t_1 = .5
+t_1 = 2
 t_span = (t_0, t_1)
 dt = 100
 t_eval = np.linspace(t_0, t_1, num=dt)
 
-# sol = solve_ivp(
-#     fun = navier_stokes,
-#     t_span = t_span,
-#     y0 = y_0,
-#     method = "RK23",
-#     rtol = 1e-3,
-#     atol = 1e-5,
-#     t_eval = t_eval,
-# )
+sol = solve_ivp(
+    fun = navier_stokes,
+    t_span = t_span,
+    y0 = y_0,
+    method = "RK23",
+    rtol = 1e-3,
+    atol = 1e-5,
+    t_eval = t_eval,
+)
+print("")
 diagnostics.time_ode()
 
 diagnostics.print_diagnostics()

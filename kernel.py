@@ -21,7 +21,7 @@ def W(x_a: jnp.array, x_b: jnp.array):
     # if distance small enough, calculate kernel, else return 0
     result = jnp.where(
         distance < kernel_radius,
-        sigma_W/h_dim * (1 + 2*distance)*jnp.power((1 - .5*distance), 4),
+        sigma_W/h_dim * (1 + 2*distance)*(1 - .5*distance)**4,
         0.0,
     )
     diagnostics.time_W()

@@ -26,6 +26,7 @@ def euler_forward(
         solution[:,i] = y
         times[i] = t
 
+    print("")
     print("iterations: " + str(no_iterations))
 
     return SimpleNamespace(t=times, y=solution)
