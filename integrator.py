@@ -13,18 +13,20 @@ def solve(
     dt=.01,
 ):
     no_iterations = int(t_end/dt)
-    solution = np.empty((np.size(initial_condition), no_iterations))
+    solution = np.empty((np.size(initial_condition), no_iterations+1))
     y = initial_condition
     t = t_start
-    times = np.array(t_start)
+    times = np.empty(no_iterations+1)
+    solution[:,0] = initial_condition
+    times[0] = t_start
 
-    for i in range(0, no_iterations):
-        solution[:,i] = y
+    for i in range(1, no_iterations+1):
         y = y + dt*function(t, y)
         t += dt
-        times = np.append(times, t)
+        solution[:,i] = y
+        times[i] = t
 
-    print(solution)
+    print("iterations: " + str(no_iterations))
 
     return SimpleNamespace(t=times, y=solution)
 

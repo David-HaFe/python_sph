@@ -58,7 +58,7 @@ class Diagnostics():
             timer[2] = time.perf_counter()
             timer[0] = timer[2] - timer[1]
 
-        # toggle which action to take
+        # toggle if start or end action should be taken next
         timer[3] = not timer[3]
 
     def print_diagnostics(self):
