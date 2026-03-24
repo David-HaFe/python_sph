@@ -13,17 +13,14 @@ class Diagnostics():
         self._rejected_particles = 0
         self._nan_instances = 0
 
-        self._navier_stokes_timer = np.array([0.0, 0.0, 0.0, True])
-        self._W_timer = np.array([0.0, 0.0, 0.0, True])
-        self._delta_W_timer = np.array([0.0, 0.0, 0.0, True])
-        self._ode_timer = np.array([0.0, 0.0, 0.0, True])
+        self._navier_stokes_timer = np.array([0.0, 0.0, True])
+        self._W_timer = np.array([0.0, 0.0, True])
+        self._delta_W_timer = np.array([0.0, 0.0, True])
+        self._ode_timer = np.array([0.0, 0.0, True])
 
     # can be called with the result of kernel rejection or acceptance to
     # get statistics for acceptance rate
-    def register_particle(
-            self,
-            was_accepted: bool,
-    ):
+    def register_particle(self, was_accepted: bool):
         if was_accepted:
             self._accepted_particles += 1
         else:
@@ -51,15 +48,14 @@ class Diagnostics():
     # generic function able to time different parts of the program
     def _timer_function(self, timer: np.array):
         # actions at start: snapshot start time
-        if timer[3]:
+        if timer[2]:
             timer[1] = time.perf_counter()
         # actions at end: snapshot end time and add to total
         else:
-            timer[2] = time.perf_counter()
-            timer[0] = timer[2] - timer[1]
+            timer[0] += time.perf_counter() - timer[1]
 
         # toggle if start or end action should be taken next
-        timer[3] = not timer[3]
+        timer[2] = not timer[2]
 
     def print_diagnostics(self):
         accepted_percentage = self._accepted_particles/(

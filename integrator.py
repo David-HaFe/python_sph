@@ -5,7 +5,7 @@
 import numpy as np
 from types import SimpleNamespace
 
-def solve(
+def euler_forward(
     function,
     initial_condition,
     t_start=0,

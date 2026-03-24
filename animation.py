@@ -7,7 +7,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-def animate_solution(t, solution):
+def animate_solution(t, solution, x_0):
+    x_0 = x_0.reshape(-1, 2)
+    fig, ax = plt.subplots()
+    ax.set_xlim(-5, 5)
+    ax.set_ylim(-5, 5)
+    scat = ax.scatter(x_0[:, 0], x_0[:, 1])
+
+    def animate(i):
+        y_i = solution[:, i]
+        x_i = y_i[: 2*n_particle]
+        x_i = x_i.reshape(-1, 2)
+        scat.set_offsets(x_i)
+        return (scat,)
+
+    ani = animation.FuncAnimation(
+        fig,
+        animate,
+        repeat=True,
+        frames=len(t),
+        interval=5
+    )
+    plt.show()
+
+### old implementation ########################################################
+"""
     # solution.shape is (n_timesteps, n_particles * dims * 2)
     # unpack all timesteps at once
     no_particles = np.size(solution)//(5*len(t))
@@ -44,5 +68,6 @@ def animate_solution(t, solution):
     ani.save('simulation.gif', writer='pillow', fps=20)
 
     plt.show()
+"""
 
 
