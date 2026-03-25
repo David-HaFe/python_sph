@@ -14,7 +14,7 @@ gravity = np.array([0, -9.81])
 # implements the discretized navier stokes equation for the ode solver
 # y consists of the triple [positions, velocities ,density] for each particle,
 # all concatenated like this one after the other
-def navier_stokes(t, y):
+def navier_stokes(t, y, is_wall_particle):
     diagnostics.time_navier_stokes()
     no_particles = np.size(y)//(2+2+1)
     y_dot = np.zeros(np.size(y))
@@ -33,47 +33,52 @@ def navier_stokes(t, y):
     v = v.reshape(-1, 2)
 
     for a, (x_a, v_a, rho_a) in enumerate(zip(x, v, rho)):
-        # reset everything and get new vectors
-        pressure_term = np.zeros(2)
-        viscosity_term = np.zeros(2)
-        rho_dot_a = 0
+        if not is_wall_particle[a]:
+            # reset everything and get new vectors
+            pressure_term = np.zeros(2)
+            viscosity_term = np.zeros(2)
+            rho_dot_a = 0
 
-        p_a = calculate_pressure(rho_a)
+            p_a = calculate_pressure(rho_a)
 
-        for b, (x_b, v_b, rho_b) in enumerate(zip(x, v, rho)):
-            # x_b = np.array(x_b)
-            particle_close_enough = W(x_a, x_b) > 0
+            for b, (x_b, v_b, rho_b) in enumerate(zip(x, v, rho)):
+                # x_b = np.array(x_b)
+                particle_close_enough = W(x_a, x_b) > 0
 
-            if not (a == b):
-                diagnostics.register_particle(particle_close_enough)
+                if not (a == b):
+                    diagnostics.register_particle(particle_close_enough)
 
-            # if particle_close_enough:
-            if (particle_close_enough and not (a == b)):
+                # if particle_close_enough:
+                if (particle_close_enough and not (a == b)):
 
-                # calculate dv/dt
-                # v_b = np.array(v_b)
-                p_b = calculate_pressure(rho_b)
+                    # calculate dv/dt
+                    # v_b = np.array(v_b)
+                    p_b = calculate_pressure(rho_b)
 
-                pressure_term += m[b] * (
-                    p_b/np.power(rho_b, 2)
-                    + p_a/np.power(rho_a, 2)
-                    ) * delta_W(x_a, x_b)
+                    pressure_term += m[b] * (
+                        p_b/np.power(rho_b, 2)
+                        + p_a/np.power(rho_a, 2)
+                        ) * delta_W(x_a, x_b)
 
-                delta_x = x_a - x_b
-                delta_v = v_a - v_b
+                    delta_x = x_a - x_b
+                    delta_v = v_a - v_b
 
-                viscosity_term += m[b] * (
-                    (mu[a] + mu[b])/(rho_a*rho_b) * np.dot(delta_x, delta_v)
-                    / (np.dot(delta_x, delta_x) + .01*h**2)
-                    ) * delta_W(x_a, x_b)
+                    viscosity_term += m[b] * (
+                        (mu[a] + mu[b])/(rho_a*rho_b) * np.dot(delta_x, delta_v)
+                        / (np.dot(delta_x, delta_x) + .01*h**2)
+                        ) * delta_W(x_a, x_b)
 
-                # calculate d(rho)/dt
-                rho_dot_a += m[b]/rho_b*np.dot(v_b - v_a, delta_W(x_a, x_b))
+                    # calculate d(rho)/dt
+                    rho_dot_a += m[b]/rho_b*np.dot(v_b - v_a, delta_W(x_a, x_b))
 
-        # fill solution array
-        x_dot[a] = v_a
-        v_dot[a] = gravity - pressure_term + viscosity_term
-        rho_dot[a] = - rho_a * rho_dot_a
+            # fill solution array
+            x_dot[a] = v_a
+            v_dot[a] = gravity - pressure_term + viscosity_term
+            rho_dot[a] = - rho_a * rho_dot_a
+        else:
+            x_dot[a] = np.zeros(2)
+            v_dot[a] = np.zeros(2)
+            rho_dot[a] = 0
 
     x_dot = x_dot.reshape(-1, order="C")
     v_dot = v_dot.reshape(-1, order="C")

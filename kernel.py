@@ -4,9 +4,9 @@ import numpy as np
 from diagnostics import diagnostics
 
 # SPH smoothing length
-h = 1
-kernel_radius = 2
-sigma_W = 1
+h = .7
+kernel_radius = h
+sigma_W = .01
 h_dim = 1
 
 # kernel for a given point and a reference point
@@ -54,6 +54,6 @@ def delta_W(x_a: np.array, x_b: np.array):
         result = np.array([0, 0])
 
     diagnostics.time_delta_W()
-    return - result
+    return + result
 
 
