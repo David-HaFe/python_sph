@@ -108,11 +108,13 @@ fig, ax = plt.subplots()
 ax.set_xlim(-5, 5)
 ax.set_ylim(-5, 5)
 scat = ax.scatter(x_0[:, 0], x_0[:, 1])
+time_text = ax.text(0.02, 0.95, '', transform=ax.transAxes)
 
 def animate(i):
     y_i = sol.y[:, i]
     x_i = y_i[: 2*no_particles]
     x_i = x_i.reshape(-1, 2)
+    time_text.set_text(f't = {sol.t[i]:.3f}')
     scat.set_offsets(x_i)
     return (scat,)
 

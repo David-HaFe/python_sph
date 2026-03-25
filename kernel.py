@@ -43,22 +43,17 @@ def delta_W(x_a: np.array, x_b: np.array):
     distance = np.linalg.norm(x_a - x_b)/h
 
     if distance < kernel_radius:
-        distance_x = (x_a[0] - x_b[0])/h
-        distance_y = (x_a[1] - x_b[1])/h
-        result = (sigma_W/h_dim) * np.array([
-            .625*distance_x**4
-            - .375*distance_x**3
-            + 7.5*distance_x**2
-            - 5*distance_x,
-            .625*distance_y**4
-            - .375*distance_y**3
-            + 7.5*distance_y**2
-            - 5*distance_y,
-        ])
+        difference = x_a - x_b
+        result = (sigma_W/h_dim) * (
+            (5/h**2)*difference
+            - (7.5/h**3)*difference**2
+            + (3.75/h**4)*difference**3
+            - (.625/h**5)*difference**4
+        )
     else:
         result = np.array([0, 0])
 
     diagnostics.time_delta_W()
-    return result
+    return - result
 
 
