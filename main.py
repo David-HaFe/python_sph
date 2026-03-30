@@ -10,10 +10,12 @@ import matplotlib.animation as animation
 from scipy.integrate import solve_ivp
 import random as rnd
 
-from integrator import euler_forward
-from equations import navier_stokes
+from integrator import euler_forward, chorin
+from equations import navier_stokes_incompressible, poisson_pressure_equation
+from equations import navier_stokes_compressible
 from diagnostics import diagnostics
 from animation import animate_solution
+from model_parameters import model_parameters
 
 # initialize grid
 initial_condition = np.array([])
@@ -35,7 +37,7 @@ for x in range(0, x_limit):
     for y in range(0, y_limit):
         x_0.extend([x*spacing + noise(), y*spacing])
         v_0.extend([0, 0])
-        rho_0.extend([1])
+        # rho_0.extend([1])
 
         # add wall particle flag
         is_wall_particle.extend([False])
@@ -46,13 +48,13 @@ for y in range(-1, int(y_limit/wall_spacing)):
     # left wall
     x_0.extend([-1, y*spacing*wall_spacing-1])
     v_0.extend([0, 0])
-    rho_0.extend([dummy_density])
+    # rho_0.extend([dummy_density])
     is_wall_particle.extend([True])
 
     # right wall
     x_0.extend([spacing*x_limit, y*spacing*wall_spacing-1])
     v_0.extend([0, 0])
-    rho_0.extend([dummy_density])
+    # rho_0.extend([dummy_density])
     is_wall_particle.extend([True])
     no_particles += 2
 
@@ -60,15 +62,18 @@ for x in range(-1, int((x_limit+1)/wall_spacing)):
     # bottom wall
     x_0.extend([x*spacing*wall_spacing-1, -1])
     v_0.extend([0, 0])
-    rho_0.extend([dummy_density])
+    # rho_0.extend([dummy_density])
     is_wall_particle.extend([True])
     no_particles += 1
 
+
 x_0 = np.array(x_0, dtype=float)
 v_0 = np.array(v_0, dtype=float)
-rho_0 = np.array(rho_0, dtype=float)
+# rho_0 = np.array(rho_0, dtype=float)
 y_0 = np.concatenate((x_0, v_0, rho_0))
 is_wall_particle = np.array(is_wall_particle)
+
+model_parameters.set_no_particles(np.size(y_0)//4)
 
 print(np.size(x_0))
 print(np.size(v_0))
@@ -88,20 +93,44 @@ diagnostics.time_ode()
 t_0 = 0
 t_1 = 2
 t_span = (t_0, t_1)
-dt = 100
-t_eval = np.linspace(t_0, t_1, num=dt)
+steps = 100
+t_eval = np.linspace(t_0, t_1, num=steps)
+dt = (t_1-t_0)/steps
 
-sol = solve_ivp(
-    fun = lambda t, y: navier_stokes(t, y, is_wall_particle),
-    t_span = t_span,
-    y0 = y_0,
-    method = "RK23",
-    rtol = 1e-3,
-    atol = 1e-3,
-    t_eval = t_eval,
+sol = chorin(
+    forward_equation=lambda t, y: navier_stokes_incompressible(
+        t,
+        y,
+        is_wall_particle,
+    ),
+    projection_equation=lambda t, y: poisson_pressure_equation(
+        t,
+        y,
+        is_wall_particle,
+        dt,
+    ),
+    initial_condition=y_0,
+    t_start=0,
+    t_end=1,
+    dt=.01,
 )
 print("")
-print(sol.message)
+
+# sol = solve_ivp(
+#     fun=lambda t, y: navier_stokes_compressible(
+#         t,
+#         y,
+#         is_wall_particle,
+#     ),
+#     t_span = t_span,
+#     y0 = y_0,
+#     method = "RK23",
+#     rtol = 1e-3,
+#     atol = 1e-3,
+#     t_eval = t_eval,
+# )
+# print("")
+# print(sol.message)
 
 diagnostics.time_ode()
 

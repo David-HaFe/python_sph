@@ -14,8 +14,10 @@ class Diagnostics():
         self._nan_instances = 0
 
         self._navier_stokes_timer = np.array([0.0, 0.0, True])
+        self._poisson_timer = np.array([0.0, 0.0, True])
         self._W_timer = np.array([0.0, 0.0, True])
-        self._delta_W_timer = np.array([0.0, 0.0, True])
+        self._gradient_W_timer = np.array([0.0, 0.0, True])
+        self._norm_gradient_W_timer = np.array([0.0, 0.0, True])
         self._ode_timer = np.array([0.0, 0.0, True])
 
     # can be called with the result of kernel rejection or acceptance to
@@ -33,13 +35,21 @@ class Diagnostics():
     def time_W(self):
         self._timer_function(self._W_timer)
 
-    # wrapper for timing delta W
-    def time_delta_W(self):
-        self._timer_function(self._delta_W_timer)
+    # wrapper for timing gradient of W
+    def time_gradient_W(self):
+        self._timer_function(self._gradient_W_timer)
+
+    # wrapper for timing laplace of W
+    def time_norm_gradient_W(self):
+        self._timer_function(self._norm_gradient_W_timer)
 
     # wrapper for timing navier stokes equations
     def time_navier_stokes(self):
         self._timer_function(self._navier_stokes_timer)
+
+    # wrapper for timing poisson pressure equations
+    def time_poisson(self):
+        self._timer_function(self._poisson_timer)
 
     # wrapper for timing the entire ode call
     def time_ode(self):
@@ -62,9 +72,10 @@ class Diagnostics():
                 self._accepted_particles + self._rejected_particles)
         print("accepted percentage: " + str(accepted_percentage))
         print("      nan instances: " + str(self._nan_instances))
-        print("navier stokes time : " + str(self._navier_stokes_timer[0]))
-        print("            W time : " + str(self._W_timer[0]))
-        print("      delta W time : " + str(self._delta_W_timer[0]))
+        print(" navier stokes time: " + str(self._navier_stokes_timer[0]))
+        print("             W time: " + str(self._W_timer[0]))
+        print("    gradient W time: " + str(self._gradient_W_timer[0]))
+        print("   norm grad W time: " + str(self._norm_gradient_W_timer[0]))
         print("           ode time: " + str(self._ode_timer[0]))
 
 # create diagnostics class instance to pass to other files
