@@ -75,10 +75,6 @@ is_wall_particle = np.array(is_wall_particle)
 
 model_parameters.set_no_particles(np.size(y_0)//4)
 
-print(np.size(x_0))
-print(np.size(v_0))
-print(np.size(rho_0))
-
 # simulation
 diagnostics.time_ode()
 
@@ -91,7 +87,7 @@ diagnostics.time_ode()
 # )
 
 t_0 = 0
-t_1 = 2
+t_1 = 5
 t_span = (t_0, t_1)
 steps = 100
 t_eval = np.linspace(t_0, t_1, num=steps)
@@ -110,8 +106,8 @@ sol = chorin(
         dt,
     ),
     initial_condition=y_0,
-    t_start=0,
-    t_end=1,
+    t_start=t_0,
+    t_end=t_1,
     dt=.01,
 )
 print("")

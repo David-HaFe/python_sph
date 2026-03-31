@@ -59,6 +59,7 @@ def navier_stokes_incompressible(t, y, is_wall_particle):
 
             # fill solution array
             x_dot[a] = v_a
+            # v_dot[a] = +viscosity_term * gradient_W(x_a, x_b)
             v_dot[a] = model_parameters.gravity + (
                 viscosity_term * gradient_W(x_a, x_b)
             )

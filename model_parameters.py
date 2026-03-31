@@ -6,10 +6,10 @@ import numpy as np
 
 class Model_Parameters():
     def __init__(self):
-        self.gravity = np.array([0, -9.81])
+        self.gravity = np.array([0, -0.81])
         self.eta = .1
         self._unified_mass = 1
-        self._unified_density = 1
+        self._unified_density = 2
         self._unified_kinetic_viscosity = 1/self._unified_density
         self.m = np.array([])
         self.nu = np.array([])

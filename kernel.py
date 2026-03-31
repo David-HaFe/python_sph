@@ -5,7 +5,7 @@ from diagnostics import diagnostics
 from model_parameters import model_parameters
 
 # SPH smoothing length
-h = 1
+h = 5
 kernel_radius = 2*h
 sigma_W = .01
 h_dim = h**2
