@@ -48,13 +48,13 @@ def gradient_W(x_a: np.array, x_b: np.array):
         result = np.zeros(2)
 
     elif distance < kernel_radius:
-        difference = x_a - x_b
+        norm = np.linalg.norm(x_a - x_b)
         result = (sigma_W/h_dim) * (
-            (5/h**2)*difference
-            - (7.5/h**3)*difference**2
-            + (3.75/h**4)*difference**3
-            - (.625/h**5)*difference**4
-        )
+            - (2.5/h**2)
+            + (7.5/h**3)*norm
+            - (3.75/h**4)*norm**2
+            + (.625/h**5)*norm**3
+        )*(x_a - x_b)
 
     else:
         result = np.zeros(2)

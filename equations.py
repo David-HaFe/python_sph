@@ -107,13 +107,15 @@ def poisson_pressure_equation(t, y, is_wall_particle, dt):
                         (v_b - v_a)
                     )
 
+            delta_W_ab_norm = normalised_gradient_W(x_a, x_b, x)
             divergence_v = divergence_v.reshape(-1, 2)
-            divergence_v = np.dot(
-                divergence_v, normalised_gradient_W(x_a, x_b, x)
-            )
-            v_dot[a] -= dt*divergence_v
-        else:
-            v_dot[a] = np.zeros(2)
+            divergence_v = np.dot(divergence_v, delta_W_ab_norm)
+
+            # TODO: calculate delta P here
+            delta_P_plus = 0
+
+            # calculate new velocity (forces already added in step 1
+            v_dot[a] -= dt*(delta_P_plus/rho[a])
 
     x_dot = x_dot.reshape(-1, order="C")
     v_dot = v_dot.reshape(-1, order="C")
