@@ -189,7 +189,9 @@ def navier_stokes_compressible(t, y, is_wall_particle):
 
             # fill solution array
             x_dot[a] = v_a
-            v_dot[a] = gravity - pressure_term + viscosity_term
+            v_dot[a] = (
+                model_parameters.gravity - pressure_term + viscosity_term
+            )
             rho_dot[a] = - rho_a * rho_dot_a
         else:
             x_dot[a] = np.zeros(2)

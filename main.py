@@ -44,7 +44,7 @@ for x in range(0, x_limit):
 
 dummy_density = .1
 # initialize wall particles
-for y in range(-1, int(y_limit/wall_spacing)):
+for y in range(0, int(y_limit/wall_spacing)):
     # left wall
     x_0.extend([-1, y*spacing*wall_spacing-1])
     v_0.extend([0, 0])
@@ -58,7 +58,7 @@ for y in range(-1, int(y_limit/wall_spacing)):
     is_wall_particle.extend([True])
     no_particles += 2
 
-for x in range(-1, int((x_limit+1)/wall_spacing)):
+for x in range(0, int((x_limit+1)/wall_spacing)):
     # bottom wall
     x_0.extend([x*spacing*wall_spacing-1, -1])
     v_0.extend([0, 0])

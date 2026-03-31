@@ -8,7 +8,7 @@ from model_parameters import model_parameters
 h = 1
 kernel_radius = 2*h
 sigma_W = .01
-h_dim = h^2
+h_dim = h**2
 kernel_zero_tolerance = 1e-5
 
 # kernel for a given point and a reference point
