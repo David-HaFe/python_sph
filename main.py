@@ -3,7 +3,6 @@
 # main file for the implementation of sph
 # author: David Hambach Ferrer
 
-# import numpy as np
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -11,8 +10,8 @@ from scipy.integrate import solve_ivp
 import random as rnd
 
 from integrator import euler_forward, chorin
-from equations import navier_stokes_incompressible, poisson_pressure_equation
-from equations import navier_stokes_compressible
+from navier_stokes import navier_stokes_incompressible, poisson_pressure_equation
+from navier_stokes import navier_stokes_compressible
 from diagnostics import diagnostics
 from animation import animate_solution
 from model_parameters import model_parameters

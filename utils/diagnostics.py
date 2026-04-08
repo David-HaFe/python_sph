@@ -13,11 +13,14 @@ class Diagnostics():
         self._rejected_particles = 0
         self._nan_instances = 0
 
-        self._navier_stokes_timer = np.array([0.0, 0.0, True])
+        self._dynamics_timer = np.array([0.0, 0.0, True])
         self._poisson_timer = np.array([0.0, 0.0, True])
-        self._W_timer = np.array([0.0, 0.0, True])
-        self._gradient_W_timer = np.array([0.0, 0.0, True])
-        self._norm_gradient_W_timer = np.array([0.0, 0.0, True])
+        self._kernel_timer = np.array([0.0, 0.0, True])
+        self._nabla_timer = np.array([0.0, 0.0, True])
+        self._laplace_timer = np.array([0.0, 0.0, True])
+        self._lsqr_timer = np.array([0.0, 0.0, True])
+        self._gradient_kernel_timer = np.array([0.0, 0.0, True])
+        self._norm_gradient_kernel_timer = np.array([0.0, 0.0, True])
         self._ode_timer = np.array([0.0, 0.0, True])
 
     # can be called with the result of kernel rejection or acceptance to
@@ -31,21 +34,33 @@ class Diagnostics():
     def register_nan(self):
         self._nan_instances += 1
 
-    # wrapper for timing W
-    def time_W(self):
-        self._timer_function(self._W_timer)
+    # wrapper for timing kernel
+    def time_kernel(self):
+        self._timer_function(self._kernel_timer)
+
+    # wrapper for timing nabla operator
+    def time_nabla(self):
+        self._timer_function(self._nabla_timer)
+
+    # wrapper for timing laplace operator
+    def time_laplace(self):
+        self._timer_function(self._laplace_timer)
+
+    # wrapper for timing the least squares estimation
+    def time_least_squares(self):
+        self._timer_function(self._lsqr_timer)
 
     # wrapper for timing gradient of W
-    def time_gradient_W(self):
-        self._timer_function(self._gradient_W_timer)
+    def time_gradient_kernel(self):
+        self._timer_function(self._gradient_kernel_timer)
 
     # wrapper for timing laplace of W
-    def time_norm_gradient_W(self):
-        self._timer_function(self._norm_gradient_W_timer)
+    def time_norm_gradient_kernel(self):
+        self._timer_function(self._norm_gradient_kernel_timer)
 
     # wrapper for timing navier stokes equations
-    def time_navier_stokes(self):
-        self._timer_function(self._navier_stokes_timer)
+    def time_dynamics(self):
+        self._timer_function(self._dynamics_timer)
 
     # wrapper for timing poisson pressure equations
     def time_poisson(self):
@@ -70,13 +85,13 @@ class Diagnostics():
     def print_diagnostics(self):
         accepted_percentage = self._accepted_particles/(
                 self._accepted_particles + self._rejected_particles)
-        print("accepted percentage: " + str(accepted_percentage))
-        print("      nan instances: " + str(self._nan_instances))
-        print(" navier stokes time: " + str(self._navier_stokes_timer[0]))
-        print("             W time: " + str(self._W_timer[0]))
-        print("    gradient W time: " + str(self._gradient_W_timer[0]))
-        print("   norm grad W time: " + str(self._norm_gradient_W_timer[0]))
-        print("           ode time: " + str(self._ode_timer[0]))
+        print(" accepted percentage: " + str(accepted_percentage))
+        print("       nan instances: " + str(self._nan_instances))
+        print("  navier stokes time: " + str(self._dynamics_timer[0]))
+        print("         kernel time: " + str(self._kernel_timer[0]))
+        print("kernel gradient time: " + str(self._gradient_kernel_timer[0]))
+        print("    norm grad W time: " + str(self._norm_gradient_kernel_timer[0]))
+        print("            ode time: " + str(self._ode_timer[0]))
 
 # create diagnostics class instance to pass to other files
 diagnostics = Diagnostics()

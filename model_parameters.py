@@ -9,7 +9,7 @@ class Model_Parameters():
         self.gravity = np.array([0, -0.81])
         self.eta = .1
         self._unified_mass = 1
-        self._unified_density = 2
+        self._unified_density = 1 # chosen by tiwari kuhnert (fpm)
         self._unified_kinetic_viscosity = 1/self._unified_density
         self.m = np.array([])
         self.nu = np.array([])
