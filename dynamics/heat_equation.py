@@ -8,7 +8,7 @@ import sys
 from utils.diagnostics import diagnostics
 from kernels.gauss import gauss, nabla, laplace
 
-def heat_equation(t, y):
+def heat_equation(t, y, is_border_particle):
     diagnostics.time_dynamics()
 
     alpha = 1
@@ -24,11 +24,15 @@ def heat_equation(t, y):
     T = T.reshape(-1, 1)
 
     for a, (r_a, T_a) in enumerate(zip(r, T)):
-        temperature_diff = alpha*laplace(r_a, T_a, r, T)
-        print
+        if not is_border_particle[a]:
+            temperature_diff = alpha*laplace(r_a, T_a, r, T)
+            print
 
-        r_dot[a] = np.zeros(2)
-        T_dot[a] = temperature_diff
+            r_dot[a] = np.zeros(2)
+            T_dot[a] = temperature_diff
+        else:
+            r_dot[a] = np.zeros(2)
+            T_dot[a] = np.zeros(1)
 
     r_dot = r_dot.reshape(-1, order="C")
     T_dot = T_dot.reshape(-1, order="C")

@@ -6,10 +6,10 @@ from utils.diagnostics import diagnostics
 from model_parameters import model_parameters
 
 # SPH smoothing length
-h = 5
+h_default = 3
 
 # gauss kernel for given point and reference point
-def gauss(r_a: np.array, r_b: np.array):
+def gauss(r_a: np.array, r_b: np.array, h=h_default):
     diagnostics.time_kernel()
     alpha = 1
     distance = np.linalg.norm(r_a-r_b)
@@ -47,7 +47,7 @@ def _solve_least_squares(r_i: np.array, T_i, r: np.array, T:np.array):
     delta_f = np.array(delta_f)
     W = np.diag(W)
 
-    coefficients = np.linalg.lstsq(W@D, delta_f)[0]
+    coefficients = np.linalg.lstsq(-W@D, delta_f)[0]
 
     diagnostics.time_least_squares()
     return coefficients
