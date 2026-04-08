@@ -34,7 +34,7 @@ y_0 = np.concatenate((r_0, T_0))
 
 # solver setup
 t_0 = 0
-t_1 = 5
+t_1 = 30
 t_span = (t_0, t_1)
 steps = 100
 t_eval = np.linspace(t_0, t_1, num=steps)
@@ -56,9 +56,15 @@ diagnostics.time_ode()
 print("")
 diagnostics.print_diagnostics()
 
-r = sol.y[: 2*no_particles]
-T = sol.y[2*no_particles :]
+print(sol.y.shape)
+x = sol.y[0:2*no_particles:2, :]
+y = sol.y[1:2*no_particles:2, :]
+T = sol.y[2*no_particles:, :]
+print(x.shape)
+print(y.shape)
+print(T.shape)
+
 t = sol.t
-heat_plot(t, r, T)
+heat_plot(t, x, y, T)
 
 

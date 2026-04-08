@@ -34,9 +34,9 @@ def _solve_least_squares(r_i: np.array, T_i, r: np.array, T:np.array):
             D.append([
                 r_j[0] - r_i[0],
                 r_j[1] - r_i[1],
-                (r_j[0] - r_i[0])*(r_j[0] - r_j[0])*.5,
-                (r_j[0] - r_i[0])*(r_j[1] - r_j[1]),
-                (r_j[1] - r_i[1])*(r_j[1] - r_j[1])*.5,
+                (r_j[0] - r_i[0])*(r_j[0] - r_i[0])*.5,
+                (r_j[0] - r_i[0])*(r_j[1] - r_i[1]),
+                (r_j[1] - r_i[1])*(r_j[1] - r_i[1])*.5,
             ])
             delta_f.extend([T_i - T_j])
             W.extend([np.sqrt(gaussian)])
@@ -47,7 +47,7 @@ def _solve_least_squares(r_i: np.array, T_i, r: np.array, T:np.array):
     delta_f = np.array(delta_f)
     W = np.diag(W)
 
-    coefficients = np.linalg.lstsq(-W@D, delta_f)[0]
+    coefficients = np.linalg.lstsq(W@D, delta_f)[0]
 
     diagnostics.time_least_squares()
     return coefficients
@@ -62,7 +62,7 @@ def laplace(r_a:np.array, T_a, r:np.array, T:np.array):
 
     coefficients = _solve_least_squares(r_a, T_a, r, T)
     result = np.array([-coefficients[2], -coefficients[4]])
-    result = (coefficients[2] + coefficients[4])*T_a
+    result = (coefficients[2] + coefficients[4])
     diagnostics.time_laplace()
     return result
 

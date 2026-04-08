@@ -25,8 +25,9 @@ def heat_equation(t, y):
 
     for a, (r_a, T_a) in enumerate(zip(r, T)):
         temperature_diff = alpha*laplace(r_a, T_a, r, T)
+        print
 
-        r_dot[a] = r_a
+        r_dot[a] = np.zeros(2)
         T_dot[a] = temperature_diff
 
     r_dot = r_dot.reshape(-1, order="C")
