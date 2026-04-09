@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source ../.sph_venv/bin/activate
+python3 -m initial_condition.generate_initial_condition
+
+

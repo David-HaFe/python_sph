@@ -3,7 +3,6 @@
 import numpy as np
 
 from utils.diagnostics import diagnostics
-from model_parameters import model_parameters
 
 # SPH smoothing length
 h_default = 3

@@ -11,7 +11,7 @@ from kernels.gauss import gauss, nabla, laplace
 def heat_equation(t, y, is_border_particle):
     diagnostics.time_dynamics()
 
-    alpha = 1
+    alpha = .1
 
     no_particles = np.size(y)//(2+1)
     y_dot = np.zeros(np.size(y))
@@ -33,6 +33,7 @@ def heat_equation(t, y, is_border_particle):
         else:
             r_dot[a] = np.zeros(2)
             T_dot[a] = np.zeros(1)
+            # T_dot[a] = np.array([np.sin(t)])
 
     r_dot = r_dot.reshape(-1, order="C")
     T_dot = T_dot.reshape(-1, order="C")

@@ -5,17 +5,18 @@
 
 import numpy as np
 from scipy.integrate import solve_ivp
+import csv
 
 from dynamics.heat_equation import heat_equation
 from utils.diagnostics import diagnostics
 from kernels.gauss import gauss
 from utils.heat_map import heat_plot
 from utils.particle_positions import particle_positions
+from config import x_limit, y_limit
+from initial_condition.generate_border import generate_border
 
 # initialize grid
 initial_condition = np.array([])
-x_limit = 10
-y_limit = 10
 spacing = .1
 
 no_particles = x_limit*y_limit
@@ -24,57 +25,20 @@ r_0 = []
 T_0 = []
 is_border_particle = []
 
+with open("initial_condition/initial_condition.csv") as file:
+    reader = csv.reader(file)
+    initial_temps = list(reader)
+
 # fill initial condition
-for x in range(0, x_limit):
-    for y in range(0, y_limit):
+for y in range(0, y_limit):
+    for x in range(0, x_limit):
         r_0.extend([x, y])
-        T_0.extend([
-            20*gauss(
-                np.array([x_limit/2,y_limit/2]),
-                np.array([x,y]),
-                (x_limit+y_limit)/4-.5,
-            )
-        ])
+        T_0.extend([initial_temps[y][x]])
         is_border_particle.extend([False])
 
-base_temp=0
-for x in range (-2, x_limit+2):
-    r_0.extend([x, -1])
-    T_0.extend([base_temp])
-    is_border_particle.extend([True])
-
-    r_0.extend([x, -2])
-    T_0.extend([base_temp])
-    is_border_particle.extend([True])
-
-    r_0.extend([x, y_limit])
-    T_0.extend([base_temp])
-    is_border_particle.extend([True])
-
-    r_0.extend([x, y_limit+1])
-    T_0.extend([base_temp])
-    is_border_particle.extend([True])
-
-    no_particles += 4
-
-for y in range (0, y_limit):
-    r_0.extend([-1, y])
-    T_0.extend([base_temp])
-    is_border_particle.extend([True])
-
-    r_0.extend([-2, y])
-    T_0.extend([base_temp])
-    is_border_particle.extend([True])
-
-    r_0.extend([x_limit, y])
-    T_0.extend([base_temp])
-    is_border_particle.extend([True])
-
-    r_0.extend([x_limit+1, y])
-    T_0.extend([base_temp])
-    is_border_particle.extend([True])
-
-    no_particles += 4
+r_0, T_0, is_border_particle, no_particles = generate_border(
+    r_0, T_0, is_border_particle, no_particles
+)
 
 r_0 = np.array(r_0, dtype=float)
 T_0 = np.array(T_0, dtype=float)
