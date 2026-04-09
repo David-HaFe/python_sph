@@ -10,7 +10,7 @@ def heat_plot(t, x, y, T):
     ax = fig.add_subplot(111, projection="3d")
     grid_points = 50
 
-    # xi, yi don't change, just ignore
+    # xi, yi don't change, just calculate once and continue
     xi = np.linspace(x[:, 1].min(), x[:, 1].max(), grid_points)
     yi = np.linspace(y[:, 1].min(), y[:, 1].max(), grid_points)
     XI, YI = np.meshgrid(xi, yi)
@@ -26,11 +26,12 @@ def heat_plot(t, x, y, T):
             T[:, frame],
             (XI, YI),
             method="cubic",
-            fill_value=0.0
         )
         ax.plot_surface(XI, YI, ZI, cmap="viridis", edgecolor="none")
 
     ani = animation.FuncAnimation(fig, update, frames=len(t), interval=100)
-    ani.save("animation.gif", writer="pillow", fps=30)
+    # ani.save("animation.gif", writer="pillow", fps=30)
+    ani.save("visualizations/heat_transfer.mp4", writer="ffmpeg", fps=30)
+    ani.save("visualizations/heat_transfer.gif", writer="pillow", fps=30)
 
 
