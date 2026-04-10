@@ -1,11 +1,14 @@
 
 
 import numpy as np
+import sys
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.interpolate import griddata
+from utils.diagnostics import diagnostics
 
 def heat_plot(t, x, y, T):
+    diagnostics.time_surface_plot()
     fig = plt.figure()
     ax = fig.add_subplot(111, projection="3d")
     grid_points = 50
@@ -28,10 +31,13 @@ def heat_plot(t, x, y, T):
             method="cubic",
         )
         ax.plot_surface(XI, YI, ZI, cmap="viridis", edgecolor="none")
+        sys.stdout.write(f"\r\033[Kplotting surface @ {t[frame]}")
+        sys.stdout.flush()
+
 
     ani = animation.FuncAnimation(fig, update, frames=len(t), interval=100)
     # ani.save("animation.gif", writer="pillow", fps=30)
     ani.save("visualizations/heat_transfer.mp4", writer="ffmpeg", fps=30)
-    ani.save("visualizations/heat_transfer.gif", writer="pillow", fps=30)
+    diagnostics.time_surface_plot()
 
 

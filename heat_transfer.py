@@ -67,9 +67,6 @@ sol = solve_ivp(
 )
 diagnostics.time_ode()
 
-print("")
-diagnostics.print_diagnostics()
-
 x = sol.y[0:2*no_particles:2, :]
 y = sol.y[1:2*no_particles:2, :]
 T = sol.y[2*no_particles:, :]
@@ -77,5 +74,8 @@ T = sol.y[2*no_particles:, :]
 t = sol.t
 heat_plot(t, x, y, T)
 particle_positions(t, x, y, is_border_particle)
+
+print("")
+diagnostics.print_diagnostics()
 
 

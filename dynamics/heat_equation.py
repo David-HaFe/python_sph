@@ -39,7 +39,9 @@ def heat_equation(t, y, is_border_particle):
     T_dot = T_dot.reshape(-1, order="C")
     y_dot = np.concatenate((r_dot, T_dot))
 
-    sys.stdout.write(f"\r\033[K{t}")
+    diagnostics.log_np_array(T_dot)
+
+    sys.stdout.write(f"\r\033[Ksimulating @ {t}")
     sys.stdout.flush()
 
     diagnostics.time_dynamics()
