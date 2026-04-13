@@ -36,8 +36,9 @@ for y in range(0, y_limit):
         T_0.extend([initial_temps[y][x]])
         is_border_particle.extend([False])
 
+base_temp = [0]
 r_0, T_0, is_border_particle, no_particles = generate_border(
-    r_0, T_0, is_border_particle, no_particles
+    r_0, T_0, base_temp, is_border_particle, no_particles
 )
 
 r_0 = np.array(r_0, dtype=float)

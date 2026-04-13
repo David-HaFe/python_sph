@@ -3,7 +3,7 @@
 import numpy as np
 
 from utils.diagnostics import diagnostics
-from model_parameters import model_parameters
+from config import model_parameters
 from kernels.wendland import wendland, normalised_gradient_W
 
 # evaluate the poisson pressure equations for given state

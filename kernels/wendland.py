@@ -1,8 +1,8 @@
 
 
 import numpy as np
-from diagnostics import diagnostics
-from model_parameters import model_parameters
+from utils.diagnostics import diagnostics
+from config import model_parameters
 
 # SPH smoothing length
 h = 5
@@ -14,7 +14,7 @@ kernel_zero_tolerance = 1e-5
 # kernel for a given point and a reference point
 # using C² Wendland kernel
 def wendland(x_a: np.array, x_b: np.array):
-    diagnostics.time_W()
+    diagnostics.time_kernel()
 
     distance = np.linalg.norm(x_a - x_b)/h
 
@@ -35,12 +35,12 @@ def wendland(x_a: np.array, x_b: np.array):
     #     sigma_W/h_dim * (1 + 2*distance)*(1 - .5*distance)**4,
     #     0.0,
     # )
-    diagnostics.time_W()
+    diagnostics.time_kernel()
     return result
 
 # gradient of the kernel function
 def gradient_W(x_a: np.array, x_b: np.array):
-    diagnostics.time_gradient_W()
+    diagnostics.time_gradient_kernel()
 
     distance = np.linalg.norm(x_a - x_b)/h
 
@@ -59,7 +59,7 @@ def gradient_W(x_a: np.array, x_b: np.array):
     else:
         result = np.zeros(2)
 
-    diagnostics.time_gradient_W()
+    diagnostics.time_gradient_kernel()
     return (+result)
 
 # normalised gradient of the kernel function
@@ -68,7 +68,7 @@ def gradient_W(x_a: np.array, x_b: np.array):
 #   x_b: point at which gradient is evaluated in R²
 #   x:   state vector for L matrix in R^n, n = no particles
 def normalised_gradient_W(x_a: np.array, x_b: np.array, x: np.array):
-    diagnostics.time_norm_gradient_W()
+    diagnostics.time_norm_gradient_kernel()
     m = model_parameters.m
     rho = model_parameters.rho
 
@@ -84,7 +84,7 @@ def normalised_gradient_W(x_a: np.array, x_b: np.array, x: np.array):
     L = np.linalg.inv(L_inv)
     result = np.matmul(L, gradient_W_ab)
 
-    diagnostics.time_norm_gradient_W()
+    diagnostics.time_norm_gradient_kernel()
     return result
 
 

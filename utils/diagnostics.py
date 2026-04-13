@@ -18,17 +18,17 @@ class Diagnostics():
         self._start_time = time.perf_counter()
         self._file_path = "utils/registry.csv"
 
-        self._dynamics_timer = np.array([0.0, 0.0, True])
-        self._poisson_timer = np.array([0.0, 0.0, True])
-        self._kernel_timer = np.array([0.0, 0.0, True])
-        self._nabla_timer = np.array([0.0, 0.0, True])
-        self._laplace_timer = np.array([0.0, 0.0, True])
-        self._lsqr_timer = np.array([0.0, 0.0, True])
-        self._gradient_kernel_timer = np.array([0.0, 0.0, True])
-        self._norm_gradient_kernel_timer = np.array([0.0, 0.0, True])
-        self._surface_plot_timer = np.array([0.0, 0.0, True])
-        self._position_plot_timer = np.array([0.0, 0.0, True])
-        self._ode_timer = np.array([0.0, 0.0, True])
+        self._dynamics_timer = self._create_timer()
+        self._poisson_timer = self._create_timer()
+        self._kernel_timer = self._create_timer()
+        self._nabla_timer = self._create_timer()
+        self._laplace_timer = self._create_timer()
+        self._lsqr_timer = self._create_timer()
+        self._gradient_kernel_timer = self._create_timer()
+        self._norm_gradient_kernel_timer = self._create_timer()
+        self._surface_plot_timer = self._create_timer()
+        self._position_plot_timer = self._create_timer()
+        self._ode_timer = self._create_timer()
 
         # set up csv file
         row = ["logged at","name","log content"]
@@ -36,6 +36,8 @@ class Diagnostics():
             writer = csv.writer(f)
             writer.writerow(["registered at: ", datetime.datetime.now()])
             writer.writerow(row)
+
+    def _create_timer(self): return np.array([0.0, 0.0, True])
 
     # can be called with the result of kernel rejection or acceptance to
     # get statistics for acceptance rate

@@ -8,10 +8,10 @@ from utils.diagnostics import diagnostics
 h_default = 3
 
 # gauss kernel for given point and reference point
-def gauss(r_a: np.array, r_b: np.array, h=h_default):
+def gauss(r_i: np.array, r_j: np.array, h=h_default):
     diagnostics.time_kernel()
     alpha = 1
-    distance = np.linalg.norm(r_a-r_b)
+    distance = np.linalg.norm(r_i-r_j)
 
     if distance < h:
         result = np.exp(-alpha * distance**2/h**2)
@@ -21,14 +21,19 @@ def gauss(r_a: np.array, r_b: np.array, h=h_default):
     diagnostics.time_kernel()
     return result
 
-def _solve_least_squares(r_i: np.array, T_i, r: np.array, T:np.array):
+def _solve_least_squares(
+    r_i: np.array,
+    function_i: np.array,
+    r: np.array,
+    function:np.array
+):
     diagnostics.time_least_squares()
     D = []
     W = []
     delta_f = []
-    for j, (r_j, T_j) in enumerate(zip(r, T)):
-        gaussian = gauss(r_i, r_j)
-        if gaussian > 0:
+    for j, (r_j, function_j) in enumerate(zip(r, function)):
+        kernel = gauss(r_i, r_j)
+        if kernel > 0:
             diagnostics.register_particle(True)
             D.append([
                 r_j[0] - r_i[0],
@@ -37,8 +42,8 @@ def _solve_least_squares(r_i: np.array, T_i, r: np.array, T:np.array):
                 (r_j[0] - r_i[0])*(r_j[1] - r_i[1]),
                 (r_j[1] - r_i[1])*(r_j[1] - r_i[1])*.5,
             ])
-            delta_f.extend([T_i - T_j])
-            W.extend([np.sqrt(gaussian)])
+            delta_f.extend([function_i - function_j])
+            W.extend([np.sqrt(kernel)])
         else:
             diagnostics.register_particle(False)
 
@@ -51,16 +56,38 @@ def _solve_least_squares(r_i: np.array, T_i, r: np.array, T:np.array):
     diagnostics.time_least_squares()
     return coefficients
 
-def nabla(r_a:np.array, T_a, r:np.array, T:np.array):
+def nabla(
+    r_i:np.array,
+    function_i:np.array,
+    r_j:np.array,
+    function_j:np.array,
+    r:np.array,
+    function:np.array
+):
     diagnostics.time_nabla()
 
-    diagnostics.time_nabla()
+    coefficients = _solve_least_squares(r_i, function_i, r, function)
+    result = np.array([
+        coefficients[0]
+        - coefficients[2]*(r_j[0] - r_i[0])
+        + coefficients[3]*(r_i[1] - r_j[1]),
+        coefficients[1]
+        - coefficients[4]*(r_j[1] - r_i[1])
+        + coefficients[3]*(r_i[0] - r_j[0]),
+    ])
 
-def laplace(r_a:np.array, T_a, r:np.array, T:np.array):
+    diagnostics.time_nabla()
+    return result
+
+def laplace(
+    r_i:np.array,
+    function_i:np.array,
+    r:np.array,
+    function:np.array,
+):
     diagnostics.time_laplace()
 
-    coefficients = _solve_least_squares(r_a, T_a, r, T)
-    result = np.array([-coefficients[2], -coefficients[4]])
+    coefficients = _solve_least_squares(r_i, function_i, r, function)
     result = (coefficients[2] + coefficients[4])
     diagnostics.time_laplace()
     return result

@@ -5,16 +5,17 @@
 import numpy as np
 import sys
 
-from diagnostics import diagnostics
-from kernel import Wendland, gradient_W, normalised_gradient_W
-from model_parameters import model_parameters
+from utils.diagnostics import diagnostics
+from kernels.wendland import wendland, gradient_W, normalised_gradient_W
+from kernels.gauss import gauss, nabla, laplace
+from config import model_parameters
 
 # implements the discretized navier stokes equation for the ode solver
 # y consists of the triple [positions, velocities, density] for each particle,
 # all concatenated like this one after the other
 # this is the INCOMPRESSIBLE case
 def navier_stokes_incompressible(t, y, is_wall_particle):
-    diagnostics.time_navier_stokes()
+    diagnostics.time_dynamics()
     no_particles = np.size(y)//(2+2)
     y_dot = np.zeros(np.size(y))
     x_dot = np.zeros((no_particles, 2))
@@ -35,7 +36,7 @@ def navier_stokes_incompressible(t, y, is_wall_particle):
             viscosity_term = np.zeros(2)
 
             for b, (x_b, v_b) in enumerate(zip(x, v)):
-                particle_close_enough = W(x_a, x_b) > 0
+                particle_close_enough = gauss(x_a, x_b) > 0
 
                 if not (a == b):
                     diagnostics.register_particle(particle_close_enough)
@@ -60,7 +61,7 @@ def navier_stokes_incompressible(t, y, is_wall_particle):
             x_dot[a] = v_a
             # v_dot[a] = +viscosity_term * gradient_W(x_a, x_b)
             v_dot[a] = model_parameters.gravity + (
-                viscosity_term * gradient_W(x_a, x_b)
+                viscosity_term * laplace(x_a, x_b)
             )
         else:
             x_dot[a] = np.zeros(2)
@@ -70,10 +71,10 @@ def navier_stokes_incompressible(t, y, is_wall_particle):
     v_dot = v_dot.reshape(-1, order="C")
     y_dot = np.concatenate((x_dot, v_dot))
 
-    sys.stdout.write(f"\r\033[K{t}")
+    sys.stdout.write(f"\r\033[Ksimulating @ {t}")
     sys.stdout.flush()
 
-    diagnostics.time_navier_stokes()
+    diagnostics.time_dynamics()
     return y_dot
 
 # implements the discretized navier stokes equation for the ode solver
@@ -81,7 +82,7 @@ def navier_stokes_incompressible(t, y, is_wall_particle):
 # all concatenated like this one after the other
 # this is the COMPRESSIBLE case
 def navier_stokes_compressible(t, y, is_wall_particle):
-    diagnostics.time_navier_stokes()
+    diagnostics.time_dynamics()
     no_particles = np.size(y)//(2+2+1)
     y_dot = np.zeros(np.size(y))
     x_dot = np.zeros((no_particles, 2))
@@ -109,7 +110,7 @@ def navier_stokes_compressible(t, y, is_wall_particle):
 
             for b, (x_b, v_b, rho_b) in enumerate(zip(x, v, rho)):
                 # x_b = np.array(x_b)
-                particle_close_enough = W(x_a, x_b) > 0
+                particle_close_enough = wendland(x_a, x_b) > 0
 
                 if not (a == b):
                     diagnostics.register_particle(particle_close_enough)
@@ -157,7 +158,7 @@ def navier_stokes_compressible(t, y, is_wall_particle):
     sys.stdout.write(f"\r\033[K{t}")
     sys.stdout.flush()
 
-    diagnostics.time_navier_stokes()
+    diagnostics.time_dynamics()
     return y_dot
 
 # calculates the pressure based on given formula
