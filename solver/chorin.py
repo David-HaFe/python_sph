@@ -33,8 +33,6 @@ def chorin(
         times[i] = t
         solution[:, i] = y
 
-    print("")
-    print("iterations: " + str(no_iterations))
     return SimpleNamespace(t=times, y=solution)
 
 

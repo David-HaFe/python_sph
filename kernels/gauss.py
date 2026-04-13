@@ -57,38 +57,47 @@ def _solve_least_squares(
     return coefficients
 
 def nabla(
-    r_i:np.array,
-    function_i:np.array,
-    r_j:np.array,
-    function_j:np.array,
-    r:np.array,
-    function:np.array
+    r_i: np.array,
+    function_i: np.array,
+    r: np.array,
+    function: np.array,
 ):
     diagnostics.time_nabla()
 
+    result = np.zeros(2)
     coefficients = _solve_least_squares(r_i, function_i, r, function)
-    result = np.array([
-        coefficients[0]
-        - coefficients[2]*(r_j[0] - r_i[0])
-        + coefficients[3]*(r_i[1] - r_j[1]),
-        coefficients[1]
-        - coefficients[4]*(r_j[1] - r_i[1])
-        + coefficients[3]*(r_i[0] - r_j[0]),
-    ])
 
+    # TODO: find out if this really is how you are supposed to
+    # calculate the gradient
+
+    for j, (r_j, function_j) in enumerate(zip(r, function)):
+        result[0] = (
+            coefficients[0]
+            - coefficients[2]*(r_j[0] - r_i[0])
+            + coefficients[3]*(r_i[1] - r_j[1])
+        )
+        result[1] = (
+            coefficients[1]
+            - coefficients[4]*(r_j[1] - r_i[1])
+            + coefficients[3]*(r_i[0] - r_j[0])
+        )
+
+    diagnostics.log_np_array(result)
     diagnostics.time_nabla()
     return result
 
 def laplace(
-    r_i:np.array,
-    function_i:np.array,
-    r:np.array,
-    function:np.array,
+    r_i: np.array,
+    function_i: np.array,
+    r: np.array,
+    function: np.array,
 ):
     diagnostics.time_laplace()
 
     coefficients = _solve_least_squares(r_i, function_i, r, function)
     result = (coefficients[2] + coefficients[4])
+
+    diagnostics.log_np_array(result)
     diagnostics.time_laplace()
     return result
 

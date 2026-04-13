@@ -14,62 +14,38 @@ from config import model_parameters
 # y consists of the triple [positions, velocities, density] for each particle,
 # all concatenated like this one after the other
 # this is the INCOMPRESSIBLE case
-def navier_stokes_incompressible(t, y, is_wall_particle):
+def navier_stokes_incompressible(t, y, is_border_particle):
     diagnostics.time_dynamics()
     no_particles = np.size(y)//(2+2)
     y_dot = np.zeros(np.size(y))
-    x_dot = np.zeros((no_particles, 2))
+    r_dot = np.zeros((no_particles, 2))
     v_dot = np.zeros((no_particles, 2))
 
-    x = y[: 2*no_particles]
+    r = y[: 2*no_particles]
     v = y[2*no_particles :]
-    x = x.reshape(-1, 2)
+    r = r.reshape(-1, 2)
     v = v.reshape(-1, 2)
 
     m = model_parameters.m
     nu = model_parameters.nu
     rho = model_parameters.rho
 
-    for a, (x_a, v_a) in enumerate(zip(x, v)):
-        if not is_wall_particle[a]:
+    for i, (r_i, v_i) in enumerate(zip(r, v)):
+        if not is_border_particle[i]:
             # reset everything and get new vectors
-            viscosity_term = np.zeros(2)
-
-            for b, (x_b, v_b) in enumerate(zip(x, v)):
-                particle_close_enough = gauss(x_a, x_b) > 0
-
-                if not (a == b):
-                    diagnostics.register_particle(particle_close_enough)
-
-                # particle is close enough
-                if (particle_close_enough and not (a == b)):
-
-                    # calculate dv/dt
-                    delta_x = x_a - x_b
-                    delta_v = v_a - v_b
-
-                    # TODO: this actually uses the preliminary position, which
-                    #       does not show up in every paper. I will use the
-                    #       initial  position, but I should keep in mind that
-                    #       this is not exactly as in Chow 2018.
-                    viscosity_term += m[b]/rho[b] * (
-                        (2*nu[b] + np.dot(delta_x, delta_v))
-                        /(np.dot(delta_x, delta_x) + model_parameters.eta**2)
-                    )
-
-            # fill solution array
-            x_dot[a] = v_a
-            # v_dot[a] = +viscosity_term * gradient_W(x_a, x_b)
-            v_dot[a] = model_parameters.gravity + (
-                viscosity_term * laplace(x_a, x_b)
+            acceleration_i = (
+                # nu[i]*laplace(r_i, v_i, r, v)
+                model_parameters.gravity + nu[i]*laplace(r_i, v_i, r, v)
             )
+            r_dot[i] = v_i
+            v_dot[i] = acceleration_i
         else:
-            x_dot[a] = np.zeros(2)
-            v_dot[a] = np.zeros(2)
+            r_dot[i] = np.zeros(2)
+            v_dot[i] = np.zeros(2)
 
-    x_dot = x_dot.reshape(-1, order="C")
+    r_dot = r_dot.reshape(-1, order="C")
     v_dot = v_dot.reshape(-1, order="C")
-    y_dot = np.concatenate((x_dot, v_dot))
+    y_dot = np.concatenate((r_dot, v_dot))
 
     sys.stdout.write(f"\r\033[Ksimulating @ {t}")
     sys.stdout.flush()
@@ -81,7 +57,7 @@ def navier_stokes_incompressible(t, y, is_wall_particle):
 # y consists of the triple [positions, velocities, density] for each particle,
 # all concatenated like this one after the other
 # this is the COMPRESSIBLE case
-def navier_stokes_compressible(t, y, is_wall_particle):
+def navier_stokes_compressible(t, y, is_border_particle):
     diagnostics.time_dynamics()
     no_particles = np.size(y)//(2+2+1)
     y_dot = np.zeros(np.size(y))
@@ -100,7 +76,7 @@ def navier_stokes_compressible(t, y, is_wall_particle):
     v = v.reshape(-1, 2)
 
     for a, (x_a, v_a, rho_a) in enumerate(zip(x, v, rho)):
-        if not is_wall_particle[a]:
+        if not is_border_particle[a]:
             # reset everything and get new vectors
             pressure_term = np.zeros(2)
             viscosity_term = np.zeros(2)

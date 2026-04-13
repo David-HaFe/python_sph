@@ -25,15 +25,15 @@ r_0 = []
 T_0 = []
 is_border_particle = []
 
-with open("initial_condition/initial_condition.csv") as file:
-    reader = csv.reader(file)
-    initial_temps = list(reader)
+# with open("initial_condition/initial_condition.csv") as file:
+#     reader = csv.reader(file)
+#     initial_temps = list(reader)
 
 # fill initial condition
 for y in range(0, y_limit):
     for x in range(0, x_limit):
         r_0.extend([x, y])
-        T_0.extend([initial_temps[y][x]])
+        T_0.extend([5*gauss(np.array([x,y]), np.array([x_limit/2,y_limit/2]))])
         is_border_particle.extend([False])
 
 base_temp = [0]

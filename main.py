@@ -33,8 +33,16 @@ is_border_particle = []
 
 for x in range(0, x_limit):
     for y in range(0, y_limit):
-        r_0.extend([x*spacing + noise(), y*spacing])
-        v_0.extend([0, 0])
+        r_0.extend([x*spacing, y*spacing])
+
+        if x == 0:
+            x_vel = 1
+        elif x == x_limit - 1:
+            x_vel = -1
+        else:
+            x_vel = 0
+
+        v_0.extend([x_vel, 0])
 
         # add wall particle flag
         is_border_particle.extend([False])
@@ -87,7 +95,6 @@ sol = chorin(
     t_end=t_1,
     dt=.01,
 )
-print("")
 
 # sol = solve_ivp(
 #     fun=lambda t, y: navier_stokes_compressible(

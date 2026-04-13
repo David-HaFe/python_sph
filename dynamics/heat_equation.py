@@ -26,7 +26,6 @@ def heat_equation(t, y, is_border_particle):
     for a, (r_a, T_a) in enumerate(zip(r, T)):
         if not is_border_particle[a]:
             temperature_diff = alpha*laplace(r_a, T_a, r, T)
-            print
 
             r_dot[a] = np.zeros(2)
             T_dot[a] = temperature_diff

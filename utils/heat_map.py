@@ -22,7 +22,7 @@ def heat_plot(t, x, y, T):
 
     def update(frame):
         ax.cla()
-        ax.set_zlim(z_min, 10*z_max)
+        ax.set_zlim(z_min, 2*z_max)
         ax.set_title(f"uiuiui sieht schon ganz gut aus t = {t[frame]:.2f}")
         ZI = griddata(
             (x[:, frame], y[:, frame]),

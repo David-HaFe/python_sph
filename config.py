@@ -4,8 +4,8 @@
 
 import numpy as np
 
-x_limit = 4
-y_limit = 4
+x_limit = 10
+y_limit = 10
 border_thickness = 1
 
 class Model_Parameters():

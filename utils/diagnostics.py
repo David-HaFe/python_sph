@@ -29,6 +29,7 @@ class Diagnostics():
         self._surface_plot_timer = self._create_timer()
         self._position_plot_timer = self._create_timer()
         self._ode_timer = self._create_timer()
+        self._logger_timer = self._create_timer()
 
         # set up csv file
         row = ["logged at","name","log content"]
@@ -53,6 +54,10 @@ class Diagnostics():
     # wrapper for timing heat surface plot
     def time_surface_plot(self):
         self._timer_function(self._surface_plot_timer)
+
+    # wrapper for timing the variable logger
+    def time_logger(self):
+        self._timer_function(self._logger_timer)
 
     # wrapper for timing particle position plot
     def time_position_plot(self):
@@ -108,7 +113,7 @@ class Diagnostics():
 
     # writes some basic properties of a variable to a csv file for debugging
     def log_np_array(self, array):
-
+        self.time_logger()
         # get variable name
         array_name = ""
         frame = inspect.currentframe().f_back or inspect.currentframe()
@@ -126,6 +131,8 @@ class Diagnostics():
             writer = csv.writer(f)
             writer.writerow(row)
 
+        self.time_logger()
+
     def print_diagnostics(self):
         accepted_percentage = self._accepted_particles/(
                 self._accepted_particles + self._rejected_particles)
@@ -133,7 +140,7 @@ class Diagnostics():
         print(" accepted percentage: " + str(accepted_percentage))
         print("       nan instances: " + str(self._nan_instances))
         print("========== timers ==========")
-        print(f"                 ode: {self._ode_timer[-1]:.4f}")
+        print(f"                 ode: {self._ode_timer[0]:.4f}")
         print(f"            dynamics: {self._dynamics_timer[0]:.4f}")
         print(f"              kernel: {self._kernel_timer[0]:.4f}")
         print(f"     kernel gradient: {self._gradient_kernel_timer[0]:.4f}")
@@ -143,6 +150,7 @@ class Diagnostics():
         print(f"             laplace: {self._laplace_timer[0]:.4f}")
         print(f"        surface plot: {self._surface_plot_timer[0]:.4f}")
         print(f"       position plot: {self._position_plot_timer[0]:.4f}")
+        print(f"              logger: {self._logger_timer[0]:.4f}")
         print("============================")
 
 # create diagnostics class instance to pass to other files
