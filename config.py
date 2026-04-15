@@ -6,7 +6,7 @@ import numpy as np
 
 x_limit = 10
 y_limit = 10
-border_thickness = 1
+border_thickness = 3
 
 class Model_Parameters():
     def __init__(self):

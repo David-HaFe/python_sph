@@ -24,30 +24,16 @@ def poisson_pressure_equation(t, y, is_border_particle, dt):
     m = model_parameters.m
     rho = model_parameters.rho
 
+    b = []
     for i, (r_i, v_i) in enumerate(zip(r, v)):
         if not is_border_particle[i]:
-            divergence_v = 0
+            # set up b vector
+            b.extend([nabla(r_i, v_i, r, v)/dt])
+            b = np.array(b, dtype=float)
 
-            laplace_p = nabla(r_i, v_i, r, v)/dt
+    A = _assemble_LHS(r, dt)
 
-            # for j, (r_j, v_j) in enumerate(zip(r, v)):
-            #     particle_close_enough = gauss(r_i, r_j) > 0
-            #
-            #     # particle is close enough
-            #     if (particle_close_enough and not (i == j)):
-            #         divergence_v += (m[j]/rho[j])*(
-            #             (v_j - v_i)
-            #         )
-            #
-            # delta_W_ab_norm = normalised_gradient_W(r_i, r_j, r)
-            # divergence_v = divergence_v.reshape(-1, 2)
-            # divergence_v = np.dot(divergence_v, delta_W_ab_norm)
-            #
-            # # TODO: calculate delta P here
-            # delta_P_plus = 0
-            #
-            # # calculate new velocity (forces already added in step 1
-            # v_dot[i] = (delta_P_plus/rho[i])
+    sol = np.linalg.solve(A, b)
 
     r_dot = r_dot.reshape(-1, order="C")
     v_dot = v_dot.reshape(-1, order="C")
@@ -57,8 +43,7 @@ def poisson_pressure_equation(t, y, is_border_particle, dt):
     return y_dot
 
 # construct A matrix for PPE
-def _assemble_LHS(r, h, dt):
-    """Assemble A and b for the pressure Poisson system A·p = b"""
+def _assemble_LHS(r, dt):
     no_particles = np.size(r)//2
     A = np.zeros((no_particles, no_particles))
 
@@ -66,11 +51,10 @@ def _assemble_LHS(r, h, dt):
         for j, (r_j, v_j) in enumerate(zip(r, v)):
             kernel = gauss(r_i, r_j)
 
-            if kernel > 0 and not i==j:
-                F_ij  = laplacian_kernel_factor(r_vec, h)
-                coeff = V_j * F_ij
-                A[i, j] += coeff
-                A[i, i] -= coeff
+            if kernel > 0 and not i == j:
+                weight = gauss(r_i, r_j, h)
+                A[i, j] += weight
+                A[i, i] -= weight
 
     return A
 

@@ -25,7 +25,7 @@ def _solve_least_squares(
     r_i: np.array,
     function_i: np.array,
     r: np.array,
-    function:np.array
+    function: np.array,
 ):
     diagnostics.time_least_squares()
     D = []
@@ -52,6 +52,8 @@ def _solve_least_squares(
     W = np.diag(W)
 
     coefficients = np.linalg.lstsq(-W@D, delta_f)[0]
+
+    diagnostics.log_np_array(coefficients)
 
     diagnostics.time_least_squares()
     return coefficients

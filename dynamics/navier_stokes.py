@@ -61,7 +61,7 @@ def navier_stokes_compressible(t, y, is_border_particle):
     diagnostics.time_dynamics()
     no_particles = np.size(y)//(2+2+1)
     y_dot = np.zeros(np.size(y))
-    x_dot = np.zeros((no_particles, 2))
+    r_dot = np.zeros((no_particles, 2))
     v_dot = np.zeros((no_particles, 2))
     rho_dot = np.zeros(no_particles)
 
@@ -69,69 +69,71 @@ def navier_stokes_compressible(t, y, is_border_particle):
     m = model_parameters.m
     mu = np.full(no_particles, .1)
 
-    x = y[: 2*no_particles]
+    eta = .01
+
+    r = y[: 2*no_particles]
     v = y[2*no_particles : 4*no_particles]
     rho = y[4*no_particles :]
-    x = x.reshape(-1, 2)
+    r = r.reshape(-1, 2)
     v = v.reshape(-1, 2)
 
-    for a, (x_a, v_a, rho_a) in enumerate(zip(x, v, rho)):
-        if not is_border_particle[a]:
+    for i, (r_i, v_i, rho_i) in enumerate(zip(r, v, rho)):
+        if not is_border_particle[i]:
             # reset everything and get new vectors
             pressure_term = np.zeros(2)
             viscosity_term = np.zeros(2)
-            rho_dot_a = 0
+            rho_dot_i = 0
 
-            p_a = calculate_pressure(rho_a)
+            p_i = calculate_pressure(rho_i)
 
-            for b, (x_b, v_b, rho_b) in enumerate(zip(x, v, rho)):
+            for j, (r_j, v_j, rho_j) in enumerate(zip(r, v, rho)):
                 # x_b = np.array(x_b)
-                particle_close_enough = wendland(x_a, x_b) > 0
+                particle_close_enough = wendland(r_i, r_j) > 0
 
-                if not (a == b):
+                if not (i == j):
                     diagnostics.register_particle(particle_close_enough)
 
                 # if particle_close_enough:
-                if (particle_close_enough and not (a == b)):
+                if (particle_close_enough and not (i == j)):
 
                     # calculate dv/dt
                     # v_b = np.array(v_b)
-                    p_b = calculate_pressure(rho_b)
+                    p_j = calculate_pressure(rho_j)
 
-                    pressure_term += m[b] * (
-                        p_b/np.power(rho_b, 2)
-                        + p_a/np.power(rho_a, 2)
-                        ) * gradient_W(x_a, x_b)
+                    pressure_term += m[j] * (
+                        p_j/np.power(rho_j, 2)
+                        + p_i/np.power(rho_i, 2)
+                        ) * gradient_W(r_i, r_j)
 
-                    delta_x = x_a - x_b
-                    delta_v = v_a - v_b
+                    delta_r = r_i - r_j
+                    delta_v = v_i - v_j
 
-                    viscosity_term += m[b] * (
-                        (mu[a] + mu[b])/(rho_a*rho_b)*np.dot(delta_x, delta_v)
-                        / (np.dot(delta_x, delta_x) + .01*eta**2)
-                        ) * gradient_W(x_a, x_b)
+                    viscosity_term += m[j] * (
+                        (mu[i] + mu[j])/(rho_i*rho_j)*np.dot(delta_r, delta_v)
+                        / (np.dot(delta_r, delta_r) + .01*eta**2)
+                        ) * gradient_W(r_i, r_j)
 
                     # calculate d(rho)/dt
-                    rho_dot_a += (m[b]/rho_b)*(
-                        np.dot(v_b - v_a, gradient_W(x_a, x_b))
+                    rho_dot_i += (m[j]/rho_j)*(
+                        np.dot(v_j - v_i, gradient_W(r_i, r_j))
                     )
 
             # fill solution array
-            x_dot[a] = v_a
-            v_dot[a] = (
+            r_dot[i] = v_i
+            v_dot[i] = (
                 model_parameters.gravity - pressure_term + viscosity_term
             )
-            rho_dot[a] = - rho_a * rho_dot_a
+            rho_dot[i] = - rho_i * rho_dot_i
         else:
-            x_dot[a] = np.zeros(2)
-            v_dot[a] = np.zeros(2)
-            rho_dot[a] = 0
+            r_dot[i] = np.zeros(2)
+            v_dot[i] = np.zeros(2)
+            rho_dot[i] = 0
 
-    x_dot = x_dot.reshape(-1, order="C")
+    r_dot = r_dot.reshape(-1, order="C")
     v_dot = v_dot.reshape(-1, order="C")
-    y_dot = np.concatenate((x_dot, v_dot, rho_dot))
+    y_dot = np.concatenate((r_dot, v_dot, rho_dot))
 
-    sys.stdout.write(f"\r\033[K{t}")
+    sys.stdout.write(f"\r\033[Ksimulating @ {t}")
     sys.stdout.flush()
 
     diagnostics.time_dynamics()
@@ -140,10 +142,10 @@ def navier_stokes_compressible(t, y, is_border_particle):
 # calculates the pressure based on given formula
 def calculate_pressure(rho):
     gamma = 7
-    c_0 = 1
+    c_0 = 10
     # TODO: maybe refine reference density, depending on what it turns
     #       out to be
-    rho_0 = 1.1
+    rho_0 = 1
     # TODO: find out what p_B actually is
     p_B = 0
 
