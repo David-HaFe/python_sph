@@ -26,6 +26,8 @@ def poisson_pressure_equation(t, y, dt, is_border_particle):
         if not is_border_particle[i]:
             r_dot[i] = np.zeros(2)
             v_dot[i], p_dot[i] = _pressure_gradient(r_i, v_i, p_i, r, v, p, dt)
+            # HACK: this should update somehow?
+            p_dot[i] = np.zeros(1)
         else:
             r_dot[i] = np.zeros(2)
             v_dot[i] = np.zeros(2)

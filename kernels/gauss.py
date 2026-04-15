@@ -67,7 +67,7 @@ def nabla(
 ):
     diagnostics.time_nabla()
 
-    result = np.zeros(2)
+    result = np.zeros((2, len(function_i)))
     coefficients = _solve_least_squares_gauss(r_i, function_i, r, function)
 
     # TODO: find out if this really is how you are supposed to
