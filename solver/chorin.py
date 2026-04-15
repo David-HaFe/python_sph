@@ -2,6 +2,7 @@
 
 import numpy as np
 from types import SimpleNamespace
+from utils.diagnostics import diagnostics
 
 def chorin(
     forward_equation,
@@ -27,8 +28,9 @@ def chorin(
         # intermediate step
         y = y + dt * forward_equation(t, y)
 
+        diagnostics.log_np_array(y)
         # poisson pressure equation
-        y = y - dt * projection_equation(t, y)
+        y = y + dt * projection_equation(t, y)
         t += dt
         times[i] = t
         solution[:, i] = y

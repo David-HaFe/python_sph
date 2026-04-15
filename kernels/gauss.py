@@ -15,26 +15,29 @@ def gauss(r_i: np.array, r_j: np.array, h=h_default):
 
     if distance < h:
         result = np.exp(-alpha * distance**2/h**2)
+        diagnostics.register_particle(True)
     else:
         result = 0
+        diagnostics.register_particle(False)
+
 
     diagnostics.time_kernel()
     return result
 
-def _solve_least_squares(
+def _solve_least_squares_gauss(
     r_i: np.array,
     function_i: np.array,
     r: np.array,
     function: np.array,
 ):
     diagnostics.time_least_squares()
+
     D = []
     W = []
-    delta_f = []
+    b = []
     for j, (r_j, function_j) in enumerate(zip(r, function)):
         kernel = gauss(r_i, r_j)
         if kernel > 0:
-            diagnostics.register_particle(True)
             D.append([
                 r_j[0] - r_i[0],
                 r_j[1] - r_i[1],
@@ -42,16 +45,14 @@ def _solve_least_squares(
                 (r_j[0] - r_i[0])*(r_j[1] - r_i[1]),
                 (r_j[1] - r_i[1])*(r_j[1] - r_i[1])*.5,
             ])
-            delta_f.extend([function_i - function_j])
+            b.extend([function_i - function_j])
             W.extend([np.sqrt(kernel)])
-        else:
-            diagnostics.register_particle(False)
 
     D = np.array(D)
-    delta_f = np.array(delta_f)
+    b = np.array(b)
     W = np.diag(W)
 
-    coefficients = np.linalg.lstsq(-W@D, delta_f)[0]
+    coefficients = np.linalg.lstsq(-W@D, b)[0]
 
     diagnostics.log_np_array(coefficients)
 
@@ -67,12 +68,12 @@ def nabla(
     diagnostics.time_nabla()
 
     result = np.zeros(2)
-    coefficients = _solve_least_squares(r_i, function_i, r, function)
+    coefficients = _solve_least_squares_gauss(r_i, function_i, r, function)
 
     # TODO: find out if this really is how you are supposed to
     # calculate the gradient
 
-    for j, (r_j, function_j) in enumerate(zip(r, function)):
+    for j, r_j in enumerate(r):
         result[0] = (
             coefficients[0]
             - coefficients[2]*(r_j[0] - r_i[0])
@@ -96,7 +97,7 @@ def laplace(
 ):
     diagnostics.time_laplace()
 
-    coefficients = _solve_least_squares(r_i, function_i, r, function)
+    coefficients = _solve_least_squares_gauss(r_i, function_i, r, function)
     result = (coefficients[2] + coefficients[4])
 
     diagnostics.log_np_array(result)

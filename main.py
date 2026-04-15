@@ -29,6 +29,7 @@ def noise(): return -.1 + .2*rnd.random()
 
 r_0 = []
 v_0 = []
+p_0 = []
 is_border_particle = []
 
 for x in range(0, x_limit):
@@ -43,21 +44,23 @@ for x in range(0, x_limit):
             x_vel = 0
 
         v_0.extend([x_vel, 0])
+        p_0.extend([1])
 
         # add wall particle flag
         is_border_particle.extend([False])
 
 border_velocity = [0, 0]
-r_0, v_0, is_border_particle, no_particles = generate_border(
-    r_0, v_0, border_velocity, is_border_particle, no_particles
+r_0, v_0, p_0, is_border_particle, no_particles = generate_border(
+    r_0, v_0, p_0, border_velocity, is_border_particle, no_particles
 )
 
 r_0 = np.array(r_0, dtype=float)
 v_0 = np.array(v_0, dtype=float)
-y_0 = np.concatenate((r_0, v_0))
+p_0 = np.array(p_0, dtype=float)
+y_0 = np.concatenate((r_0, v_0, p_0))
 is_border_particle = np.array(is_border_particle)
 
-model_parameters.set_no_particles(np.size(y_0)//4)
+model_parameters.set_no_particles(np.size(y_0)//(2+2+1))
 
 # simulation
 diagnostics.time_ode()
@@ -87,8 +90,8 @@ sol = chorin(
     projection_equation=lambda t, y: poisson_pressure_equation(
         t,
         y,
-        is_border_particle,
         dt,
+        is_border_particle,
     ),
     initial_condition=y_0,
     t_start=t_0,
