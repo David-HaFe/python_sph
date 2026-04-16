@@ -61,13 +61,13 @@ def _pressure_gradient(
     for j, r_j in enumerate(r):
         result[0] = (
             - coefficients[1]
-            + coefficients[3]*(r_j[0] - r_i[0])
+            - coefficients[3]*(r_j[0] - r_i[0])
             - coefficients[4]*(r_i[1] - r_j[1])
         )
         result[1] = (
             - coefficients[2]
-            + coefficients[4]*(r_j[1] - r_i[1])
-            - coefficients[5]*(r_i[0] - r_j[0])
+            - coefficients[4]*(r_j[1] - r_i[1])
+            - coefficients[5]*(r_j[0] - r_i[0])
         )
 
         # TODO: check if this is the correct pressure update

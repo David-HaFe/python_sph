@@ -76,13 +76,13 @@ def nabla(
     for j, r_j in enumerate(r):
         result[0] = (
             coefficients[0]
-            - coefficients[2]*(r_j[0] - r_i[0])
-            + coefficients[3]*(r_i[1] - r_j[1])
+            + coefficients[2]*(r_j[0] - r_i[0])
+            + coefficients[3]*(r_j[1] - r_i[1])
         )
         result[1] = (
             coefficients[1]
-            - coefficients[4]*(r_j[1] - r_i[1])
-            + coefficients[3]*(r_i[0] - r_j[0])
+            + coefficients[4]*(r_j[1] - r_i[1])
+            + coefficients[3]*(r_j[0] - r_i[0])
         )
 
     diagnostics.log_np_array(result)
