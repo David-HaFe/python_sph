@@ -66,7 +66,8 @@ L = fem.form(ufl.rhs(F))
 ### matrix and vector for linear problem ###
 A = assemble_matrix(a, bcs=[bc])
 A.assemble()
-b = create_vector(fem.extract_function_spaces(L))
+# b = create_vector(fem.extract_function_spaces(L))
+b = create_vector(L) # <- DAVID modification
 uh = fem.Function(V)
 
 ### linear variational solver ###
@@ -122,9 +123,5 @@ error_max = domain.comm.allreduce(
 )
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
-
-
-
-
 
 
