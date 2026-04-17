@@ -14,6 +14,7 @@ from utils.heat_map import heat_plot
 from utils.particle_positions import particle_positions
 from config import x_limit, y_limit
 from initial_condition.generate_border import generate_border
+from playsound3 import playsound
 
 # initialize grid
 initial_condition = np.array([])
@@ -83,5 +84,8 @@ particle_positions(t, x, y, is_border_particle)
 
 print("")
 diagnostics.print_diagnostics()
+
+# ready
+playsound("media/ding.wav")
 
 

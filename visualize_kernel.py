@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from kernels.gauss import gauss
+from kernels.wendland import wendland
 from utils.heat_map import heat_plot
 from scipy.interpolate import griddata
 
@@ -22,6 +23,11 @@ for x in x0:
             r_j=np.array([x, y]),
             h=100,
         )])
+        # function_value.extend([wendland(
+        #     x_a=np.zeros(2),
+        #     x_b=np.array([x, y]),
+        #     h=70,
+        # )])
 
 x0 = np.array(x0, dtype=float)
 y0 = np.array(y0, dtype=float)

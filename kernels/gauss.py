@@ -3,12 +3,10 @@
 import numpy as np
 
 from utils.diagnostics import diagnostics
-
-# SPH smoothing length
-h_default = 4.5
+from config import kernel_length
 
 # gauss kernel for given point and reference point
-def gauss(r_i: np.array, r_j: np.array, h=h_default):
+def gauss(r_i: np.array, r_j: np.array, h=kernel_length):
     diagnostics.time_kernel()
     alpha = 6.25 # don't change this, otherwise kernel looks not very good
     distance = np.linalg.norm(r_i-r_j)

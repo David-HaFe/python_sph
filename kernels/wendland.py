@@ -13,7 +13,7 @@ kernel_zero_tolerance = 1e-5
 
 # kernel for a given point and a reference point
 # using C² Wendland kernel
-def wendland(x_a: np.array, x_b: np.array):
+def wendland(x_a: np.array, x_b: np.array, h=h):
     diagnostics.time_kernel()
 
     distance = np.linalg.norm(x_a - x_b)/h
