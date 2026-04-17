@@ -34,7 +34,6 @@ def heat_plot(t, x, y, T):
         sys.stdout.write(f"\r\033[Kplotting surface @ {t[frame]}")
         sys.stdout.flush()
 
-
     ani = animation.FuncAnimation(fig, update, frames=len(t), interval=100)
     # ani.save("animation.gif", writer="pillow", fps=30)
     ani.save("visualizations/heat_transfer.mp4", writer="ffmpeg", fps=30)

@@ -33,12 +33,17 @@ is_border_particle = []
 for y in range(0, y_limit):
     for x in range(0, x_limit):
         r_0.extend([x, y])
-        T_0.extend([5*gauss(np.array([x,y]), np.array([x_limit/2,y_limit/2]))])
+        T_0.extend([5*gauss(
+            np.array([x,y]),
+            np.array([x_limit/2,y_limit/2]),
+            x_limit/2,
+        )])
         is_border_particle.extend([False])
 
 base_temp = [0]
-r_0, T_0, is_border_particle, no_particles = generate_border(
-    r_0, T_0, base_temp, is_border_particle, no_particles
+dummy_pressure = []
+r_0, T_0, dummy_pressure, is_border_particle, no_particles = generate_border(
+    r_0, T_0, dummy_pressure, base_temp, is_border_particle, no_particles
 )
 
 r_0 = np.array(r_0, dtype=float)

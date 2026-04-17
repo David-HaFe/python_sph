@@ -16,7 +16,7 @@ import numpy.typing as npt
 
 ### problem specific parameters ###
 t = 0.0  # Start time
-T = 2.0  # End time
+T = 3.0  # End time
 num_steps = 20  # Number of time steps
 dt = (T - t) / num_steps  # Time step size
 alpha = 3.0

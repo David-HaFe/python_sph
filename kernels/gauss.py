@@ -5,12 +5,12 @@ import numpy as np
 from utils.diagnostics import diagnostics
 
 # SPH smoothing length
-h_default = 3
+h_default = 4.5
 
 # gauss kernel for given point and reference point
 def gauss(r_i: np.array, r_j: np.array, h=h_default):
     diagnostics.time_kernel()
-    alpha = 1
+    alpha = 6.25 # don't change this, otherwise kernel looks not very good
     distance = np.linalg.norm(r_i-r_j)
 
     if distance < h:
@@ -19,7 +19,6 @@ def gauss(r_i: np.array, r_j: np.array, h=h_default):
     else:
         result = 0
         diagnostics.register_particle(False)
-
 
     diagnostics.time_kernel()
     return result
