@@ -6,21 +6,27 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 import csv
+from playsound3 import playsound
 
 from dynamics.heat_equation import heat_equation
 from utils.diagnostics import diagnostics
 from kernels.gauss import gauss
 from utils.heat_map import heat_plot
 from utils.particle_positions import particle_positions
-from config import x_limit, y_limit
+from config import (
+    no_particles_x,
+    no_particles_y,
+    x_positions,
+    y_positions,
+    no_particles,
+    border,
+)
 from initial_condition.generate_border import generate_border
-from playsound3 import playsound
+from utils.save_solution import save_run
 
 # initialize grid
 initial_condition = np.array([])
 spacing = .1
-
-no_particles = x_limit*y_limit
 
 r_0 = []
 T_0 = []
@@ -31,20 +37,22 @@ is_border_particle = []
 #     initial_temps = list(reader)
 
 # fill initial condition
-for y in range(0, y_limit):
-    for x in range(0, x_limit):
+for _, y in enumerate(y_positions):
+    for _, x in enumerate(x_positions):
         r_0.extend([x, y])
         T_0.extend([5*gauss(
-            np.array([x,y]),
-            np.array([x_limit/2,y_limit/2]),
-            x_limit/2,
+            np.zeros(2),
+            np.array([x, y]),
+            1.5*border,
         )])
         is_border_particle.extend([False])
 
 base_temp = [0]
+# this also requires and returns a pressure for the navier stokes equations,
+# just pass through and ignore afterwards
 dummy_pressure = []
-r_0, T_0, dummy_pressure, is_border_particle, no_particles = generate_border(
-    r_0, T_0, dummy_pressure, base_temp, is_border_particle, no_particles
+r_0, T_0, dummy_pressure, is_border_particle = generate_border(
+    r_0, T_0, dummy_pressure, base_temp, is_border_particle
 )
 
 r_0 = np.array(r_0, dtype=float)
@@ -83,6 +91,9 @@ heat_plot(t, x, y, T)
 particle_positions(t, x, y, is_border_particle)
 
 print("")
+
+save_run(t, T, "heat_eq")
+
 diagnostics.print_diagnostics()
 
 # ready

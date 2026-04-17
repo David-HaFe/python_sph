@@ -4,10 +4,18 @@
 
 import numpy as np
 
-x_limit = 20
-y_limit = 20
+no_particles_x = 20
+no_particles_y = 20
+border = 5
+# positions without border
+x_positions, dx = np.linspace(-border, border, no_particles_x, retstep=True)
+y_positions, dy = np.linspace(-border, border, no_particles_y, retstep=True)
+
 border_thickness = 2
-kernel_length = 3.0
+no_particles = (
+    no_particles_x+2*border_thickness)*(no_particles_y+2*border_thickness
+)
+kernel_length = 1.5
 
 class Model_Parameters():
     def __init__(self):

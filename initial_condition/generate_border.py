@@ -1,6 +1,15 @@
 
 
-from config import x_limit, y_limit, border_thickness
+import numpy as np
+
+from config import (
+    no_particles_x,
+    no_particles_y,
+    border_thickness,
+    border,
+    dx,
+    dy,
+)
 
 # takes the limits and wraps a border of a given strength around everything
 def generate_border(
@@ -9,36 +18,43 @@ def generate_border(
     p_0,
     default_attribute,
     is_border_particle,
-    no_particles
 ):
-    for x in range(0-border_thickness, x_limit+border_thickness):
-        for layer in range(0, border_thickness):
-            r_0.extend([x, -1-layer])
+    x_positions = np.linspace(
+        - border - border_thickness*dx,
+        + border + border_thickness*dx,
+        no_particles_x + 2*border_thickness,
+    )
+    y_positions = np.linspace(dy, border_thickness*dy, border_thickness)
+    for _, x in enumerate(x_positions):
+        for _, y in enumerate(y_positions):
+            r_0.extend([x, -border-y])
             attribute.extend(default_attribute)
             p_0.extend([1])
             is_border_particle.extend([True])
 
-            r_0.extend([x, y_limit+layer])
+            r_0.extend([x, border+y])
             attribute.extend(default_attribute)
             p_0.extend([1])
             is_border_particle.extend([True])
 
-            no_particles += 2
-
-    for y in range(0, y_limit):
-        for layer in range(0, border_thickness):
-            r_0.extend([-1-layer, y])
+    x_positions = np.linspace(dx, border_thickness*dx, border_thickness)
+    y_positions = np.linspace(
+        - border,
+        + border,
+        no_particles_y,
+    )
+    for _, y in enumerate(y_positions):
+        for _, x in enumerate(x_positions):
+            r_0.extend([-border-x, y])
             attribute.extend(default_attribute)
             p_0.extend([1])
             is_border_particle.extend([True])
 
-            r_0.extend([x_limit+layer, y])
+            r_0.extend([border+x, y])
             attribute.extend(default_attribute)
             p_0.extend([1])
             is_border_particle.extend([True])
 
-            no_particles += 2
-
-    return r_0, attribute, p_0, is_border_particle, no_particles
+    return r_0, attribute, p_0, is_border_particle
 
 
