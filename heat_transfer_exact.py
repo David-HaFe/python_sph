@@ -3,7 +3,7 @@
 from petsc4py import PETSc
 from mpi4py import MPI
 import ufl
-from dolfinx import mesh, fem
+from dolfinx import mesh, fem, geometry
 from dolfinx.fem.petsc import (
     assemble_matrix,
     assemble_vector,
@@ -11,20 +11,33 @@ from dolfinx.fem.petsc import (
     create_vector,
     set_bc,
 )
-import numpy
+import numpy as np
 import numpy.typing as npt
+import csv
+from config import (
+    no_particles_x,
+    no_particles_y,
+    border,
+    t0,
+    t1,
+    dt,
+    no_steps,
+)
 
 ### problem specific parameters ###
-t = 0.0  # Start time
-T = 3.0  # End time
-num_steps = 20  # Number of time steps
-dt = (T - t) / num_steps  # Time step size
 alpha = 3.0
 beta = 1.2
 
 ### define mesh and appropriate function space ###
-nx, ny = 5, 5
-domain = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny, mesh.CellType.triangle)
+nx, ny = no_particles_x - 1, no_particles_y - 1
+domain = mesh.create_rectangle(
+    MPI.COMM_WORLD,
+    [np.array([-border, -border]),
+     np.array([border, border])],
+    [nx, ny],
+    mesh.CellType.triangle
+) # <- DAVID modification
+# domain = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny, mesh.CellType.triangle)
 V = fem.functionspace(domain, ("Lagrange", 1))
 
 ### class that represents exact solution ###
@@ -34,7 +47,7 @@ class ExactSolution:
         self.beta = beta
         self.t = t
 
-    def __call__(self, x: npt.NDArray[numpy.floating]) -> npt.NDArray[numpy.floating]:
+    def __call__(self, x: npt.NDArray[np.floating]) -> npt.NDArray[np.floating]:
         return 1 + x[0] ** 2 + self.alpha * x[1] ** 2 + self.beta * self.t
 
 u_exact = ExactSolution(alpha, beta, t)
@@ -109,7 +122,7 @@ solver.destroy()
 V_ex = fem.functionspace(domain, ("Lagrange", 2))
 u_ex = fem.Function(V_ex)
 u_ex.interpolate(u_exact)
-error_L2 = numpy.sqrt(
+error_L2 = np.sqrt(
     domain.comm.allreduce(
         fem.assemble_scalar(fem.form((uh - u_ex) ** 2 * ufl.dx)), op=MPI.SUM
     )
@@ -119,9 +132,60 @@ if domain.comm.rank == 0:
 
 # Compute values at mesh vertices
 error_max = domain.comm.allreduce(
-    numpy.max(numpy.abs(uh.x.array - u_D.x.array)), op=MPI.MAX
+    np.max(np.abs(uh.x.array - u_D.x.array)), op=MPI.MAX
 )
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
+
+### export to csv ###
+filename = "csvs/exact_solution.csv"
+
+# Build 300 evenly spaced evaluation points over the mesh extent
+coords = V_ex.tabulate_dof_coordinates()
+x_min, x_max = coords[:, 0].min(), coords[:, 0].max()
+x_eval = np.linspace(x_min, x_max, N_POINTS).reshape(-1, 1)
+# Pad to 3D as required by FEniCSx eval()
+x_eval_3d = np.hstack([x_eval, np.zeros((N_POINTS, 2))])
+
+# Write header before the time loop
+if domain.comm.rank == 0:
+    with open(filename, "w+", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["time", "data"])
+
+# --- Inside your time loop ---
+t_start, t_end, dt = 0.0, 1.0, 0.01
+t_values = np.arange(t_start, t_end, dt)
+for t in t_values:
+    # ... solve / update u_ex here ...
+
+    # Evaluate u_ex at the 300 points
+    cells = []
+    points_on_proc = []
+    bb_tree = geometry.bb_tree(domain, domain.topology.dim)
+    cell_candidates = geometry.compute_collisions_points(bb_tree, x_eval_3d)
+    colliding_cells = geometry.compute_colliding_cells(domain, cell_candidates, x_eval_3d)
+    for i, pt in enumerate(x_eval_3d):
+        if len(colliding_cells.links(i)) > 0:
+            points_on_proc.append(pt)
+            cells.append(colliding_cells.links(i)[0])
+
+    u_values = u_ex.eval(np.array(points_on_proc), cells)
+
+    # Gather across MPI ranks
+    all_values = domain.comm.gather(u_values.flatten(), root=0)
+
+    if domain.comm.rank == 0:
+        full_array = np.concatenate(all_values)
+        with open(filename, "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                t,
+                np.array2string(
+                    full_array,
+                    separator=" ",
+                    max_line_width=np.inf
+                )
+            ])
 
 

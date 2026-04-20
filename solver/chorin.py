@@ -29,8 +29,17 @@ def chorin(
         y = y + dt * forward_equation(t, y)
 
         diagnostics.log_np_array(y)
-        # poisson pressure equation
-        y = y + dt * projection_equation(t, y)
+
+        # apply this until the rate of change is sufficiently small
+        # initialize error to something meaningless since python doesn't have a
+        # do while loop apparently
+        error = 1
+        while error > 1e-3:
+            # poisson pressure equation
+            dy = projection_equation(t, y)
+            y = y + dt * dy
+            error = dt * dy
+
         t += dt
         times[i] = t
         solution[:, i] = y

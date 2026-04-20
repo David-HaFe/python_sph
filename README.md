@@ -15,11 +15,13 @@ Once this is done, you will need to install
 * matplotlib
 * scipy
 * pandas
+* playsound3 (if you want the sound effect when the simulation is done)
 ```
 pip install numpy
 pip install matplotlib
 pip install scipy
 pip install pandas
+pip install playsound3
 ```
 
 
