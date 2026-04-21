@@ -1,5 +1,3 @@
-
-
 # main file for the implementation of the heat equations
 # author: David Hambach Ferrer
 
@@ -20,13 +18,17 @@ from config import (
     y_positions,
     no_particles,
     border,
+    t0,
+    t1,
+    no_steps,
+    dt,
 )
 from initial_condition.generate_border import generate_border
 from utils.save_solution import save_run
 
 # initialize grid
 initial_condition = np.array([])
-spacing = .1
+spacing = 0.1
 
 r_0 = []
 T_0 = []
@@ -40,11 +42,16 @@ is_border_particle = []
 for _, y in enumerate(y_positions):
     for _, x in enumerate(x_positions):
         r_0.extend([x, y])
-        T_0.extend([5*gauss(
-            np.zeros(2),
-            np.array([x, y]),
-            1.5*border,
-        )])
+        T_0.extend(
+            [
+                5
+                * gauss(
+                    np.zeros(2),
+                    np.array([x, y]),
+                    1.5 * border,
+                )
+            ]
+        )
         is_border_particle.extend([False])
 
 base_temp = [0]
@@ -62,29 +69,25 @@ is_border_particle = np.array(is_border_particle)
 y_0 = np.concatenate((r_0, T_0))
 
 # solver setup
-t_0 = 0
-t_1 = 30
-t_span = (t_0, t_1)
-steps = 10*t_1
-t_eval = np.linspace(t_0, t_1, num=steps)
-dt = (t_1-t_0)/steps
+t_span = (t0, t1)
+t_eval = np.linspace(t0, t1, num=no_steps)
 
 # solve
 diagnostics.time_ode()
 sol = solve_ivp(
     fun=lambda t, y: heat_equation(t, y, is_border_particle),
     t_span=t_span,
-    y0 = y_0,
-    method = "RK23",
-    rtol = 1e-3,
-    atol = 1e-3,
-    t_eval = t_eval,
+    y0=y_0,
+    method="RK23",
+    rtol=1e-3,
+    atol=1e-3,
+    t_eval=t_eval,
 )
 diagnostics.time_ode()
 
-x = sol.y[0:2*no_particles:2, :]
-y = sol.y[1:2*no_particles:2, :]
-T = sol.y[2*no_particles:, :]
+x = sol.y[0 : 2 * no_particles : 2, :]
+y = sol.y[1 : 2 * no_particles : 2, :]
+T = sol.y[2 * no_particles :, :]
 
 t = sol.t
 heat_plot(t, x, y, T)
@@ -98,5 +101,3 @@ diagnostics.print_diagnostics()
 
 # ready
 playsound("media/ding.wav")
-
-

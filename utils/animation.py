@@ -1,11 +1,10 @@
-
-
 # file in charge of the animation
 # author: David Hambach Ferrer
 
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+
 
 def animate_solution(t, solution, x_0):
     x_0 = x_0.reshape(-1, 2)
@@ -16,19 +15,14 @@ def animate_solution(t, solution, x_0):
 
     def animate(i):
         y_i = solution[:, i]
-        x_i = y_i[: 2*n_particle]
+        x_i = y_i[: 2 * n_particle]
         x_i = x_i.reshape(-1, 2)
         scat.set_offsets(x_i)
         return (scat,)
 
-    ani = animation.FuncAnimation(
-        fig,
-        animate,
-        repeat=True,
-        frames=len(t),
-        interval=5
-    )
+    ani = animation.FuncAnimation(fig, animate, repeat=True, frames=len(t), interval=5)
     plt.show()
+
 
 ### old implementation ########################################################
 """
@@ -69,5 +63,3 @@ def animate_solution(t, solution, x_0):
 
     plt.show()
 """
-
-

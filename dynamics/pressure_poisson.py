@@ -1,23 +1,22 @@
-
-
 import numpy as np
 
 from utils.diagnostics import diagnostics
 from config import model_parameters
 from kernels.gauss import gauss, nabla, laplace
 
+
 # evaluate the poisson pressure equations for given state
 def poisson_pressure_equation(t, y, dt, is_border_particle):
     diagnostics.time_poisson()
-    no_particles = np.size(y)//(2+2+1)
+    no_particles = np.size(y) // (2 + 2 + 1)
 
     r_dot = np.zeros((no_particles, 2))
     v_dot = np.zeros((no_particles, 2))
     p_dot = np.zeros((no_particles, 1))
 
-    r = y[: 2*no_particles]
-    v = y[2*no_particles : 4*no_particles]
-    p = y[4*no_particles :]
+    r = y[: 2 * no_particles]
+    v = y[2 * no_particles : 4 * no_particles]
+    p = y[4 * no_particles :]
     r = r.reshape(-1, 2)
     v = v.reshape(-1, 2)
     p = p.reshape(-1, 1)
@@ -44,6 +43,7 @@ def poisson_pressure_equation(t, y, dt, is_border_particle):
     diagnostics.time_poisson()
     return y_dot
 
+
 def _pressure_gradient(
     r_i: np.array,
     v_i: np.array,
@@ -60,14 +60,14 @@ def _pressure_gradient(
     # calculate the gradient
     for j, r_j in enumerate(r):
         result[0] = (
-            - coefficients[1]
-            - coefficients[3]*(r_j[0] - r_i[0])
-            - coefficients[4]*(r_i[1] - r_j[1])
+            -coefficients[1]
+            - coefficients[3] * (r_j[0] - r_i[0])
+            - coefficients[4] * (r_i[1] - r_j[1])
         )
         result[1] = (
-            - coefficients[2]
-            - coefficients[4]*(r_j[1] - r_i[1])
-            - coefficients[5]*(r_j[0] - r_i[0])
+            -coefficients[2]
+            - coefficients[4] * (r_j[1] - r_i[1])
+            - coefficients[5] * (r_j[0] - r_i[0])
         )
 
         # TODO: check if this is the correct pressure update
@@ -75,6 +75,7 @@ def _pressure_gradient(
 
     diagnostics.log_np_array(result)
     return result, pressure
+
 
 # TODO: add boundary condition
 def _solve_least_squares_ppe(
@@ -92,14 +93,16 @@ def _solve_least_squares_ppe(
     for j, (r_j, p_j) in enumerate(zip(r, p)):
         kernel = gauss(r_i, r_j)
         if kernel > 0:
-            D.append([
-                1,
-                r_j[0] - r_i[0],
-                r_j[1] - r_i[1],
-                (r_j[0] - r_i[0])*(r_j[0] - r_i[0])*.5,
-                (r_j[0] - r_i[0])*(r_j[1] - r_i[1]),
-                (r_j[1] - r_i[1])*(r_j[1] - r_i[1])*.5,
-            ])
+            D.append(
+                [
+                    1,
+                    r_j[0] - r_i[0],
+                    r_j[1] - r_i[1],
+                    (r_j[0] - r_i[0]) * (r_j[0] - r_i[0]) * 0.5,
+                    (r_j[0] - r_i[0]) * (r_j[1] - r_i[1]),
+                    (r_j[1] - r_i[1]) * (r_j[1] - r_i[1]) * 0.5,
+                ]
+            )
             b.extend([p_j[0]])
             W.extend([np.sqrt(kernel)])
 
@@ -107,17 +110,15 @@ def _solve_least_squares_ppe(
     D.append([1, 0, 0, 0, 0, 0])
     W.extend([1])
     nabla_operator = nabla(r_i, v_i, r, v)
-    nabla_dot_product = (nabla_operator[0][0] + nabla_operator[1][1])/dt
+    nabla_dot_product = (nabla_operator[0][0] + nabla_operator[1][1]) / dt
     b.extend([nabla_dot_product])
 
     D = np.array(D)
     b = np.array(b)
     W = np.diag(W)
 
-    coefficients_ppe = np.linalg.lstsq(-W@D, b)[0]
+    coefficients_ppe = np.linalg.lstsq(-W @ D, b)[0]
 
     diagnostics.log_np_array(coefficients_ppe)
 
     return coefficients_ppe
-
-

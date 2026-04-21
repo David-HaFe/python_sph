@@ -1,29 +1,28 @@
-
-
 import numpy as np
 from utils.diagnostics import diagnostics
 from config import model_parameters
 
 # SPH smoothing length
 h = 1.5
-kernel_radius = 2*h
-sigma_W = .01
+kernel_radius = 2 * h
+sigma_W = 0.01
 h_dim = h**2
 kernel_zero_tolerance = 1e-5
+
 
 # kernel for a given point and a reference point
 # using C² Wendland kernel
 def wendland(x_a: np.array, x_b: np.array, h=h):
     diagnostics.time_kernel()
 
-    distance = np.linalg.norm(x_a - x_b)/h
+    distance = np.linalg.norm(x_a - x_b) / h
 
     if distance < kernel_radius:
-        result = (sigma_W/h_dim) * (
-            .125*distance**5
-            - .9375*distance**4
-            + 2.5*distance**3
-            - 2.5*distance**2
+        result = (sigma_W / h_dim) * (
+            0.125 * distance**5
+            - 0.9375 * distance**4
+            + 2.5 * distance**3
+            - 2.5 * distance**2
             + 1
         )
     else:
@@ -38,29 +37,35 @@ def wendland(x_a: np.array, x_b: np.array, h=h):
     diagnostics.time_kernel()
     return result
 
+
 # gradient of the kernel function
 def gradient_W(x_a: np.array, x_b: np.array):
     diagnostics.time_gradient_kernel()
 
-    distance = np.linalg.norm(x_a - x_b)/h
+    distance = np.linalg.norm(x_a - x_b) / h
 
     if distance < kernel_zero_tolerance:
         result = np.zeros(2)
 
     elif distance < kernel_radius:
         norm = np.linalg.norm(x_a - x_b)
-        result = (sigma_W/h_dim) * (
-            - (2.5/h**2)
-            + (7.5/h**3)*norm
-            - (3.75/h**4)*norm**2
-            + (.625/h**5)*norm**3
-        )*(x_a - x_b)
+        result = (
+            (sigma_W / h_dim)
+            * (
+                -(2.5 / h**2)
+                + (7.5 / h**3) * norm
+                - (3.75 / h**4) * norm**2
+                + (0.625 / h**5) * norm**3
+            )
+            * (x_a - x_b)
+        )
 
     else:
         result = np.zeros(2)
 
     diagnostics.time_gradient_kernel()
-    return (+result)
+    return +result
+
 
 # normalised gradient of the kernel function
 # args:
@@ -72,12 +77,12 @@ def normalised_gradient_W(x_a: np.array, x_b: np.array, x: np.array):
     m = model_parameters.m
     rho = model_parameters.rho
 
-    L_inv = np.zeros((2,2))
+    L_inv = np.zeros((2, 2))
     gradient_W_ab = gradient_W(x_a, x_b)
 
     for i, (x_i) in enumerate(zip(x)):
         gradient = (gradient_W(x_a, x_i)).reshape(-1, 2)
-        L_inv += np.matmul(np.transpose((m[i]/rho[i])*(x_i - x_a)), gradient)
+        L_inv += np.matmul(np.transpose((m[i] / rho[i]) * (x_i - x_a)), gradient)
 
     gradient_W_ab = gradient_W_ab.reshape(-1, 1)
 
@@ -86,5 +91,3 @@ def normalised_gradient_W(x_a: np.array, x_b: np.array, x: np.array):
 
     diagnostics.time_norm_gradient_kernel()
     return result
-
-

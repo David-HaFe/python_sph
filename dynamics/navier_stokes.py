@@ -1,5 +1,3 @@
-
-
 # navier stokes equations, compressible as well as incompressible
 
 import numpy as np
@@ -10,21 +8,22 @@ from kernels.wendland import wendland, gradient_W, normalised_gradient_W
 from kernels.gauss import gauss, nabla, laplace
 from config import model_parameters
 
+
 # implements the discretized navier stokes equation for the ode solver
 # y consists of the triple [positions, velocities, density] for each particle,
 # all concatenated like this one after the other
 # this is the INCOMPRESSIBLE case
 def navier_stokes_incompressible(t, y, is_border_particle):
     diagnostics.time_dynamics()
-    no_particles = np.size(y)//(2+2+1)
+    no_particles = np.size(y) // (2 + 2 + 1)
     y_dot = np.zeros(np.size(y))
     r_dot = np.zeros((no_particles, 2))
     v_dot = np.zeros((no_particles, 2))
     p_dot = np.zeros((no_particles, 1))
 
-    r = y[: 2*no_particles]
-    v = y[2*no_particles : 4*no_particles]
-    p = y[4*no_particles :]
+    r = y[: 2 * no_particles]
+    v = y[2 * no_particles : 4 * no_particles]
+    p = y[4 * no_particles :]
     r = r.reshape(-1, 2)
     v = v.reshape(-1, 2)
     p = p.reshape(-1, 1)
@@ -36,7 +35,8 @@ def navier_stokes_incompressible(t, y, is_border_particle):
             # reset everything and get new vectors
             acceleration_i = (
                 # nu[i]*laplace(r_i, v_i, r, v)
-                model_parameters.gravity + nu[i]*laplace(r_i, v_i, r, v)
+                model_parameters.gravity
+                + nu[i] * laplace(r_i, v_i, r, v)
             )
             r_dot[i] = v_i
             v_dot[i] = acceleration_i
@@ -59,13 +59,14 @@ def navier_stokes_incompressible(t, y, is_border_particle):
     diagnostics.time_dynamics()
     return y_dot
 
+
 # implements the discretized navier stokes equation for the ode solver
 # y consists of the triple [positions, velocities, density] for each particle,
 # all concatenated like this one after the other
 # this is the COMPRESSIBLE case
 def navier_stokes_compressible(t, y, is_border_particle):
     diagnostics.time_dynamics()
-    no_particles = np.size(y)//(2+2+1)
+    no_particles = np.size(y) // (2 + 2 + 1)
     y_dot = np.zeros(np.size(y))
     r_dot = np.zeros((no_particles, 2))
     v_dot = np.zeros((no_particles, 2))
@@ -73,13 +74,13 @@ def navier_stokes_compressible(t, y, is_border_particle):
 
     # TODO: these have to be updated, not sure how to do that
     m = model_parameters.m
-    mu = np.full(no_particles, .1)
+    mu = np.full(no_particles, 0.1)
 
-    eta = .01
+    eta = 0.01
 
-    r = y[: 2*no_particles]
-    v = y[2*no_particles : 4*no_particles]
-    rho = y[4*no_particles :]
+    r = y[: 2 * no_particles]
+    v = y[2 * no_particles : 4 * no_particles]
+    rho = y[4 * no_particles :]
     r = r.reshape(-1, 2)
     v = v.reshape(-1, 2)
 
@@ -97,36 +98,41 @@ def navier_stokes_compressible(t, y, is_border_particle):
                 particle_close_enough = wendland(r_i, r_j) > 0
 
                 # if particle_close_enough:
-                if (particle_close_enough and not (i == j)):
+                if particle_close_enough and not (i == j):
 
                     # calculate dv/dt
                     # v_b = np.array(v_b)
                     p_j = calculate_pressure(rho_j)
 
-                    pressure_term += m[j] * (
-                        p_j/np.power(rho_j, 2)
-                        + p_i/np.power(rho_i, 2)
-                        ) * gradient_W(r_i, r_j)
+                    pressure_term += (
+                        m[j]
+                        * (p_j / np.power(rho_j, 2) + p_i / np.power(rho_i, 2))
+                        * gradient_W(r_i, r_j)
+                    )
 
                     delta_r = r_i - r_j
                     delta_v = v_i - v_j
 
-                    viscosity_term += m[j] * (
-                        (mu[i] + mu[j])/(rho_i*rho_j)*np.dot(delta_r, delta_v)
-                        / (np.dot(delta_r, delta_r) + .01*eta**2)
-                        ) * gradient_W(r_i, r_j)
+                    viscosity_term += (
+                        m[j]
+                        * (
+                            (mu[i] + mu[j])
+                            / (rho_i * rho_j)
+                            * np.dot(delta_r, delta_v)
+                            / (np.dot(delta_r, delta_r) + 0.01 * eta**2)
+                        )
+                        * gradient_W(r_i, r_j)
+                    )
 
                     # calculate d(rho)/dt
-                    rho_dot_i += (m[j]/rho_j)*(
+                    rho_dot_i += (m[j] / rho_j) * (
                         np.dot(v_j - v_i, gradient_W(r_i, r_j))
                     )
 
             # fill solution array
             r_dot[i] = v_i
-            v_dot[i] = (
-                model_parameters.gravity - pressure_term + viscosity_term
-            )
-            rho_dot[i] = - rho_i * rho_dot_i
+            v_dot[i] = model_parameters.gravity - pressure_term + viscosity_term
+            rho_dot[i] = -rho_i * rho_dot_i
         else:
             r_dot[i] = np.zeros(2)
             v_dot[i] = np.zeros(2)
@@ -142,6 +148,7 @@ def navier_stokes_compressible(t, y, is_border_particle):
     diagnostics.time_dynamics()
     return y_dot
 
+
 # calculates the pressure based on given formula
 def calculate_pressure(rho):
     gamma = 7
@@ -152,7 +159,4 @@ def calculate_pressure(rho):
     # TODO: find out what p_B actually is
     p_B = 0
 
-    return (((c_0**2)*rho_0/gamma) * (
-        ((rho/rho_0)**gamma)-1) + p_B)
-
-
+    return ((c_0**2) * rho_0 / gamma) * (((rho / rho_0) ** gamma) - 1) + p_B

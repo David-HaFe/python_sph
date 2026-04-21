@@ -1,5 +1,3 @@
-
-
 # main file for simulating COMPRESSIBLE fluid with navier stokes equations
 # author: David Hambach Ferrer
 
@@ -20,10 +18,13 @@ from initial_condition.generate_border import generate_border
 initial_condition = np.array([])
 
 spacing = 1
-wall_spacing = .1
+wall_spacing = 0.1
 no_particles = x_limit * y_limit
 
-def noise(): return -.1 + .2*rnd.random()
+
+def noise():
+    return -0.1 + 0.2 * rnd.random()
+
 
 r_0 = []
 v_0 = []
@@ -32,7 +33,7 @@ is_border_particle = []
 
 for x in range(0, x_limit):
     for y in range(0, y_limit):
-        r_0.extend([x*spacing, y*spacing])
+        r_0.extend([x * spacing, y * spacing])
         v_0.extend([0, 0])
         rho_0.extend([1])
 
@@ -44,7 +45,7 @@ r_0, v_0, is_border_particle, no_particles = generate_border(
     r_0, v_0, border_velocity, is_border_particle, no_particles
 )
 
-for i in range(no_particles - x_limit*y_limit):
+for i in range(no_particles - x_limit * y_limit):
     rho_0.extend([1])
 
 r_0 = np.array(r_0, dtype=float)
@@ -53,7 +54,7 @@ rho_0 = np.array(rho_0, dtype=float)
 y_0 = np.concatenate((r_0, v_0, rho_0))
 is_border_particle = np.array(is_border_particle)
 
-model_parameters.set_no_particles(np.size(y_0)//5)
+model_parameters.set_no_particles(np.size(y_0) // 5)
 
 # simulation
 diagnostics.time_ode()
@@ -70,9 +71,9 @@ diagnostics.time_ode()
 t_0 = 0
 t_1 = 3
 t_span = (t_0, t_1)
-steps = 10*t_1
+steps = 10 * t_1
 t_eval = np.linspace(t_0, t_1, num=steps)
-dt = (t_1-t_0)/steps
+dt = (t_1 - t_0) / steps
 
 # sol = chorin(
 #     forward_equation=lambda t, y: navier_stokes_incompressible(
@@ -98,25 +99,23 @@ sol = solve_ivp(
         y,
         is_border_particle,
     ),
-    t_span = t_span,
-    y0 = y_0,
-    method = "RK23",
-    rtol = 1e-3,
-    atol = 1e-3,
-    t_eval = t_eval,
+    t_span=t_span,
+    y0=y_0,
+    method="RK23",
+    rtol=1e-3,
+    atol=1e-3,
+    t_eval=t_eval,
 )
 # print("")
 # print(sol.message)
 
 diagnostics.time_ode()
 
-x = sol.y[0:2*no_particles:2, :]
-y = sol.y[1:2*no_particles:2, :]
+x = sol.y[0 : 2 * no_particles : 2, :]
+y = sol.y[1 : 2 * no_particles : 2, :]
 
 t = sol.t
 particle_positions(t, x, y, is_border_particle)
 
 print("")
 diagnostics.print_diagnostics()
-
-

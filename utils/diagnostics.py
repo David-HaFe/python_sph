@@ -1,5 +1,3 @@
-
-
 # misc functions for stuff
 # author: David Hambach Ferrer
 
@@ -9,7 +7,8 @@ import numpy as np
 import datetime
 import csv
 
-class Diagnostics():
+
+class Diagnostics:
 
     def __init__(self):
         self._accepted_particles = 0
@@ -32,13 +31,14 @@ class Diagnostics():
         self._logger_timer = self._create_timer()
 
         # set up csv file
-        row = ["logged at","name","log content"]
+        row = ["logged at", "name", "log content"]
         with open(self._file_path, "w+", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["registered at: ", datetime.datetime.now()])
             writer.writerow(row)
 
-    def _create_timer(self): return np.array([0.0, 0.0, True])
+    def _create_timer(self):
+        return np.array([0.0, 0.0, True])
 
     # can be called with the result of kernel rejection or acceptance to
     # get statistics for acceptance rate
@@ -124,7 +124,7 @@ class Diagnostics():
 
         dimensions = array.shape
         delta_t = time.perf_counter() - self._start_time
-        time_of_registration = round(10000*delta_t)/10000
+        time_of_registration = round(10000 * delta_t) / 10000
         row = [time_of_registration, array_name, dimensions]
 
         with open(self._file_path, "a", newline="") as f:
@@ -134,8 +134,9 @@ class Diagnostics():
         self.time_logger()
 
     def print_diagnostics(self):
-        accepted_percentage = self._accepted_particles/(
-                self._accepted_particles + self._rejected_particles)
+        accepted_percentage = self._accepted_particles / (
+            self._accepted_particles + self._rejected_particles
+        )
         print("========= summary ==========")
         print(" accepted percentage: " + str(accepted_percentage))
         print("       nan instances: " + str(self._nan_instances))
@@ -153,7 +154,6 @@ class Diagnostics():
         print(f"              logger: {self._logger_timer[0]:.4f}")
         print("============================")
 
+
 # create diagnostics class instance to pass to other files
 diagnostics = Diagnostics()
-
-

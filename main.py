@@ -1,5 +1,3 @@
-
-
 # main file for simulating incompressible fluid with navier stokes equations
 # author: David Hambach Ferrer
 
@@ -22,10 +20,13 @@ from initial_condition.generate_border import generate_border
 initial_condition = np.array([])
 
 spacing = 1
-wall_spacing = .1
+wall_spacing = 0.1
 no_particles = x_limit * y_limit
 
-def noise(): return -.1 + .2*rnd.random()
+
+def noise():
+    return -0.1 + 0.2 * rnd.random()
+
 
 r_0 = []
 v_0 = []
@@ -34,7 +35,7 @@ is_border_particle = []
 
 for x in range(0, x_limit):
     for y in range(0, y_limit):
-        r_0.extend([x*spacing, y*spacing])
+        r_0.extend([x * spacing, y * spacing])
 
         if x == 0:
             x_vel = 1
@@ -60,7 +61,7 @@ p_0 = np.array(p_0, dtype=float)
 y_0 = np.concatenate((r_0, v_0, p_0))
 is_border_particle = np.array(is_border_particle)
 
-model_parameters.set_no_particles(np.size(y_0)//(2+2+1))
+model_parameters.set_no_particles(np.size(y_0) // (2 + 2 + 1))
 
 # simulation
 diagnostics.time_ode()
@@ -77,9 +78,9 @@ diagnostics.time_ode()
 t_0 = 0
 t_1 = 3
 t_span = (t_0, t_1)
-steps = 10*t_1
+steps = 10 * t_1
 t_eval = np.linspace(t_0, t_1, num=steps)
-dt = (t_1-t_0)/steps
+dt = (t_1 - t_0) / steps
 
 sol = chorin(
     forward_equation=lambda t, y: navier_stokes_incompressible(
@@ -96,7 +97,7 @@ sol = chorin(
     initial_condition=y_0,
     t_start=t_0,
     t_end=t_1,
-    dt=.01,
+    dt=0.01,
 )
 
 # sol = solve_ivp(
@@ -117,13 +118,11 @@ sol = chorin(
 
 diagnostics.time_ode()
 
-x = sol.y[0:2*no_particles:2, :]
-y = sol.y[1:2*no_particles:2, :]
+x = sol.y[0 : 2 * no_particles : 2, :]
+y = sol.y[1 : 2 * no_particles : 2, :]
 
 t = sol.t
 particle_positions(t, x, y, is_border_particle)
 
 print("")
 diagnostics.print_diagnostics()
-
-

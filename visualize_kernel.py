@@ -1,5 +1,3 @@
-
-
 # allows to plot the kernel function
 
 import numpy as np
@@ -11,18 +9,22 @@ from utils.heat_map import heat_plot
 from scipy.interpolate import griddata
 
 length = 100
-x0 = range(-length, length+1)
-y0 = range(-length, length+1)
+x0 = range(-length, length + 1)
+y0 = range(-length, length + 1)
 function_value = []
 
 # set up
 for x in x0:
     for y in y0:
-        function_value.extend([gauss(
-            r_i=np.zeros(2),
-            r_j=np.array([x, y]),
-            h=100,
-        )])
+        function_value.extend(
+            [
+                gauss(
+                    r_i=np.zeros(2),
+                    r_j=np.array([x, y]),
+                    h=100,
+                )
+            ]
+        )
         # function_value.extend([wendland(
         #     x_a=np.zeros(2),
         #     x_b=np.array([x, y]),
@@ -39,7 +41,7 @@ ax = fig.add_subplot(111, projection="3d")
 XI, YI = np.meshgrid(x0, y0)
 z_min = np.nanmin(function_value)
 z_max = np.nanmax(function_value)
-ax.set_zlim(z_min, 1.2*z_max)
+ax.set_zlim(z_min, 1.2 * z_max)
 ax.set_title("here is your kernel sire")
 ZI = griddata(
     (XI.ravel(), YI.ravel()),
@@ -49,5 +51,3 @@ ZI = griddata(
 )
 ax.plot_surface(XI, YI, ZI, cmap="viridis", edgecolor="none")
 plt.show()
-
-

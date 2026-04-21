@@ -1,5 +1,3 @@
-
-
 from petsc4py import PETSc
 from mpi4py import MPI
 import ufl
@@ -32,13 +30,13 @@ beta = 1.2
 nx, ny = no_particles_x - 1, no_particles_y - 1
 domain = mesh.create_rectangle(
     MPI.COMM_WORLD,
-    [np.array([-border, -border]),
-     np.array([border, border])],
+    [np.array([-border, -border]), np.array([border, border])],
     [nx, ny],
-    mesh.CellType.triangle
-) # <- DAVID modification
+    mesh.CellType.triangle,
+)  # <- DAVID modification
 # domain = mesh.create_unit_square(MPI.COMM_WORLD, nx, ny, mesh.CellType.triangle)
 V = fem.functionspace(domain, ("Lagrange", 1))
+
 
 ### class that represents exact solution ###
 class ExactSolution:
@@ -49,6 +47,7 @@ class ExactSolution:
 
     def __call__(self, x: npt.NDArray[np.floating]) -> npt.NDArray[np.floating]:
         return 1 + x[0] ** 2 + self.alpha * x[1] ** 2 + self.beta * self.t
+
 
 u_exact = ExactSolution(alpha, beta, t)
 
@@ -80,7 +79,7 @@ L = fem.form(ufl.rhs(F))
 A = assemble_matrix(a, bcs=[bc])
 A.assemble()
 # b = create_vector(fem.extract_function_spaces(L))
-b = create_vector(L) # <- DAVID modification
+b = create_vector(L)  # <- DAVID modification
 uh = fem.Function(V)
 
 ### linear variational solver ###
@@ -131,9 +130,7 @@ if domain.comm.rank == 0:
     print(f"L2-error: {error_L2:.2e}")
 
 # Compute values at mesh vertices
-error_max = domain.comm.allreduce(
-    np.max(np.abs(uh.x.array - u_D.x.array)), op=MPI.MAX
-)
+error_max = domain.comm.allreduce(np.max(np.abs(uh.x.array - u_D.x.array)), op=MPI.MAX)
 if domain.comm.rank == 0:
     print(f"Error_max: {error_max:.2e}")
 
@@ -164,7 +161,9 @@ for t in t_values:
     points_on_proc = []
     bb_tree = geometry.bb_tree(domain, domain.topology.dim)
     cell_candidates = geometry.compute_collisions_points(bb_tree, x_eval_3d)
-    colliding_cells = geometry.compute_colliding_cells(domain, cell_candidates, x_eval_3d)
+    colliding_cells = geometry.compute_colliding_cells(
+        domain, cell_candidates, x_eval_3d
+    )
     for i, pt in enumerate(x_eval_3d):
         if len(colliding_cells.links(i)) > 0:
             points_on_proc.append(pt)
@@ -179,13 +178,6 @@ for t in t_values:
         full_array = np.concatenate(all_values)
         with open(filename, "a", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([
-                t,
-                np.array2string(
-                    full_array,
-                    separator=" ",
-                    max_line_width=np.inf
-                )
-            ])
-
-
+            writer.writerow(
+                [t, np.array2string(full_array, separator=" ", max_line_width=np.inf)]
+            )
