@@ -5,6 +5,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 import csv
 from playsound3 import playsound
+from tqdm import tqdm
 
 from dynamics.heat_equation import heat_equation
 from utils.diagnostics import diagnostics

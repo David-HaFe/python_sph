@@ -46,7 +46,7 @@ for _, y in enumerate(y_positions):
     for _, x in enumerate(x_positions):
         r_0.extend([x, y])
 
-        x_vel = y # proportional to y coordinate, resulting in a shear
+        x_vel = y  # proportional to y coordinate, resulting in a shear
 
         v_0.extend([x_vel, 0])
         p_0.extend([1])

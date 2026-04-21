@@ -20,24 +20,38 @@ def poisson_pressure_equation(t, y, dt, is_border_particle):
     r = r.reshape(-1, 2)
     v = v.reshape(-1, 2)
     p = p.reshape(-1, 1)
-    p_test = np.array((no_particles, 1))
 
+    print()
     for i, (r_i, v_i, p_i) in enumerate(zip(r, v, p)):
         # apply this until the rate of change is sufficiently small
         # initialize error to something meaningless since python doesn't have a
         # do while loop apparently
-        error = 1
-        while error > 1e-2:
-            if not is_border_particle[i]:
+        if not is_border_particle[i]:
+            error = 1
+            p_i_test = p[i]
+            while error > 1e-2:
                 r_dot[i] = np.zeros(2)
-                v_dot[i], p_dot[i] = _pressure_gradient(r_i, v_i, p_i, r, v, p, dt)
+                v_dot[i], p_i_dot_test = _pressure_gradient(
+                    r_i,
+                    v_i,
+                    p_i_test,
+                    r,
+                    v,
+                    p,
+                    dt,
+                )
                 # HACK: this should update somehow?
-            else:
-                r_dot[i] = np.zeros(2)
-                v_dot[i] = np.zeros(2)
-                p_dot[i] = np.zeros(1)
-            error = p_dot[i]
-            print(error)
+                error = p_i_dot_test
+                p_i_test += dt * p_i_dot_test
+                print(error)
+
+            p_dot[i] = p_i_dot_test
+
+        # wall particle, just pass everything as is
+        else:
+            r_dot[i] = np.zeros(2)
+            v_dot[i] = np.zeros(2)
+            p_dot[i] = np.zeros(1)
 
     diagnostics.log_np_array(v_dot)
     diagnostics.log_np_array(p_dot)
@@ -66,13 +80,13 @@ def _pressure_gradient(
     # TODO: find out if this really is how you are supposed to
     # calculate the gradient
     for j, r_j in enumerate(r):
-        result[0] = (
-            -coefficients[1]
+        result[0] += (
+            coefficients[1]
             - coefficients[3] * (r_j[0] - r_i[0])
             - coefficients[4] * (r_i[1] - r_j[1])
         )
-        result[1] = (
-            -coefficients[2]
+        result[1] += (
+            coefficients[2]
             - coefficients[4] * (r_j[1] - r_i[1])
             - coefficients[5] * (r_j[0] - r_i[0])
         )

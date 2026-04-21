@@ -11,7 +11,7 @@ from config import no_particles
 def heat_equation(t, y, is_border_particle):
     diagnostics.time_dynamics()
 
-    alpha = 0.1
+    alpha = 0.2
 
     y_dot = np.zeros(np.size(y))
     r_dot = np.zeros((no_particles, 2))

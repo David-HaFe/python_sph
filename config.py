@@ -2,8 +2,8 @@
 
 import numpy as np
 
-no_particles_x = 5
-no_particles_y = 5
+no_particles_x = 10
+no_particles_y = 10
 border = 2
 # positions without border
 x_positions, dx = np.linspace(-border, border, no_particles_x, retstep=True)
@@ -15,15 +15,14 @@ no_particles = (no_particles_x + 2 * border_thickness) * (
 )
 
 t0 = 0.0
-t1 = 3.0
+t1 = 60.0
 no_steps = 300
 dt = (t1 - t0) / no_steps
 
-# calculate how far apart particles are,
-# then
+# calculate how far apart particles are
 spacing_x = border * 2 / (no_particles_x - 1)
 spacing_y = border * 2 / (no_particles_y - 1)
-kernel_scaling = 3
+kernel_scaling = 1.5
 kernel_length = kernel_scaling * (spacing_x + spacing_y) / 2
 
 

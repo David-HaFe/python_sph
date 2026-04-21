@@ -22,7 +22,7 @@ def heat_plot(t, x, y, T):
 
     def update(frame):
         ax.cla()
-        ax.set_zlim(z_min, 2 * z_max)
+        ax.set_zlim(z_min, z_max*2)
         ax.set_title(f"t = {t[frame]:.2f}")
         ZI = griddata(
             (x[:, frame], y[:, frame]),
@@ -30,7 +30,15 @@ def heat_plot(t, x, y, T):
             (XI, YI),
             method="cubic",
         )
-        ax.plot_surface(XI, YI, ZI, cmap="viridis", edgecolor="none")
+        ax.plot_surface(
+            XI,
+            YI,
+            ZI,
+            cmap="viridis",
+            edgecolor="none",
+            vmax=5,
+            vmin=-0.1,
+        )
         sys.stdout.write(f"\r\033[Kplotting surface @ {t[frame]}")
         sys.stdout.flush()
 
