@@ -20,17 +20,24 @@ def poisson_pressure_equation(t, y, dt, is_border_particle):
     r = r.reshape(-1, 2)
     v = v.reshape(-1, 2)
     p = p.reshape(-1, 1)
+    p_test = np.array((no_particles, 1))
 
     for i, (r_i, v_i, p_i) in enumerate(zip(r, v, p)):
-        if not is_border_particle[i]:
-            r_dot[i] = np.zeros(2)
-            v_dot[i], p_dot[i] = _pressure_gradient(r_i, v_i, p_i, r, v, p, dt)
-            # HACK: this should update somehow?
-            p_dot[i] = np.zeros(1)
-        else:
-            r_dot[i] = np.zeros(2)
-            v_dot[i] = np.zeros(2)
-            p_dot[i] = np.zeros(1)
+        # apply this until the rate of change is sufficiently small
+        # initialize error to something meaningless since python doesn't have a
+        # do while loop apparently
+        error = 1
+        while error > 1e-2:
+            if not is_border_particle[i]:
+                r_dot[i] = np.zeros(2)
+                v_dot[i], p_dot[i] = _pressure_gradient(r_i, v_i, p_i, r, v, p, dt)
+                # HACK: this should update somehow?
+            else:
+                r_dot[i] = np.zeros(2)
+                v_dot[i] = np.zeros(2)
+                p_dot[i] = np.zeros(1)
+            error = p_dot[i]
+            print(error)
 
     diagnostics.log_np_array(v_dot)
     diagnostics.log_np_array(p_dot)

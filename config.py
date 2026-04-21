@@ -2,9 +2,9 @@
 
 import numpy as np
 
-no_particles_x = 15
-no_particles_y = 15
-border = 5
+no_particles_x = 5
+no_particles_y = 5
+border = 2
 # positions without border
 x_positions, dx = np.linspace(-border, border, no_particles_x, retstep=True)
 y_positions, dy = np.linspace(-border, border, no_particles_y, retstep=True)
@@ -15,7 +15,7 @@ no_particles = (no_particles_x + 2 * border_thickness) * (
 )
 
 t0 = 0.0
-t1 = 30.0
+t1 = 3.0
 no_steps = 300
 dt = (t1 - t0) / no_steps
 

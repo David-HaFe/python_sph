@@ -32,12 +32,9 @@ def chorin(
         # apply this until the rate of change is sufficiently small
         # initialize error to something meaningless since python doesn't have a
         # do while loop apparently
-        error = 1
-        while error > 1e-3:
-            # poisson pressure equation
-            dy = projection_equation(t, y)
-            y = y + dt * dy
-            error = dt * dy
+        # poisson pressure equation
+        dy = projection_equation(t, y)
+        y = y + dt * dy
 
         t += dt
         times[i] = t
