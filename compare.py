@@ -2,21 +2,14 @@
 import numpy as np
 import pandas as pd
 
-file_1_name = "heat_eq_15x15_r1_5"
-file_2_name = "heat_eq_15x15_r2"
-# file_2_name = "exact_solution"
-
 files = np.array(
     [
+        # "exact_heat_eq_10x10_r1_5",
+        # "exact_heat_eq_15x15_r1_5",
+        # "exact_heat_eq_20x20_r1_5",
         "heat_eq_10x10_r1_5",
-        "heat_eq_10x10_r2",
-        "heat_eq_10x10_r3",
         "heat_eq_15x15_r1_5",
-        "heat_eq_15x15_r2",
-        "heat_eq_15x15_r3",
         "heat_eq_20x20_r1_5",
-        "heat_eq_20x20_r2",
-        "heat_eq_20x20_r3",
     ]
 )
 width = max(len(file) for file in files)
@@ -31,10 +24,14 @@ for index_1, file_1 in enumerate(files):
         df2 = pd.read_csv(f"csvs/{file_2}.csv", delimiter=",")
 
         data1 = np.array(
-            [np.fromstring(row.strip("[]"), sep=" ") for row in df1["data"]]
+            [np.fromstring(
+                row.strip("[]").replace(",", " "), sep=" "
+            ) for row in df1["data"]]
         )
         data2 = np.array(
-            [np.fromstring(row.strip("[]"), sep=" ") for row in df2["data"]]
+            [np.fromstring(
+                row.strip("[]").replace(",", " "), sep=" "
+            ) for row in df2["data"]]
         )
 
         t1 = df1["time"].to_numpy()
@@ -55,9 +52,6 @@ for index_1, file_1 in enumerate(files):
         squared_error = (data1_interp - data2_interp) ** 2
         mse = np.mean(squared_error)
         errors[index_1][index_2] = mse
-
-        # print(f"Comparing | {file_1_name} | and | {file_2_name} |")
-        # print(f"Mean squared error (MSE):  {mse:.6f}")
 
     print()
     print(f"{file_1:<{width}} | ", end="")

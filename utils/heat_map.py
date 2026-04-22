@@ -7,7 +7,7 @@ from utils.diagnostics import diagnostics
 from config import no_particles_x, no_particles_y, kernel_scaling
 
 
-def heat_plot(t, x, y, T):
+def heat_surface(t, x, y, T):
     diagnostics.time_surface_plot()
     fig = plt.figure()
     ax = fig.add_subplot(111, projection="3d")
@@ -22,7 +22,7 @@ def heat_plot(t, x, y, T):
 
     def update(frame):
         ax.cla()
-        ax.set_zlim(z_min, z_max*2)
+        ax.set_zlim(z_min, z_max * 2)
         ax.set_title(f"t = {t[frame]:.2f}")
         ZI = griddata(
             (x[:, frame], y[:, frame]),
@@ -45,8 +45,48 @@ def heat_plot(t, x, y, T):
     ani = animation.FuncAnimation(fig, update, frames=len(t), interval=100)
     # ani.save("animation.gif", writer="pillow", fps=30)
     param = str(kernel_scaling).replace(".", "_")
-    name = (
-        f"visualizations/heat_transfer_{no_particles_x}x{no_particles_y}_r{param}.mp4"
-    )
+    name = f"visualizations/heat_surface_{no_particles_x}x{no_particles_y}_r{param}.mp4"
+    ani.save(name, writer="ffmpeg", fps=30)
+    diagnostics.time_surface_plot()
+
+
+def heat_plot(t, x, y, T):
+    t = np.array(t)
+    x = np.array(x)
+    y = np.array(y)
+    T = np.array(T)
+
+    diagnostics.time_surface_plot()
+    fig, ax = plt.subplots()
+    grid_points = 50
+
+    xi = np.linspace(x[:, 1].min(), x[:, 1].max(), grid_points)
+    yi = np.linspace(y[:, 1].min(), y[:, 1].max(), grid_points)
+    XI, YI = np.meshgrid(xi, yi)
+
+    def update(frame):
+        ax.cla()
+        ax.set_title(f"t = {t[frame]:.2f}")
+        ZI = griddata(
+            (x[:, frame], y[:, frame]),
+            T[:, frame],
+            (XI, YI),
+            method="cubic",
+        )
+        heatmap = ax.imshow(
+            ZI,
+            extent=[xi.min(), xi.max(), yi.min(), yi.max()],
+            origin="lower",
+            cmap="viridis",
+            vmax=1,
+            vmin=-0.1,
+            aspect="auto",
+        )
+        sys.stdout.write(f"\r\033[Kplotting heatmap @ {t[frame]}")
+        sys.stdout.flush()
+
+    ani = animation.FuncAnimation(fig, update, frames=len(t), interval=100)
+    param = str(kernel_scaling).replace(".", "_")
+    name = f"visualizations/heat_map_{no_particles_x}x{no_particles_y}_r{param}.mp4"
     ani.save(name, writer="ffmpeg", fps=30)
     diagnostics.time_surface_plot()

@@ -12,6 +12,7 @@ from utils.diagnostics import diagnostics
 from kernels.gauss import gauss
 from utils.heat_map import heat_plot
 from utils.particle_positions import particle_positions
+from dynamics.heat_equation_analytical import heat_equation_analytical
 from config import (
     no_particles_x,
     no_particles_y,
@@ -43,16 +44,10 @@ is_border_particle = []
 for _, y in enumerate(y_positions):
     for _, x in enumerate(x_positions):
         r_0.extend([x, y])
-        T_0.extend(
-            [
-                5
-                * gauss(
-                    np.zeros(2),
-                    np.array([x, y]),
-                    1.5 * border,
-                )
-            ]
-        )
+        T_0.extend([heat_equation_analytical(t0, x, y)])
+        # T_0.extend([
+        #     5 * gauss(np.zeros(2), np.array([x, y]), 1.5 * border)
+        # ])
         is_border_particle.extend([False])
 
 base_temp = [0]
@@ -91,6 +86,7 @@ y = sol.y[1 : 2 * no_particles : 2, :]
 T = sol.y[2 * no_particles :, :]
 
 t = sol.t
+
 heat_plot(t, x, y, T)
 particle_positions(t, x, y, is_border_particle)
 
