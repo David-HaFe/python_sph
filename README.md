@@ -28,6 +28,7 @@ valid options for `--run` are
 
 Additionally, you can also add
 | | name | description |
+| --- | --- | --- |
 | :white_check_mark: | `--no_plot` | do not generate plot |
 | :white_check_mark: | `--no_csv` | do not generate csv |
 
