@@ -32,6 +32,12 @@ Additionally, you can also add
 | :white_check_mark: | `--no_plot` | do not generate plot |
 | :white_check_mark: | `--no_csv` | do not generate csv |
 
+An example of a valid command would be
+```
+python3 main.py --run heat_equation --no_plot
+```
+which runs the heat equation example without a plot for additional speed.
+
 ## Dependencies
 In order to run this code, you will need python3, and a virtual environment,
 which is created with
