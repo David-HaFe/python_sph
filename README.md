@@ -26,6 +26,11 @@ valid options for `--run` are
 | :warning: | navier_stokes_compressible | simulating compressible fluid flow (does weird things and is also deprecated) |
 | :construction: | navier_stokes_incompressible | simulating incompressible fluid flow (not working) |
 
+Additionally, you can also add
+| | name | description |
+| :white_check_mark: | `--no_plot` | do not generate plot |
+| :white_check_mark: | `--no_csv` | do not generate csv |
+
 ## Dependencies
 In order to run this code, you will need python3, and a virtual environment,
 which is created with
