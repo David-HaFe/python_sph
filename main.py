@@ -33,21 +33,36 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+file_prefix = args.run
 if args.run == "heat_equation":
-    t, x, y, T = heat_equation.main()
+    t, x, y, T, is_border_particle  = heat_equation.main()
+
     if not args.no_plot:
-        plot_temperature_map(t, x, y, T, "heat_equation")
+        plot_temperature_map(t, x, y, T, file_prefix)
+
+    if not args.no_csv:
+        export_to_csv(t, T, file_prefix)
 
 elif args.run == "heat_equation_analytical":
-    t, x, y, T = heat_equation_analytical.main()
+    t, x, y, T, is_border_particle = heat_equation_analytical.main()
+
     if not args.no_plot:
-        plot_temperature_map(t, x, y, T, "heat_equation_analytical")
+        plot_temperature_map(t, x, y, T, file_prefix)
+
+    if not args.no_csv:
+        export_to_csv(t, T, file_prefix)
 
 elif args.run == "navier_stokes_incompressible":
-    navier_stokes_incompressible.main()
+    t, x, y, is_border_particle = navier_stokes_incompressible.main()
+
+    if not args.no_plot:
+        plot_particles(t, x, y, is_border_particle, file_prefix)
 
 elif args.run == "navier_stokes_compressible":
-    navier_stokes_compressible.main()
+    t, x, y, is_border_particle = navier_stokes_compressible.main()
+
+    if not args.no_plot:
+        plot_particles(t, x, y, is_border_particle, file_prefix)
 
 else:
     print("This is not a valid program, now you have to implement it")
@@ -56,9 +71,7 @@ else:
 # if not args.no_plot:
 # plot_particles(t, x, y, is_border_particle)
 
-if not args.no_csv:
-    export_to_csv(t, T, "heat_eq")
 
 print("")
 diagnostics.print_diagnostics()
-playsound("media/ding.wav")
+playsound("misc/ding.wav")

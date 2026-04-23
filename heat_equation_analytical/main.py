@@ -33,5 +33,6 @@ def main():
     x_sol = x_sol.tolist()
     y_sol = y_sol.tolist()
     T_sol = T_sol.tolist()
+    is_border_particle = np.full(no_particles, False)
 
-    return times, x_sol, y_sol, T_sol
+    return times, x_sol, y_sol, T_sol, is_border_particle

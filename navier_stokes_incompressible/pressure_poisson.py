@@ -1,14 +1,15 @@
 import numpy as np
 
 from utils.diagnostics import diagnostics
-from config import model_parameters
 from kernels.gauss import gauss, nabla, laplace
+from config import (
+    no_particles,
+)
 
 
 # evaluate the poisson pressure equations for given state
 def equation(t, y, dt, is_border_particle):
     diagnostics.time_poisson()
-    no_particles = np.size(y) // (2 + 2 + 1)
 
     r_dot = np.zeros((no_particles, 2))
     v_dot = np.zeros((no_particles, 2))
@@ -21,7 +22,6 @@ def equation(t, y, dt, is_border_particle):
     v = v.reshape(-1, 2)
     p = p.reshape(-1, 1)
 
-    print()
     for i, (r_i, v_i, p_i) in enumerate(zip(r, v, p)):
         # apply this until the rate of change is sufficiently small
         # initialize error to something meaningless since python doesn't have a
@@ -43,7 +43,6 @@ def equation(t, y, dt, is_border_particle):
                 # HACK: this should update somehow?
                 error = p_i_dot_test
                 p_i_test += dt * p_i_dot_test
-                print(error)
 
             p_dot[i] = p_i_dot_test
 

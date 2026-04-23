@@ -6,7 +6,11 @@ import sys
 from utils.diagnostics import diagnostics
 from kernels.wendland import wendland, gradient_W, normalised_gradient_W
 from kernels.gauss import gauss, nabla, laplace
-from config import model_parameters
+from config import (
+    no_particles,
+    masses,
+    gravity,
+)
 
 
 # implements the discretized navier stokes equation for the ode solver
@@ -15,14 +19,14 @@ from config import model_parameters
 # this is the COMPRESSIBLE case
 def dynamics(t, y, is_border_particle):
     diagnostics.time_dynamics()
-    no_particles = np.size(y) // (2 + 2 + 1)
+
     y_dot = np.zeros(np.size(y))
     r_dot = np.zeros((no_particles, 2))
     v_dot = np.zeros((no_particles, 2))
     rho_dot = np.zeros(no_particles)
 
     # TODO: these have to be updated, not sure how to do that
-    m = model_parameters.m
+    m = masses
     mu = np.full(no_particles, 0.1)
 
     eta = 0.01
@@ -80,7 +84,7 @@ def dynamics(t, y, is_border_particle):
 
             # fill solution array
             r_dot[i] = v_i
-            v_dot[i] = model_parameters.gravity - pressure_term + viscosity_term
+            v_dot[i] = gravity - pressure_term + viscosity_term
             rho_dot[i] = -rho_i * rho_dot_i
         else:
             r_dot[i] = np.zeros(2)

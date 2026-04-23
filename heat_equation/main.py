@@ -80,4 +80,4 @@ def main():
 
     t = sol.t
 
-    return t, x, y, T
+    return t, x, y, T, is_border_particle

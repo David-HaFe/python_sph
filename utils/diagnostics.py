@@ -140,45 +140,50 @@ class Diagnostics:
         self.time_logger()
 
     def print_diagnostics(self):
-        accepted_percentage = self._accepted_particles / (
-            self._accepted_particles + self._rejected_particles
-        )
+        if self._accepted_particles + self._rejected_particles == 0:
+            accepted_percentage = "nothing registered"
+        else:
+            accepted_percentage = self._accepted_particles / (
+                self._accepted_particles + self._rejected_particles
+            )
+            accepted_percentage = f"{accepted_percentage:.4f}"
+
         print("========= summary ==========")
-        print(" accepted percentage: " + str(accepted_percentage))
+        print(" accepted percentage: " + accepted_percentage)
         print("       nan instances: " + str(self._nan_instances))
         print("========== timers ==========")
         print(
-            f"                 ode: {self._ode_timer[0]:.4f}, calls: {int(self._ode_timer[3])}"
+            f"                 ode: {self._ode_timer[0]:4.4f}, calls: {int(self._ode_timer[3])}"
         )
         print(
-            f"            dynamics: {self._dynamics_timer[0]:.4f}, calls: {int(self._dynamics_timer[3])}"
+            f"            dynamics: {self._dynamics_timer[0]:4.4f}, calls: {int(self._dynamics_timer[3])}"
         )
         print(
-            f"              kernel: {self._kernel_timer[0]:.4f}, calls: {int(self._kernel_timer[3])}"
+            f"              kernel: {self._kernel_timer[0]:4.4f}, calls: {int(self._kernel_timer[3])}"
         )
         print(
-            f"     kernel gradient: {self._gradient_kernel_timer[0]:.4f}, calls: {int(self._gradient_kernel_timer[3])}"
+            f"     kernel gradient: {self._gradient_kernel_timer[0]:4.4f}, calls: {int(self._gradient_kernel_timer[3])}"
         )
         print(
-            f"norm kernel gradient: {self._norm_gradient_kernel_timer[0]:.4f}, calls: {int(self._norm_gradient_kernel_timer[3])}"
+            f"norm kernel gradient: {self._norm_gradient_kernel_timer[0]:4.4f}, calls: {int(self._norm_gradient_kernel_timer[3])}"
         )
         print(
-            f"       least squares: {self._lsqr_timer[0]:.4f}, calls: {int(self._lsqr_timer[3])}"
+            f"       least squares: {self._lsqr_timer[0]:4.4f}, calls: {int(self._lsqr_timer[3])}"
         )
         print(
-            f"               nabla: {self._nabla_timer[0]:.4f}, calls: {int(self._nabla_timer[3])}"
+            f"               nabla: {self._nabla_timer[0]:4.4f}, calls: {int(self._nabla_timer[3])}"
         )
         print(
-            f"             laplace: {self._laplace_timer[0]:.4f}, calls: {int(self._laplace_timer[3])}"
+            f"             laplace: {self._laplace_timer[0]:4.4f}, calls: {int(self._laplace_timer[3])}"
         )
         print(
-            f"        surface plot: {self._surface_plot_timer[0]:.4f}, calls: {int(self._surface_plot_timer[3])}"
+            f"        surface plot: {self._surface_plot_timer[0]:4.4f}, calls: {int(self._surface_plot_timer[3])}"
         )
         print(
-            f"       position plot: {self._position_plot_timer[0]:.4f}, calls: {int(self._position_plot_timer[3])}"
+            f"       position plot: {self._position_plot_timer[0]:4.4f}, calls: {int(self._position_plot_timer[3])}"
         )
         print(
-            f"              logger: {self._logger_timer[0]:.4f}, calls: {int(self._logger_timer[3])}"
+            f"              logger: {self._logger_timer[0]:4.4f}, calls: {int(self._logger_timer[3])}"
         )
         print("============================")
 

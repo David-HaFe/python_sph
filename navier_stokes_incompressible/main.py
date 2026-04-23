@@ -12,7 +12,6 @@ from utils.diagnostics import diagnostics
 from utils.generate_border import generate_border
 
 from config import (
-    model_parameters,
     no_particles_x,
     no_particles_y,
     no_particles,
@@ -58,8 +57,6 @@ def main():
     p_0 = np.array(p_0, dtype=float)
     y_0 = np.concatenate((r_0, v_0, p_0))
     is_border_particle = np.array(is_border_particle)
-
-    model_parameters.set_no_particles(np.size(y_0) // (2 + 2 + 1))
 
     # simulation
     diagnostics.time_ode()
@@ -117,4 +114,4 @@ def main():
 
     t = sol.t
 
-    return t, x, y
+    return t, x, y, is_border_particle

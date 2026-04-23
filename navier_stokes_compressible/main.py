@@ -52,8 +52,6 @@ def main():
     y_0 = np.concatenate((r_0, v_0, rho_0))
     is_border_particle = np.array(is_border_particle)
 
-    model_parameters.set_no_particles(np.size(y_0) // 5)
-
     # simulation
     diagnostics.time_ode()
 
@@ -108,4 +106,4 @@ def main():
 
     t = sol.t
 
-    return t, x, y
+    return t, x, y, is_border_particle

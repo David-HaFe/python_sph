@@ -1,6 +1,9 @@
 import numpy as np
 from utils.diagnostics import diagnostics
-from config import model_parameters
+from config import (
+    masses,
+    densities,
+)
 
 # SPH smoothing length
 h = 1.5
@@ -74,8 +77,8 @@ def gradient_W(x_a: np.array, x_b: np.array):
 #   x:   state vector for L matrix in R^n, n = no particles
 def normalised_gradient_W(x_a: np.array, x_b: np.array, x: np.array):
     diagnostics.time_norm_gradient_kernel()
-    m = model_parameters.m
-    rho = model_parameters.rho
+    m = masses
+    rho = densities
 
     L_inv = np.zeros((2, 2))
     gradient_W_ab = gradient_W(x_a, x_b)
