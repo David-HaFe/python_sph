@@ -140,6 +140,7 @@ class Diagnostics:
         self.time_logger()
 
     def print_diagnostics(self):
+        print("")
         if self._accepted_particles + self._rejected_particles == 0:
             accepted_percentage = "nothing registered"
         else:

@@ -40,6 +40,21 @@ nu = 1 / rho
 kinetic_viscosities = np.full(no_particles, nu)
 gravity = np.array([0, -0.81])
 
+# for compare command
+# .csv shall not be written out
+compared_files = np.array(
+    [
+        "heat_equation/solutions/solution_5x5_r1_5",
+        "heat_equation_analytical/solutions/solution_5x5_r1_5",
+        # "heat_equation/solutions/solution_10x10_r1_5",
+        # "heat_equation/solutions/solution_15x15_r1_5",
+        # "heat_equation/solutions/solution_20x20_r1_5",
+    ]
+)
+
+# for visualize kernel command
+# options: "gauss", "wendland", everything you decide to add (:
+kernel_choice = "gauss"
 
 # class Model_Parameters:
 #     def __init__(self):

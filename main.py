@@ -9,6 +9,9 @@ import heat_equation_analytical.main as heat_equation_analytical
 import navier_stokes_incompressible.main as navier_stokes_incompressible
 import navier_stokes_compressible.main as navier_stokes_compressible
 
+from utils.visualize_kernel import visualize_kernel
+from utils.compare import compare
+
 from utils.diagnostics import diagnostics
 from utils.plot_particles import plot_particles
 from utils.plot_temperature import (
@@ -18,7 +21,27 @@ from utils.plot_temperature import (
 from utils.export_to_csv import export_to_csv
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--run", help="which example to run")
+parser.add_argument("--run", nargs="+", help="which example to run")
+
+parser.add_argument(
+    "--heat_equation",
+    action="store_true",
+)
+
+parser.add_argument(
+    "--heat_equation_analytical",
+    action="store_true",
+)
+
+parser.add_argument(
+    "--navier_stokes_compressible",
+    action="store_true",
+)
+
+parser.add_argument(
+    "--navier_stokes_incompressible",
+    action="store_true",
+)
 
 parser.add_argument(
     "--no_plot",
@@ -30,48 +53,60 @@ parser.add_argument(
     action="store_true",
     help="if csv should be generated",
 )
+parser.add_argument(
+    "--compare",
+    action="store_true",
+    help="if true, print MSE table to compare csvs specified in config file",
+)
+parser.add_argument(
+    "--visualize_kernel",
+    action="store_true",
+    help="if true, visualize the kernel specified in the config file",
+)
 
 args = parser.parse_args()
 
-file_prefix = args.run
-if args.run == "heat_equation":
+if args.heat_equation:
     t, x, y, T, is_border_particle = heat_equation.main()
 
+    file_prefix = "heat_equation"
     if not args.no_plot:
         plot_temperature_map(t, x, y, T, file_prefix)
 
     if not args.no_csv:
         export_to_csv(t, T, file_prefix)
 
-elif args.run == "heat_equation_analytical":
+elif args.heat_equation_analytical:
     t, x, y, T, is_border_particle = heat_equation_analytical.main()
 
+    file_prefix = "heat_equation_analytical"
     if not args.no_plot:
         plot_temperature_map(t, x, y, T, file_prefix)
 
     if not args.no_csv:
         export_to_csv(t, T, file_prefix)
 
-elif args.run == "navier_stokes_incompressible":
+elif args.navier_stokes_incompressible:
     t, x, y, is_border_particle = navier_stokes_incompressible.main()
 
+    file_prefix = "navier_stokes_incompressible"
     if not args.no_plot:
         plot_particles(t, x, y, is_border_particle, file_prefix)
 
-elif args.run == "navier_stokes_compressible":
+elif args.navier_stokes_compressible:
     t, x, y, is_border_particle = navier_stokes_compressible.main()
 
+    file_prefix = "navier_stokes_compressible"
     if not args.no_plot:
         plot_particles(t, x, y, is_border_particle, file_prefix)
 
-else:
-    print("This is not a valid program, now you have to implement it")
-    sys.exit()
+# show kernel function, or whatever is thrown in there
+if args.visualize_kernel:
+    visualize_kernel()
 
-# if not args.no_plot:
-# plot_particles(t, x, y, is_border_particle)
+if args.compare:
+    compare()
 
 
-print("")
 diagnostics.print_diagnostics()
 playsound("misc/ding.wav")

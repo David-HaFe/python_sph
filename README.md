@@ -10,21 +10,19 @@ After you are happy with the settings, you can run a simulation via the command
 python3 main.py
 ```
 and one of the following **mandatory** flags:
+<!--
+    use the following emojis
+    :white_check_mark:, :x:, :warning:, :construction:
+-->
 
 | | name | description |
 | --- | --- | --- |
-| :construction: | `--compare` | calculates a table containing MSE between all runs specified by `config.py` |
+| :white_check_mark: | `--compare` | calculates a table containing MSE between all runs specified by `config.py` |
 | :construction: | `--visualize_kernel` | plots the kernel function specified in `config.py` |
-| :white_check_mark: | `--run` | runs a simulation of the specified example |
-
-valid options for `--run` are
-
-|  | name | description |
-| --- | --- | --- |
-| :white_check_mark: | heat_equation | simulating heat transfer using a PDE |
-| :white_check_mark: | heat_equation_analytical | evaluating a known analytical solution of the heat equation at all simulation time steps |
-| :warning: | navier_stokes_compressible | simulating compressible fluid flow (does weird things and is also deprecated) |
-| :construction: | navier_stokes_incompressible | simulating incompressible fluid flow (not working) |
+| :white_check_mark: | `--heat_equation` | simulating heat transfer using a PDE |
+| :white_check_mark: | `--heat_equation_analytical` | evaluating a known analytical solution of the heat equation at all simulation time steps |
+| :warning: | `--navier_stokes_compressible` | simulating compressible fluid flow (does weird things and is also deprecated) |
+| :construction: | `--navier_stokes_incompressible` | simulating incompressible fluid flow (not working) |
 
 Additionally, you can also add
 | | name | description |
@@ -34,9 +32,10 @@ Additionally, you can also add
 
 An example of a valid command would be
 ```
-python3 main.py --run heat_equation --no_plot
+python3 main.py --heat_equation --heat_equation_analytical --no_plot --compare
 ```
-which runs the heat equation example without a plot for additional speed.
+which runs the heat equation example using the PDE and analytical solution without a plot for additional speed,
+and compares them afterwards.
 
 ## Dependencies
 In order to run this code, you will need python3, and a virtual environment,
