@@ -8,7 +8,7 @@ from kernels.gauss import gauss, nabla, laplace
 from config import no_particles, heat_alpha
 
 
-def heat_equation(t, y, is_border_particle):
+def dynamics(t, y, is_border_particle):
     diagnostics.time_dynamics()
 
     y_dot = np.zeros(np.size(y))

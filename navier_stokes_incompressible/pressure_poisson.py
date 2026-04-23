@@ -6,7 +6,7 @@ from kernels.gauss import gauss, nabla, laplace
 
 
 # evaluate the poisson pressure equations for given state
-def poisson_pressure_equation(t, y, dt, is_border_particle):
+def equation(t, y, dt, is_border_particle):
     diagnostics.time_poisson()
     no_particles = np.size(y) // (2 + 2 + 1)
 

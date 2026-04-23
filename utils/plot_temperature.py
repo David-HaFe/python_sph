@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.interpolate import griddata
 from utils.diagnostics import diagnostics
+from utils.file_naming import get_file_name
 from config import no_particles_x, no_particles_y, kernel_scaling
 
 
-def heat_surface(t, x, y, T):
+def plot_temperature_surface(t, x, y, T, file_prefix):
     diagnostics.time_surface_plot()
     fig = plt.figure()
     ax = fig.add_subplot(111, projection="3d")
@@ -43,14 +44,14 @@ def heat_surface(t, x, y, T):
         sys.stdout.flush()
 
     ani = animation.FuncAnimation(fig, update, frames=len(t), interval=100)
-    # ani.save("animation.gif", writer="pillow", fps=30)
-    param = str(kernel_scaling).replace(".", "_")
-    name = f"visualizations/heat_surface_{no_particles_x}x{no_particles_y}_r{param}.mp4"
+
+    name = get_file_name(file_prefix, "heat_surface", "mp4")
+
     ani.save(name, writer="ffmpeg", fps=30)
     diagnostics.time_surface_plot()
 
 
-def heat_plot(t, x, y, T):
+def plot_temperature_map(t, x, y, T, file_prefix):
     t = np.array(t)
     x = np.array(x)
     y = np.array(y)
@@ -86,7 +87,8 @@ def heat_plot(t, x, y, T):
         sys.stdout.flush()
 
     ani = animation.FuncAnimation(fig, update, frames=len(t), interval=100)
-    param = str(kernel_scaling).replace(".", "_")
-    name = f"visualizations/heat_map_{no_particles_x}x{no_particles_y}_r{param}.mp4"
+
+    name = get_file_name(file_prefix, "heat_map", "mp4")
+
     ani.save(name, writer="ffmpeg", fps=30)
     diagnostics.time_surface_plot()

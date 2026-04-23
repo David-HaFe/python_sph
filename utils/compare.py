@@ -24,14 +24,16 @@ for index_1, file_1 in enumerate(files):
         df2 = pd.read_csv(f"csvs/{file_2}.csv", delimiter=",")
 
         data1 = np.array(
-            [np.fromstring(
-                row.strip("[]").replace(",", " "), sep=" "
-            ) for row in df1["data"]]
+            [
+                np.fromstring(row.strip("[]").replace(",", " "), sep=" ")
+                for row in df1["data"]
+            ]
         )
         data2 = np.array(
-            [np.fromstring(
-                row.strip("[]").replace(",", " "), sep=" "
-            ) for row in df2["data"]]
+            [
+                np.fromstring(row.strip("[]").replace(",", " "), sep=" ")
+                for row in df2["data"]
+            ]
         )
 
         t1 = df1["time"].to_numpy()

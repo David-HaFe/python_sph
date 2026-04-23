@@ -37,8 +37,13 @@ class Diagnostics:
             writer.writerow(["registered at: ", datetime.datetime.now()])
             writer.writerow(row)
 
+    # structure:
+    #   - total time spent in the function
+    #   - time where last function call was started
+    #   - flag stating if at the start or end of function (toggles on/off)
+    #   - number of times the function has been called
     def _create_timer(self):
-        return np.array([0.0, 0.0, True])
+        return np.array([0.0, 0.0, True, 0])
 
     # can be called with the result of kernel rejection or acceptance to
     # get statistics for acceptance rate
@@ -101,9 +106,10 @@ class Diagnostics:
 
     # generic function able to time different parts of the program
     def _timer_function(self, timer: np.array):
-        # actions at start: snapshot start time
+        # actions at start: snapshot start time and register one call
         if timer[2]:
             timer[1] = time.perf_counter()
+            timer[3] += 1
         # actions at end: snapshot end time and add to total
         else:
             timer[0] += time.perf_counter() - timer[1]
@@ -141,17 +147,39 @@ class Diagnostics:
         print(" accepted percentage: " + str(accepted_percentage))
         print("       nan instances: " + str(self._nan_instances))
         print("========== timers ==========")
-        print(f"                 ode: {self._ode_timer[0]:.4f}")
-        print(f"            dynamics: {self._dynamics_timer[0]:.4f}")
-        print(f"              kernel: {self._kernel_timer[0]:.4f}")
-        print(f"     kernel gradient: {self._gradient_kernel_timer[0]:.4f}")
-        print(f"norm kernel gradient: {self._norm_gradient_kernel_timer[0]:.4f}")
-        print(f"       least squares: {self._lsqr_timer[0]:.4f}")
-        print(f"               nabla: {self._nabla_timer[0]:.4f}")
-        print(f"             laplace: {self._laplace_timer[0]:.4f}")
-        print(f"        surface plot: {self._surface_plot_timer[0]:.4f}")
-        print(f"       position plot: {self._position_plot_timer[0]:.4f}")
-        print(f"              logger: {self._logger_timer[0]:.4f}")
+        print(
+            f"                 ode: {self._ode_timer[0]:.4f}, calls: {int(self._ode_timer[3])}"
+        )
+        print(
+            f"            dynamics: {self._dynamics_timer[0]:.4f}, calls: {int(self._dynamics_timer[3])}"
+        )
+        print(
+            f"              kernel: {self._kernel_timer[0]:.4f}, calls: {int(self._kernel_timer[3])}"
+        )
+        print(
+            f"     kernel gradient: {self._gradient_kernel_timer[0]:.4f}, calls: {int(self._gradient_kernel_timer[3])}"
+        )
+        print(
+            f"norm kernel gradient: {self._norm_gradient_kernel_timer[0]:.4f}, calls: {int(self._norm_gradient_kernel_timer[3])}"
+        )
+        print(
+            f"       least squares: {self._lsqr_timer[0]:.4f}, calls: {int(self._lsqr_timer[3])}"
+        )
+        print(
+            f"               nabla: {self._nabla_timer[0]:.4f}, calls: {int(self._nabla_timer[3])}"
+        )
+        print(
+            f"             laplace: {self._laplace_timer[0]:.4f}, calls: {int(self._laplace_timer[3])}"
+        )
+        print(
+            f"        surface plot: {self._surface_plot_timer[0]:.4f}, calls: {int(self._surface_plot_timer[3])}"
+        )
+        print(
+            f"       position plot: {self._position_plot_timer[0]:.4f}, calls: {int(self._position_plot_timer[3])}"
+        )
+        print(
+            f"              logger: {self._logger_timer[0]:.4f}, calls: {int(self._logger_timer[3])}"
+        )
         print("============================")
 
 

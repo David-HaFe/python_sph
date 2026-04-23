@@ -2,8 +2,8 @@
 
 import numpy as np
 
-no_particles_x = 15
-no_particles_y = 15
+no_particles_x = 5
+no_particles_y = 5
 border = 2
 # positions without border
 x_positions, dx = np.linspace(-border, border, no_particles_x, retstep=True)
@@ -25,7 +25,8 @@ spacing_y = border * 2 / (no_particles_y - 1)
 kernel_scaling = 1.5
 kernel_length = kernel_scaling * (spacing_x + spacing_y) / 2
 
-heat_alpha = .05
+heat_alpha = 0.05
+
 
 class Model_Parameters:
     def __init__(self):

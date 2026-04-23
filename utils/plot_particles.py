@@ -3,10 +3,11 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from utils.diagnostics import diagnostics
+from utils.file_naming import get_file_name
 
 
 # this file allows to plot the positions of particles over time
-def particle_positions(t, x, y, is_border_particle):
+def plot_particles(t, x, y, is_border_particle, file_prefix):
 
     diagnostics.time_position_plot()
     fig, ax = plt.subplots()
@@ -23,5 +24,8 @@ def particle_positions(t, x, y, is_border_particle):
         sys.stdout.flush()
 
     ani = animation.FuncAnimation(fig, update, frames=len(t), interval=100)
-    ani.save("visualizations/particle_positions.mp4", writer="ffmpeg", fps=30)
+
+    name = get_file_name(file_prefix, "position_plot", "mp4")
+
+    ani.save(name, writer="ffmpeg", fps=30)
     diagnostics.time_position_plot()
