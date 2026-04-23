@@ -35,7 +35,7 @@ args = parser.parse_args()
 
 file_prefix = args.run
 if args.run == "heat_equation":
-    t, x, y, T, is_border_particle  = heat_equation.main()
+    t, x, y, T, is_border_particle = heat_equation.main()
 
     if not args.no_plot:
         plot_temperature_map(t, x, y, T, file_prefix)

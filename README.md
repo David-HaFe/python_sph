@@ -10,24 +10,21 @@ After you are happy with the settings, you can run a simulation via the command
 python3 main.py
 ```
 and one of the following **mandatory** flags:
-```
-:construction: -- compare -> calculates a table of the MSE between all runs specified in config.py
-```
-```
-:construction: -- visualize kernel -> plots a kernel function that was specified in config.py
-```
-```
--- run -> runs a simulation of the specified example
-```
+
+| | name | description |
+| --- | --- | --- |
+| :construction: | `--compare` | calculates a table containing MSE between all runs specified by `config.py` |
+| :construction: | `--visualize_kernel` | plots the kernel function specified in `config.py` |
+| :white_check_mark: | `--run` | runs a simulation of the specified example |
+
 valid options for `--run` are
 
 |  | name | description |
+| --- | --- | --- |
 | :white_check_mark: | heat_equation | simulating heat transfer using a PDE |
 | :white_check_mark: | heat_equation_analytical | evaluating a known analytical solution of the heat equation at all simulation time steps |
 | :warning: | navier_stokes_compressible | simulating compressible fluid flow (does weird things and is also deprecated) |
 | :construction: | navier_stokes_incompressible | simulating incompressible fluid flow (not working) |
-
-
 
 ## Dependencies
 In order to run this code, you will need python3, and a virtual environment,
