@@ -63,16 +63,22 @@ def plot_temperature_map(sim_result, file_prefix):
     fig, ax = plt.subplots()
     grid_points = 50
 
-    xi = np.linspace(sim_result.x[:, 1].min(), sim_result.x[:, 1].max(), grid_points)
-    yi = np.linspace(sim_result.y[:, 1].min(), sim_result.y[:, 1].max(), grid_points)
+    xi = np.linspace(sim_result.x[1, :].min(), sim_result.x[1, :].max(), grid_points)
+    yi = np.linspace(sim_result.y[1, :].min(), sim_result.y[1, :].max(), grid_points)
     XI, YI = np.meshgrid(xi, yi)
+
+    diagnostics.log_string(f"evaulating {file_prefix}")
+    diagnostics.log_full_np_array(sim_result.x)
+    diagnostics.log_full_np_array(sim_result.y)
+    diagnostics.log_full_np_array(sim_result.data_1)
+    diagnostics.log_full_np_array(sim_result.data_2)
 
     def update(frame):
         ax.cla()
         ax.set_title(f"t = {sim_result.t[frame]:.2f}")
         ZI = griddata(
-            (sim_result.x[:, frame], sim_result.y[:, frame]),
-            sim_result.data_1[:, frame],
+            (sim_result.x[frame, :], sim_result.y[frame, :]),
+            sim_result.data_1[frame, :],
             (XI, YI),
             method="cubic",
         )

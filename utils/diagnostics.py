@@ -29,6 +29,7 @@ class Diagnostics:
         self._position_plot_timer = self._create_timer()
         self._ode_timer = self._create_timer()
         self._logger_timer = self._create_timer()
+        self._scatter_timer = self._create_timer()
 
         # set up csv file
         row = ["logged at", "name", "log content"]
@@ -56,56 +57,49 @@ class Diagnostics:
     def register_nan(self):
         self._nan_instances += 1
 
-    # wrapper for timing heat surface plot
+    # wrapper functions for timing all kinds of things
     def time_surface_plot(self):
         self._timer_function(self._surface_plot_timer)
 
-    # wrapper for timing the variable logger
-    def time_logger(self):
-        self._timer_function(self._logger_timer)
-
-    # wrapper for timing particle position plot
     def time_position_plot(self):
         self._timer_function(self._position_plot_timer)
 
-    # wrapper for timing kernel
     def time_kernel(self):
         self._timer_function(self._kernel_timer)
 
-    # wrapper for timing nabla operator
     def time_nabla(self):
         self._timer_function(self._nabla_timer)
 
-    # wrapper for timing laplace operator
     def time_laplace(self):
         self._timer_function(self._laplace_timer)
 
-    # wrapper for timing the least squares estimation
     def time_least_squares(self):
         self._timer_function(self._lsqr_timer)
 
-    # wrapper for timing gradient of W
     def time_gradient_kernel(self):
         self._timer_function(self._gradient_kernel_timer)
 
-    # wrapper for timing laplace of W
     def time_norm_gradient_kernel(self):
         self._timer_function(self._norm_gradient_kernel_timer)
 
-    # wrapper for timing navier stokes equations
     def time_dynamics(self):
         self._timer_function(self._dynamics_timer)
 
-    # wrapper for timing poisson pressure equations
     def time_poisson(self):
         self._timer_function(self._poisson_timer)
 
-    # wrapper for timing the entire ode call
     def time_ode(self):
         self._timer_function(self._ode_timer)
 
+    def time_logger(self):
+        self._timer_function(self._logger_timer)
+
+    def time_scatter(self):
+        self._timer_function(self._scatter_timer)
+
     # generic function able to time different parts of the program
     def _timer_function(self, timer: np.array):
+        logging_start_time = time.perf_counter()
         # actions at start: snapshot start time and register one call
         if timer[2]:
             timer[1] = time.perf_counter()
@@ -117,13 +111,42 @@ class Diagnostics:
         # toggle if start or end action should be taken next
         timer[2] = not timer[2]
 
+        # time the time the logger took -> logging the logger
+        self._logger_timer[3] += 1
+        self._logger_timer[0] += time.perf_counter() - logging_start_time
+
     # writes a string to a csv file for debugging, can be used to provide
     # more context
     def log_string(self, string):
         self.time_logger()
+
+        delta_t = time.perf_counter() - self._start_time
+        time_of_registration = round(10000 * delta_t) / 10000
+
         with open(self._file_path, "a", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([string])
+            writer.writerow([time_of_registration, string])
+        self.time_logger()
+
+    def log_full_np_array(self, array):
+        self.time_logger()
+
+        # get variable name
+        array_name = ""
+        frame = inspect.currentframe().f_back or inspect.currentframe()
+        for name, val in list(frame.f_locals.items()):
+            if val is array:
+                array_name = name
+                break
+
+        delta_t = time.perf_counter() - self._start_time
+        time_of_registration = round(10000 * delta_t) / 10000
+        row = [time_of_registration, array_name, array]
+
+        with open(self._file_path, "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(row)
+
         self.time_logger()
 
     # writes some basic properties of a variable to a csv file for debugging
@@ -194,6 +217,9 @@ class Diagnostics:
         )
         print(
             f"              logger: {self._logger_timer[0]:4.4f}, calls: {int(self._logger_timer[3])}"
+        )
+        print(
+            f"       scatter plots: {self._scatter_timer[0]:4.4f}, calls: {int(self._scatter_timer[3])}"
         )
         print("========================================")
 

@@ -4,10 +4,14 @@ import pandas as pd
 import sys
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from scipy.interpolate import griddata
 
 from utils.read_from_npz import get_values_from_npz
-from config import compared_files
-
+from utils.diagnostics import diagnostics
+from config import (
+    compared_files,
+    border,
+)
 
 # takes n csv files and calculates the MSE between all combinations of them
 def compare_MSE():
@@ -17,11 +21,28 @@ def compare_MSE():
     print(" " * (width + 3), end="")
     print(" | ".join(f"{file:<{width}}" for file in compared_files))
 
+    grid_points = np.linspace(-border, border, 21)
+
     for index_1, file_1 in enumerate(compared_files):
         for index_2, file_2 in enumerate(compared_files):
+            for frame, _ in enumerate(result_1.t):
 
-            result_1 = get_values_from_npz(file_1)
-            result_2 = get_values_from_npz(file_2)
+                result_1 = get_values_from_npz(file_1)
+                result_2 = get_values_from_npz(file_2)
+
+                points_1 = griddata(
+                    points=(result_1.x[frame, :], result_1.y[frame, :]),
+                    values=result_1.data_1[frame, :],
+                    xi=(grid_points, grid_points),
+                    method='cubic',
+                )
+
+                points_2 = griddata(
+                    points=(result_1.x[frame, :], result_1.y[frame, :]),
+                    values=result_1.data_1[frame, :],
+                    xi=(grid_points, grid_points),
+                    method='cubic',
+                )
 
             squared_error = (result_1.data_1 - result_2.data_1) ** 2
             mse = np.mean(squared_error)
@@ -33,9 +54,11 @@ def compare_MSE():
 
 
 def compare_scatter():
+    diagnostics.time_scatter()
+
     for index_1, file_1 in enumerate(compared_files):
         for index_2, file_2 in enumerate(compared_files):
-            if index_1 == index_2:
+            if index_1 >= index_2:
                 continue
             else:
                 result_1 = get_values_from_npz(file_1)
@@ -75,9 +98,9 @@ def compare_scatter():
                         s=2,
                     )
                     ax.scatter(
-                        result_1.x[frame],
-                        result_1.y[frame],
-                        result_1.data_1[frame],
+                        result_2.x[frame],
+                        result_2.y[frame],
+                        result_2.data_1[frame],
                         c="red",
                         label=file_2,
                         alpha=0.5,
@@ -92,3 +115,5 @@ def compare_scatter():
                 )
                 name = f"comparisons/{index_1}_{index_2}.mp4"
                 ani.save(name, writer="ffmpeg", fps=30)
+
+    diagnostics.time_scatter()

@@ -45,7 +45,9 @@ gravity = np.array([0, -0.81])
 # .csv shall not be written out
 compared_files = np.array(
     [
+        # "heat_equation/solutions/solution_3x3_r1_5",
         "heat_equation/solutions/solution_5x5_r1_5",
+        # "heat_equation_analytical/solutions/solution_3x3_r1_5",
         "heat_equation_analytical/solutions/solution_5x5_r1_5",
         # "heat_equation/solutions/solution_10x10_r1_5",
         # "heat_equation/solutions/solution_15x15_r1_5",

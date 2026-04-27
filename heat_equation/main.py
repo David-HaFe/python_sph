@@ -23,10 +23,6 @@ from utils.generate_border import generate_border
 
 
 def main():
-    # initialize grid
-    initial_condition = np.array([])
-    spacing = 0.1
-
     r_0 = []
     T_0 = []
     is_border_particle = []
@@ -39,15 +35,15 @@ def main():
     for _, y in enumerate(y_positions):
         for _, x in enumerate(x_positions):
             r_0.extend([x, y])
-            # T_0.extend([heat_equation_analytical.dynamics(t0, x, y)])
-            T_0.extend([5 * gauss(np.zeros(2), np.array([x, y]), 1.5 * border)])
+            T_0.extend([heat_equation_analytical.dynamics(t0, x, y)])
+            # T_0.extend([5 * gauss(np.zeros(2), np.array([x, y]), 1.5 * border)])
             is_border_particle.extend([False])
 
     base_temp = [0]
     # this also requires and returns a pressure for the navier stokes equations,
     # just pass through and ignore afterwards
     dummy_pressure = []
-    r_0, T_0, dummy_pressure, is_border_particle = generate_border(
+    r_0, T_0, _, is_border_particle = generate_border(
         r_0, T_0, dummy_pressure, base_temp, is_border_particle
     )
 

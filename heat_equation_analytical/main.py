@@ -30,9 +30,8 @@ def main():
                 heat_equation_analytical.dynamics(t, x, y)
             )
 
-    is_border_particle = np.full(no_particles, False)
-
     data_2_dummy = np.zeros((no_steps, no_particles))
+    is_border_particle = np.full(no_particles, False)
 
     result = sim_result(
         t=times,
