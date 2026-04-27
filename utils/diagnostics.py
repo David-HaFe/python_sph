@@ -142,17 +142,17 @@ class Diagnostics:
     def print_diagnostics(self):
         print("")
         if self._accepted_particles + self._rejected_particles == 0:
-            accepted_percentage = "nothing registered"
+            accepted_percentage = "none registered"
         else:
             accepted_percentage = self._accepted_particles / (
                 self._accepted_particles + self._rejected_particles
             )
             accepted_percentage = f"{accepted_percentage:.4f}"
 
-        print("========= summary ==========")
+        print("========= summary ======================")
         print(" accepted percentage: " + accepted_percentage)
         print("       nan instances: " + str(self._nan_instances))
-        print("========== timers ==========")
+        print("========= timers =======================")
         print(
             f"                 ode: {self._ode_timer[0]:4.4f}, calls: {int(self._ode_timer[3])}"
         )
@@ -186,7 +186,7 @@ class Diagnostics:
         print(
             f"              logger: {self._logger_timer[0]:4.4f}, calls: {int(self._logger_timer[3])}"
         )
-        print("============================")
+        print("========================================")
 
 
 # create diagnostics class instance to pass to other files

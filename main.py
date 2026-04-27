@@ -10,7 +10,7 @@ import navier_stokes_incompressible.main as navier_stokes_incompressible
 import navier_stokes_compressible.main as navier_stokes_compressible
 
 from utils.visualize_kernel import visualize_kernel
-from utils.compare import compare
+from utils.compare import compare_MSE, compare_scatter
 
 from utils.diagnostics import diagnostics
 from utils.plot_particles import plot_particles
@@ -54,7 +54,12 @@ parser.add_argument(
     help="if csv should be generated",
 )
 parser.add_argument(
-    "--compare",
+    "--compare_scatter",
+    action="store_true",
+    help="if true, display scatter plot of different files",
+)
+parser.add_argument(
+    "--compare_mse",
     action="store_true",
     help="if true, print MSE table to compare csvs specified in config file",
 )
@@ -74,9 +79,9 @@ if args.heat_equation:
         plot_temperature_map(t, x, y, T, file_prefix)
 
     if not args.no_csv:
-        export_to_csv(t, T, file_prefix)
+        export_to_csv(t, x, y, T, file_prefix)
 
-elif args.heat_equation_analytical:
+if args.heat_equation_analytical:
     t, x, y, T, is_border_particle = heat_equation_analytical.main()
 
     file_prefix = "heat_equation_analytical"
@@ -84,16 +89,16 @@ elif args.heat_equation_analytical:
         plot_temperature_map(t, x, y, T, file_prefix)
 
     if not args.no_csv:
-        export_to_csv(t, T, file_prefix)
+        export_to_csv(t, x, y, T, file_prefix)
 
-elif args.navier_stokes_incompressible:
+if args.navier_stokes_incompressible:
     t, x, y, is_border_particle = navier_stokes_incompressible.main()
 
     file_prefix = "navier_stokes_incompressible"
     if not args.no_plot:
         plot_particles(t, x, y, is_border_particle, file_prefix)
 
-elif args.navier_stokes_compressible:
+if args.navier_stokes_compressible:
     t, x, y, is_border_particle = navier_stokes_compressible.main()
 
     file_prefix = "navier_stokes_compressible"
@@ -104,8 +109,11 @@ elif args.navier_stokes_compressible:
 if args.visualize_kernel:
     visualize_kernel()
 
-if args.compare:
-    compare()
+if args.compare_scatter:
+    compare_scatter()
+
+if args.compare_mse:
+    compare_MSE()
 
 
 diagnostics.print_diagnostics()

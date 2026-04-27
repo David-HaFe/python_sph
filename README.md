@@ -17,7 +17,8 @@ and one of the following **mandatory** flags:
 
 | | name | description |
 | --- | --- | --- |
-| :white_check_mark: | `--compare` | calculates a table containing MSE between all runs specified by `config.py` |
+| :white_check_mark: | `--compare_mse` | calculates a table containing MSE between all runs specified by `config.py` |
+| :white_check_mark: | `--compare_scatter` | draws scatter plots of all possible combinations of the runs specified by `config.py` |
 | :construction: | `--visualize_kernel` | plots the kernel function specified in `config.py` |
 | :white_check_mark: | `--heat_equation` | simulating heat transfer using a PDE |
 | :white_check_mark: | `--heat_equation_analytical` | evaluating a known analytical solution of the heat equation at all simulation time steps |

@@ -16,6 +16,7 @@ from config import (
     t0,
     t1,
     no_steps,
+    border,
 )
 from utils.generate_border import generate_border
 
@@ -37,10 +38,8 @@ def main():
     for _, y in enumerate(y_positions):
         for _, x in enumerate(x_positions):
             r_0.extend([x, y])
-            T_0.extend([heat_equation_analytical.dynamics(t0, x, y)])
-            # T_0.extend([
-            #     5 * gauss(np.zeros(2), np.array([x, y]), 1.5 * border)
-            # ])
+            # T_0.extend([heat_equation_analytical.dynamics(t0, x, y)])
+            T_0.extend([5 * gauss(np.zeros(2), np.array([x, y]), 1.5 * border)])
             is_border_particle.extend([False])
 
     base_temp = [0]

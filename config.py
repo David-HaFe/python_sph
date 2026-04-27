@@ -9,7 +9,7 @@ border = 2
 x_positions, dx = np.linspace(-border, border, no_particles_x, retstep=True)
 y_positions, dy = np.linspace(-border, border, no_particles_y, retstep=True)
 
-border_thickness = 2
+border_thickness = 0
 no_particles = (no_particles_x + 2 * border_thickness) * (
     no_particles_y + 2 * border_thickness
 )
@@ -48,7 +48,11 @@ compared_files = np.array(
         "heat_equation_analytical/solutions/solution_5x5_r1_5",
         # "heat_equation/solutions/solution_10x10_r1_5",
         # "heat_equation/solutions/solution_15x15_r1_5",
-        # "heat_equation/solutions/solution_20x20_r1_5",
+        # "heat_equation_analytical/solutions/solution_10x10_r1_5",
+        # "heat_equation_analytical/solutions/solution_15x15_r1_5",
+        # "heat_equation/solutions/solution_10x10_r1_5",
+        # "heat_equation/solutions/solution_15x15_r1_5",
+        # "heat_equation/solutions/solution_20x20_r1_5
     ]
 )
 
