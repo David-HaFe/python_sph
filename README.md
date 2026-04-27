@@ -29,7 +29,7 @@ Additionally, you can also add
 | | name | description |
 | --- | --- | --- |
 | :white_check_mark: | `--no_plot` | do not generate plot |
-| :white_check_mark: | `--no_csv` | do not generate csv |
+| :white_check_mark: | `--no_npz` | do not generate npz file |
 
 An example of a valid command would be
 ```
@@ -58,11 +58,7 @@ Once this is done, you will need to install the packages
 
 which can be done via
 ```
-pip install numpy
-pip install matplotlib
-pip install scipy
-pip install pandas
-pip install playsound3
+pip install numpy matplotlib scipy pandas playsound3
 ```
 
 

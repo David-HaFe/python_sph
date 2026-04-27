@@ -3,6 +3,7 @@
 import argparse
 import sys
 from playsound3 import playsound
+import numpy as np
 
 import heat_equation.main as heat_equation
 import heat_equation_analytical.main as heat_equation_analytical
@@ -18,7 +19,12 @@ from utils.plot_temperature import (
     plot_temperature_map,
     plot_temperature_surface,
 )
-from utils.export_to_csv import export_to_csv
+from utils.export_to_npz import export_to_npz
+from config import (
+    sim_result,
+    no_particles,
+    no_steps,
+)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--run", nargs="+", help="which example to run")
@@ -49,9 +55,9 @@ parser.add_argument(
     help="if plot/animation should be drawn",
 )
 parser.add_argument(
-    "--no_csv",
+    "--no_npz",
     action="store_true",
-    help="if csv should be generated",
+    help="if npz should be generated",
 )
 parser.add_argument(
     "--compare_scatter",
@@ -61,7 +67,7 @@ parser.add_argument(
 parser.add_argument(
     "--compare_mse",
     action="store_true",
-    help="if true, print MSE table to compare csvs specified in config file",
+    help="if true, print MSE table to compare npzs specified in config file",
 )
 parser.add_argument(
     "--visualize_kernel",
@@ -72,24 +78,24 @@ parser.add_argument(
 args = parser.parse_args()
 
 if args.heat_equation:
-    t, x, y, T, is_border_particle = heat_equation.main()
+    sim_result = heat_equation.main()
 
     file_prefix = "heat_equation"
     if not args.no_plot:
-        plot_temperature_map(t, x, y, T, file_prefix)
+        plot_temperature_map(sim_result, file_prefix)
 
-    if not args.no_csv:
-        export_to_csv(t, x, y, T, file_prefix)
+    if not args.no_npz:
+        export_to_npz(sim_result, file_prefix)
 
 if args.heat_equation_analytical:
-    t, x, y, T, is_border_particle = heat_equation_analytical.main()
+    sim_result = heat_equation_analytical.main()
 
     file_prefix = "heat_equation_analytical"
     if not args.no_plot:
-        plot_temperature_map(t, x, y, T, file_prefix)
+        plot_temperature_map(sim_result, file_prefix)
 
-    if not args.no_csv:
-        export_to_csv(t, x, y, T, file_prefix)
+    if not args.no_npz:
+        export_to_npz(sim_result, file_prefix)
 
 if args.navier_stokes_incompressible:
     t, x, y, is_border_particle = navier_stokes_incompressible.main()

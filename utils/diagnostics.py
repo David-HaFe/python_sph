@@ -117,6 +117,15 @@ class Diagnostics:
         # toggle if start or end action should be taken next
         timer[2] = not timer[2]
 
+    # writes a string to a csv file for debugging, can be used to provide
+    # more context
+    def log_string(self, string):
+        self.time_logger()
+        with open(self._file_path, "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([string])
+        self.time_logger()
+
     # writes some basic properties of a variable to a csv file for debugging
     def log_np_array(self, array):
         self.time_logger()

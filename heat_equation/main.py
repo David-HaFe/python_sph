@@ -10,6 +10,7 @@ import heat_equation_analytical.dynamics as heat_equation_analytical
 from utils.diagnostics import diagnostics
 from kernels.gauss import gauss
 from config import (
+    sim_result,
     x_positions,
     y_positions,
     no_particles,
@@ -73,10 +74,19 @@ def main():
     )
     diagnostics.time_ode()
 
-    x = sol.y[0 : 2 * no_particles : 2, :]
-    y = sol.y[1 : 2 * no_particles : 2, :]
-    T = sol.y[2 * no_particles :, :]
-
     t = sol.t
+    x = sol.y[0 : 2 * no_particles : 2, :].T
+    y = sol.y[1 : 2 * no_particles : 2, :].T
+    T = sol.y[2 * no_particles :, :].T
+    data_2_dummy = np.zeros((no_steps, no_particles))
 
-    return t, x, y, T, is_border_particle
+    result = sim_result(
+        t=t,
+        x=x,
+        y=y,
+        data_1=T,
+        data_2=data_2_dummy,
+        is_border_particle=is_border_particle,
+    )
+
+    return result

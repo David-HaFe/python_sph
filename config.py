@@ -1,6 +1,7 @@
 # several constants etc. that should be used throughout the model
 
 import numpy as np
+from dataclasses import dataclass
 
 no_particles_x = 5
 no_particles_y = 5
@@ -59,6 +60,17 @@ compared_files = np.array(
 # for visualize kernel command
 # options: "gauss", "wendland", everything you decide to add (:
 kernel_choice = "gauss"
+
+
+@dataclass
+class sim_result:
+    t: np.array
+    x: np.ndarray
+    y: np.ndarray
+    data_1: np.ndarray
+    data_2: np.ndarray
+    is_border_particle: np.array
+
 
 # class Model_Parameters:
 #     def __init__(self):
