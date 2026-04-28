@@ -5,6 +5,7 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.interpolate import griddata
+import re
 
 from utils.read_from_npz import get_values_from_npz
 from utils.diagnostics import diagnostics
@@ -16,16 +17,28 @@ from config import (
 
 # takes n csv files and calculates the MSE between all combinations of them
 def compare_MSE():
-    width = max(len(file) for file in compared_files)
     errors = np.zeros((compared_files.size, compared_files.size))
+    plot_errors = []
+    plot_no_particles = []
+
+    # derive names for table from file names
+    file_names = []
+    for file in compared_files:
+        ana_or_num = re.search(r"analytical", file) is not None
+        prefix = ana_or_num and "ana" or "num"
+        numbers = re.findall(r'-?\d*\.?\d+', file)
+        dimensions = f"{numbers[0]}_{numbers[1]}"
+        file_names.extend([f"{prefix}_{dimensions}"])
+
+    width = max(len(file) for file in file_names)
 
     print(" " * (width + 3), end="")
-    print(" | ".join(f"{file:<{width}}" for file in compared_files))
+    print(" | ".join(f"{file_name:<{width}}" for file_name in file_names))
 
     grid_points = np.linspace(-border, border, 21)
 
     # point at which comparison is performed
-    frame = 299
+    frame = 99
 
     for index_1, file_1 in enumerate(compared_files):
         result_1 = get_values_from_npz(file_1)
@@ -47,11 +60,36 @@ def compare_MSE():
             mse = np.mean(squared_error)
             errors[index_1][index_2] = mse
 
+            # save errors for convergence plot
+            file_1_is_analytical = re.search(r"analytical", file_1) is not None
+            numbers = re.findall(r'-?\d*\.?\d+', file_1)
+            numbers = [int(number) for number in numbers]
+            file_1_no_particles = numbers[0]
+
+            file_2_is_analytical = re.search(r"analytical", file_2) is not None
+            numbers = re.findall(r'-?\d*\.?\d+', file_2)
+            numbers = [int(number) for number in numbers]
+            file_2_no_particles = numbers[0]
+
+            one_of_each = file_1_is_analytical and not file_2_is_analytical
+            same_no_of_particles = file_1_no_particles == file_2_no_particles
+            if one_of_each and same_no_of_particles:
+                plot_errors.extend([mse])
+                plot_no_particles.extend([file_1_no_particles])
+
+        # print one line of the error table
         print()
-        print(f"{file_1:<{width}} | ", end="")
+        print(f"{file_names[index_1]:<{width}} | ", end="")
         print(" | ".join(f"{error:<{width}.5f}" for error in errors[index_1]))
 
-        # save everything as plot
+    # convergence plot
+    plt.plot(plot_no_particles, plot_errors, "-o", label="error")
+
+    plt.legend()
+    plt.xlabel("number of particles")
+    plt.ylabel("error")
+    plt.title("errors with different number of particles")
+    plt.savefig("comparisons/error_graph.png")
 
 
 def compare_scatter():
