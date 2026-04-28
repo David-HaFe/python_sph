@@ -4,11 +4,9 @@ import numpy as np
 from dataclasses import dataclass
 
 ### grid ######################################################################
-# number of particles in the x dimension
-no_particles_x = 10
-
-# number of particles in the y direction
-no_particles_y = 10
+# number of particles in the x and y dimension
+no_particles_x = 15
+no_particles_y = 15
 
 # interval where the x and y dimension are contained
 # the result looks like this
@@ -60,7 +58,7 @@ kernel_scaling = 1.5
 
 # DO NOT TOUCH
 # actual kernel support length based on kernel scaling
-kernel_length = kernel_scaling * (spacing_x + spacing_y) / 2
+kernel_length = kernel_scaling * (dx + dy) / 2
 
 ### physical properties #######################################################
 # heat dissipation constant
@@ -90,18 +88,19 @@ compared_files = np.array(
         "heat_equation_analytical/solutions/solution_5x5_r1_5",
         "heat_equation_analytical/solutions/solution_10x10_r1_5",
         "heat_equation_analytical/solutions/solution_15x15_r1_5",
-        # "heat_equation_analytical/solutions/solution_20x20_r1_5",
+        "heat_equation_analytical/solutions/solution_20x20_r1_5",
         # "heat_equation/solutions/solution_3x3_r1_5",
         "heat_equation/solutions/solution_5x5_r1_5",
         "heat_equation/solutions/solution_10x10_r1_5",
         "heat_equation/solutions/solution_15x15_r1_5",
-        # "heat_equation/solutions/solution_20x20_r1_5
+        "heat_equation/solutions/solution_20x20_r1_5",
     ]
 )
 
 # for visualize kernel command
 # options: "gauss", "wendland", everything you decide to add (:
 kernel_choice = "gauss"
+
 
 ### sim result data class #####################################################
 @dataclass

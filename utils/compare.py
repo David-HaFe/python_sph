@@ -26,12 +26,13 @@ def compare_MSE():
     for file in compared_files:
         ana_or_num = re.search(r"analytical", file) is not None
         prefix = ana_or_num and "ana" or "num"
-        numbers = re.findall(r'-?\d*\.?\d+', file)
+        numbers = re.findall(r"-?\d*\.?\d+", file)
         dimensions = f"{numbers[0]}_{numbers[1]}"
         file_names.extend([f"{prefix}_{dimensions}"])
 
     width = max(len(file) for file in file_names)
 
+    print()
     print(" " * (width + 3), end="")
     print(" | ".join(f"{file_name:<{width}}" for file_name in file_names))
 
@@ -62,12 +63,12 @@ def compare_MSE():
 
             # save errors for convergence plot
             file_1_is_analytical = re.search(r"analytical", file_1) is not None
-            numbers = re.findall(r'-?\d*\.?\d+', file_1)
+            numbers = re.findall(r"-?\d*\.?\d+", file_1)
             numbers = [int(number) for number in numbers]
             file_1_no_particles = numbers[0]
 
             file_2_is_analytical = re.search(r"analytical", file_2) is not None
-            numbers = re.findall(r'-?\d*\.?\d+', file_2)
+            numbers = re.findall(r"-?\d*\.?\d+", file_2)
             numbers = [int(number) for number in numbers]
             file_2_no_particles = numbers[0]
 

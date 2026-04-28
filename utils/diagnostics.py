@@ -16,6 +16,7 @@ class Diagnostics:
         self._nan_instances = 0
         self._start_time = time.perf_counter()
         self._file_path = "utils/registry.csv"
+        self._currently_logging = True
 
         self._dynamics_timer = self._create_timer()
         self._poisson_timer = self._create_timer()
@@ -99,129 +100,134 @@ class Diagnostics:
 
     # generic function able to time different parts of the program
     def _timer_function(self, timer: np.array):
-        logging_start_time = time.perf_counter()
-        # actions at start: snapshot start time and register one call
-        if timer[2]:
-            timer[1] = time.perf_counter()
-            timer[3] += 1
-        # actions at end: snapshot end time and add to total
-        else:
-            timer[0] += time.perf_counter() - timer[1]
+        if self._currently_logging:
+            logging_start_time = time.perf_counter()
+            # actions at start: snapshot start time and register one call
+            if timer[2]:
+                timer[1] = time.perf_counter()
+                timer[3] += 1
+            # actions at end: snapshot end time and add to total
+            else:
+                timer[0] += time.perf_counter() - timer[1]
 
-        # toggle if start or end action should be taken next
-        timer[2] = not timer[2]
+            # toggle if start or end action should be taken next
+            timer[2] = not timer[2]
 
-        # time the time the logger took -> logging the logger
-        self._logger_timer[3] += 1
-        self._logger_timer[0] += time.perf_counter() - logging_start_time
+            # time the time the logger took -> logging the logger
+            self._logger_timer[3] += 1
+            self._logger_timer[0] += time.perf_counter() - logging_start_time
 
     # writes a string to a csv file for debugging, can be used to provide
     # more context
     def log_string(self, string):
-        self.time_logger()
+        if self._currently_logging:
+            self.time_logger()
 
-        delta_t = time.perf_counter() - self._start_time
-        time_of_registration = round(10000 * delta_t) / 10000
+            delta_t = time.perf_counter() - self._start_time
+            time_of_registration = round(10000 * delta_t) / 10000
 
-        with open(self._file_path, "a", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow([time_of_registration, string])
-        self.time_logger()
+            with open(self._file_path, "a", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow([time_of_registration, string])
+            self.time_logger()
 
     def log_full_np_array(self, array):
-        self.time_logger()
+        if self._currently_logging:
+            self.time_logger()
 
-        # get variable name
-        array_name = ""
-        frame = inspect.currentframe().f_back or inspect.currentframe()
-        for name, val in list(frame.f_locals.items()):
-            if val is array:
-                array_name = name
-                break
+            # get variable name
+            array_name = ""
+            frame = inspect.currentframe().f_back or inspect.currentframe()
+            for name, val in list(frame.f_locals.items()):
+                if val is array:
+                    array_name = name
+                    break
 
-        delta_t = time.perf_counter() - self._start_time
-        time_of_registration = round(10000 * delta_t) / 10000
-        row = [time_of_registration, array_name, array]
+            delta_t = time.perf_counter() - self._start_time
+            time_of_registration = round(10000 * delta_t) / 10000
+            row = [time_of_registration, array_name, array]
 
-        with open(self._file_path, "a", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(row)
+            with open(self._file_path, "a", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(row)
 
-        self.time_logger()
+            self.time_logger()
 
     # writes some basic properties of a variable to a csv file for debugging
     def log_np_array(self, array):
-        self.time_logger()
-        # get variable name
-        array_name = ""
-        frame = inspect.currentframe().f_back or inspect.currentframe()
-        for name, val in list(frame.f_locals.items()):
-            if val is array:
-                array_name = name
-                break
+        if self._currently_logging:
+            self.time_logger()
+            # get variable name
+            array_name = ""
+            frame = inspect.currentframe().f_back or inspect.currentframe()
+            for name, val in list(frame.f_locals.items()):
+                if val is array:
+                    array_name = name
+                    break
 
-        dimensions = array.shape
-        delta_t = time.perf_counter() - self._start_time
-        time_of_registration = round(10000 * delta_t) / 10000
-        row = [time_of_registration, array_name, dimensions]
+            dimensions = array.shape
+            delta_t = time.perf_counter() - self._start_time
+            time_of_registration = round(10000 * delta_t) / 10000
+            row = [time_of_registration, array_name, dimensions]
 
-        with open(self._file_path, "a", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(row)
+            with open(self._file_path, "a", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(row)
 
-        self.time_logger()
+            self.time_logger()
 
     def print_diagnostics(self):
-        print("")
-        if self._accepted_particles + self._rejected_particles == 0:
-            accepted_percentage = "none registered"
-        else:
-            accepted_percentage = self._accepted_particles / (
-                self._accepted_particles + self._rejected_particles
-            )
-            accepted_percentage = f"{accepted_percentage:.4f}"
+        if self._currently_logging:
+            print("")
+            if self._accepted_particles + self._rejected_particles == 0:
+                accepted_percentage = "none registered"
+            else:
+                accepted_percentage = self._accepted_particles / (
+                    self._accepted_particles + self._rejected_particles
+                )
+                accepted_percentage = f"{accepted_percentage:.4f}"
 
-        print("========= summary ======================")
-        print(" accepted percentage: " + accepted_percentage)
-        print("       nan instances: " + str(self._nan_instances))
-        print("========= timers =======================")
-        print(
-            f"                 ode: {self._ode_timer[0]:4.4f}, calls: {int(self._ode_timer[3])}"
-        )
-        print(
-            f"            dynamics: {self._dynamics_timer[0]:4.4f}, calls: {int(self._dynamics_timer[3])}"
-        )
-        print(
-            f"              kernel: {self._kernel_timer[0]:4.4f}, calls: {int(self._kernel_timer[3])}"
-        )
-        print(
-            f"     kernel gradient: {self._gradient_kernel_timer[0]:4.4f}, calls: {int(self._gradient_kernel_timer[3])}"
-        )
-        print(
-            f"norm kernel gradient: {self._norm_gradient_kernel_timer[0]:4.4f}, calls: {int(self._norm_gradient_kernel_timer[3])}"
-        )
-        print(
-            f"       least squares: {self._lsqr_timer[0]:4.4f}, calls: {int(self._lsqr_timer[3])}"
-        )
-        print(
-            f"               nabla: {self._nabla_timer[0]:4.4f}, calls: {int(self._nabla_timer[3])}"
-        )
-        print(
-            f"             laplace: {self._laplace_timer[0]:4.4f}, calls: {int(self._laplace_timer[3])}"
-        )
-        print(
-            f"        surface plot: {self._surface_plot_timer[0]:4.4f}, calls: {int(self._surface_plot_timer[3])}"
-        )
-        print(
-            f"       position plot: {self._position_plot_timer[0]:4.4f}, calls: {int(self._position_plot_timer[3])}"
-        )
-        print(
-            f"              logger: {self._logger_timer[0]:4.4f}, calls: {int(self._logger_timer[3])}"
-        )
-        print(
-            f"       scatter plots: {self._scatter_timer[0]:4.4f}, calls: {int(self._scatter_timer[3])}"
-        )
-        print("========================================")
+            print("========= summary ======================")
+            print(" accepted percentage: " + accepted_percentage)
+            print("       nan instances: " + str(self._nan_instances))
+            print("========= timers =======================")
+            print(
+                f"                 ode: {self._ode_timer[0]:4.4f}, calls: {int(self._ode_timer[3])}"
+            )
+            print(
+                f"            dynamics: {self._dynamics_timer[0]:4.4f}, calls: {int(self._dynamics_timer[3])}"
+            )
+            print(
+                f"              kernel: {self._kernel_timer[0]:4.4f}, calls: {int(self._kernel_timer[3])}"
+            )
+            print(
+                f"     kernel gradient: {self._gradient_kernel_timer[0]:4.4f}, calls: {int(self._gradient_kernel_timer[3])}"
+            )
+            print(
+                f"norm kernel gradient: {self._norm_gradient_kernel_timer[0]:4.4f}, calls: {int(self._norm_gradient_kernel_timer[3])}"
+            )
+            print(
+                f"       least squares: {self._lsqr_timer[0]:4.4f}, calls: {int(self._lsqr_timer[3])}"
+            )
+            print(
+                f"               nabla: {self._nabla_timer[0]:4.4f}, calls: {int(self._nabla_timer[3])}"
+            )
+            print(
+                f"             laplace: {self._laplace_timer[0]:4.4f}, calls: {int(self._laplace_timer[3])}"
+            )
+            print(
+                f"        surface plot: {self._surface_plot_timer[0]:4.4f}, calls: {int(self._surface_plot_timer[3])}"
+            )
+            print(
+                f"       position plot: {self._position_plot_timer[0]:4.4f}, calls: {int(self._position_plot_timer[3])}"
+            )
+            print(
+                f"              logger: {self._logger_timer[0]:4.4f}, calls: {int(self._logger_timer[3])}"
+            )
+            print(
+                f"       scatter plots: {self._scatter_timer[0]:4.4f}, calls: {int(self._scatter_timer[3])}"
+            )
+            print("========================================")
 
 
 # create diagnostics class instance to pass to other files

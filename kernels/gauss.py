@@ -1,4 +1,5 @@
 import numpy as np
+import scipy as sp
 
 from utils.diagnostics import diagnostics
 from config import kernel_length
@@ -51,7 +52,7 @@ def _solve_least_squares_gauss(
     b = np.array(b)
     W = np.diag(W)
 
-    coefficients = np.linalg.lstsq(-W @ D, b)[0]
+    coefficients = np.linalg.solve(-W @ D, b)[0]
 
     diagnostics.log_np_array(coefficients)
 
