@@ -3,8 +3,6 @@
 
 import numpy as np
 
-from config import(
+from config import (
     compared_files,
 )
-
-

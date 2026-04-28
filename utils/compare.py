@@ -13,6 +13,7 @@ from config import (
     border,
 )
 
+
 # takes n csv files and calculates the MSE between all combinations of them
 def compare_MSE():
     width = max(len(file) for file in compared_files)
@@ -23,34 +24,34 @@ def compare_MSE():
 
     grid_points = np.linspace(-border, border, 21)
 
+    # point at which comparison is performed
+    frame = 299
+
     for index_1, file_1 in enumerate(compared_files):
+        result_1 = get_values_from_npz(file_1)
+        points_1 = griddata(
+            points=(result_1.x[frame, :], result_1.y[frame, :]),
+            values=result_1.data_1[frame, :],
+            xi=(grid_points, grid_points),
+            method="cubic",
+        )
         for index_2, file_2 in enumerate(compared_files):
-            for frame, _ in enumerate(result_1.t):
-
-                result_1 = get_values_from_npz(file_1)
-                result_2 = get_values_from_npz(file_2)
-
-                points_1 = griddata(
-                    points=(result_1.x[frame, :], result_1.y[frame, :]),
-                    values=result_1.data_1[frame, :],
-                    xi=(grid_points, grid_points),
-                    method='cubic',
-                )
-
-                points_2 = griddata(
-                    points=(result_1.x[frame, :], result_1.y[frame, :]),
-                    values=result_1.data_1[frame, :],
-                    xi=(grid_points, grid_points),
-                    method='cubic',
-                )
-
-            squared_error = (result_1.data_1 - result_2.data_1) ** 2
+            result_2 = get_values_from_npz(file_2)
+            points_2 = griddata(
+                points=(result_2.x[frame, :], result_2.y[frame, :]),
+                values=result_2.data_1[frame, :],
+                xi=(grid_points, grid_points),
+                method="cubic",
+            )
+            squared_error = (points_1 - points_2) ** 2
             mse = np.mean(squared_error)
             errors[index_1][index_2] = mse
 
         print()
         print(f"{file_1:<{width}} | ", end="")
         print(" | ".join(f"{error:<{width}.5f}" for error in errors[index_1]))
+
+        # save everything as plot
 
 
 def compare_scatter():

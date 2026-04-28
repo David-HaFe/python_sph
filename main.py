@@ -27,7 +27,6 @@ from config import (
 )
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--run", nargs="+", help="which example to run")
 
 parser.add_argument(
     "--heat_equation",

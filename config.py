@@ -3,8 +3,8 @@
 import numpy as np
 from dataclasses import dataclass
 
-no_particles_x = 5
-no_particles_y = 5
+no_particles_x = 10
+no_particles_y = 10
 border = 2
 # positions without border
 x_positions, dx = np.linspace(-border, border, no_particles_x, retstep=True)
@@ -45,16 +45,15 @@ gravity = np.array([0, -0.81])
 # .csv shall not be written out
 compared_files = np.array(
     [
-        # "heat_equation/solutions/solution_3x3_r1_5",
-        "heat_equation/solutions/solution_5x5_r1_5",
         # "heat_equation_analytical/solutions/solution_3x3_r1_5",
         "heat_equation_analytical/solutions/solution_5x5_r1_5",
-        # "heat_equation/solutions/solution_10x10_r1_5",
-        # "heat_equation/solutions/solution_15x15_r1_5",
-        # "heat_equation_analytical/solutions/solution_10x10_r1_5",
-        # "heat_equation_analytical/solutions/solution_15x15_r1_5",
-        # "heat_equation/solutions/solution_10x10_r1_5",
-        # "heat_equation/solutions/solution_15x15_r1_5",
+        "heat_equation_analytical/solutions/solution_10x10_r1_5",
+        "heat_equation_analytical/solutions/solution_15x15_r1_5",
+        # "heat_equation_analytical/solutions/solution_20x20_r1_5",
+        # "heat_equation/solutions/solution_3x3_r1_5",
+        # "heat_equation/solutions/solution_5x5_r1_5",
+        "heat_equation/solutions/solution_10x10_r1_5",
+        "heat_equation/solutions/solution_15x15_r1_5",
         # "heat_equation/solutions/solution_20x20_r1_5
     ]
 )
