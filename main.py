@@ -4,6 +4,7 @@ import argparse
 import sys
 from playsound3 import playsound
 import numpy as np
+from concurrent.futures import ProcessPoolExecutor
 
 import heat_equation.main as heat_equation
 import heat_equation_analytical.main as heat_equation_analytical
@@ -24,6 +25,7 @@ from config import (
     sim_result,
     no_particles,
     no_steps,
+    recompute,
 )
 
 parser = argparse.ArgumentParser()
@@ -74,6 +76,10 @@ parser.add_argument(
     help="if true, visualize the kernel specified in the config file",
 )
 
+# parser.add_argument(
+#     "--particles",
+#     action
+
 args = parser.parse_args()
 
 if args.heat_equation:
@@ -82,6 +88,7 @@ if args.heat_equation:
     file_prefix = "heat_equation"
     if not args.no_plot:
         plot_temperature_map(sim_result, file_prefix)
+        plot_temperature_surface(sim_result, file_prefix)
 
     if not args.no_npz:
         export_to_npz(sim_result, file_prefix)
@@ -92,6 +99,7 @@ if args.heat_equation_analytical:
     file_prefix = "heat_equation_analytical"
     if not args.no_plot:
         plot_temperature_map(sim_result, file_prefix)
+        plot_temperature_surface(sim_result, file_prefix)
 
     if not args.no_npz:
         export_to_npz(sim_result, file_prefix)

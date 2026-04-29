@@ -101,7 +101,6 @@ class Diagnostics:
     # generic function able to time different parts of the program
     def _timer_function(self, timer: np.array):
         if self._currently_logging:
-            logging_start_time = time.perf_counter()
             # actions at start: snapshot start time and register one call
             if timer[2]:
                 timer[1] = time.perf_counter()
@@ -112,10 +111,6 @@ class Diagnostics:
 
             # toggle if start or end action should be taken next
             timer[2] = not timer[2]
-
-            # time the time the logger took -> logging the logger
-            self._logger_timer[3] += 1
-            self._logger_timer[0] += time.perf_counter() - logging_start_time
 
     # writes a string to a csv file for debugging, can be used to provide
     # more context

@@ -3,6 +3,8 @@
 
 import numpy as np
 from scipy.integrate import solve_ivp
+from math import sin, cos, pi
+from random import uniform, seed
 
 import heat_equation.dynamics as heat_equation
 import heat_equation_analytical.dynamics as heat_equation_analytical
@@ -21,21 +23,26 @@ from config import (
 )
 from utils.generate_border import generate_border
 
+seed(37)
+
+
+def noise(magnitude):
+    return uniform(-magnitude, magnitude)
+
 
 def main():
     r_0 = []
     T_0 = []
     is_border_particle = []
 
-    # with open("initial_condition/initial_condition.csv") as file:
-    #     reader = csv.reader(file)
-    #     initial_temps = list(reader)
-
     # fill initial condition
     for _, y in enumerate(y_positions):
         for _, x in enumerate(x_positions):
             r_0.extend([x, y])
-            T_0.extend([heat_equation_analytical.dynamics(t0, x, y)])
+            # T_0.extend([0.1 * cos(8 * pi * x) + noise(0.05)])
+            T_0.extend([noise(0.1)])
+            # T_0.extend([0.3 * sin(14 * x) + 0.3 * cos(14 * y) + noise(0.03)])
+            # T_0.extend([heat_equation_analytical.dynamics(t0, x, y)])
             # T_0.extend([5 * gauss(np.zeros(2), np.array([x, y]), 1.5 * border)])
             is_border_particle.extend([False])
 

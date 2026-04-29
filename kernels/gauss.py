@@ -2,11 +2,12 @@ import numpy as np
 import scipy as sp
 
 from utils.diagnostics import diagnostics
-from config import kernel_length
+from config import kernel_length, no_particles
 
 alpha = 6.25  # don't change this, otherwise kernel looks not very good
 # compute this once for speed
-default_kernel_coefficient = -alpha/(kernel_length**2)
+default_kernel_coefficient = -alpha / (kernel_length**2)
+
 
 # gauss kernel for given point and reference point
 def gauss(r_i: np.array, r_j: np.array, h=kernel_length):
@@ -37,28 +38,45 @@ def _solve_least_squares_gauss(
 ):
     # diagnostics.time_least_squares()
 
-    D = []
-    W = []
-    b = []
+    D = np.zeros((no_particles, 5))
+    W = np.zeros(no_particles)
+    b = np.zeros(no_particles)
+    count = 0
+
     for j, (r_j, function_j) in enumerate(zip(r, function)):
         kernel = gauss(r_i, r_j)
         if kernel > 0:
-            D.append(
-                [
-                    r_j[0] - r_i[0],
-                    r_j[1] - r_i[1],
-                    (r_j[0] - r_i[0]) * (r_j[0] - r_i[0]) * 0.5,
-                    (r_j[0] - r_i[0]) * (r_j[1] - r_i[1]),
-                    (r_j[1] - r_i[1]) * (r_j[1] - r_i[1]) * 0.5,
-                ]
-            )
-            b.extend([function_i - function_j])
-            W.extend([np.sqrt(kernel)])
+            dr = r_j - r_i
+            D[count] = [dr[0], dr[1], 0.5 * dr[0] ** 2, dr[0] * dr[1], 0.5 * dr[1] ** 2]
+            W[count] = np.sqrt(kernel)
+            b[count] = function_i - function_j
+            count += 1
 
-    D = np.array(D)
-    b = np.array(b)
-    W = np.array(W)
-    # W = np.diag(W)
+    D = D[:count]
+    W = W[:count]
+    b = b[:count]
+    # D = []
+    # W = []
+    # b = []
+    # for j, (r_j, function_j) in enumerate(zip(r, function)):
+    #     kernel = gauss(r_i, r_j)
+    #     if kernel > 0:
+    #         D.append(
+    #             [
+    #                 r_j[0] - r_i[0],
+    #                 r_j[1] - r_i[1],
+    #                 (r_j[0] - r_i[0]) * (r_j[0] - r_i[0]) * 0.5,
+    #                 (r_j[0] - r_i[0]) * (r_j[1] - r_i[1]),
+    #                 (r_j[1] - r_i[1]) * (r_j[1] - r_i[1]) * 0.5,
+    #             ]
+    #         )
+    #         b.extend([function_i - function_j])
+    #         W.extend([np.sqrt(kernel)])
+    #
+    # D = np.array(D)
+    # b = np.array(b)
+    # W = np.array(W)
+    # # W = np.diag(W)
 
     coefficients = np.linalg.lstsq(-W[:, None] * D, b)[0]
     # coefficients = np.linalg.lstsq(-W @ D, b)[0]

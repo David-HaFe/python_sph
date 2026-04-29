@@ -5,8 +5,8 @@ from dataclasses import dataclass
 
 ### grid ######################################################################
 # number of particles in the x and y dimension
-no_particles_x = 15
-no_particles_y = 15
+no_particles_x = 40
+no_particles_y = no_particles_x
 
 # interval where the x and y dimension are contained
 # the result looks like this
@@ -19,14 +19,14 @@ no_particles_y = 15
 #      -border
 border = 2
 
+# number of layers that the border has, spaced with same spacing as
+# inside particles
+border_thickness = 0
+
 # DO NOT TOUCH
 # positions without border, spacing between particles
 x_positions, dx = np.linspace(-border, border, no_particles_x, retstep=True)
 y_positions, dy = np.linspace(-border, border, no_particles_y, retstep=True)
-
-# number of layers that the border has, spaced with same spacing as
-# inside particles
-border_thickness = 0
 
 # DO NOT TOUCH
 # number of total particles
@@ -36,16 +36,17 @@ no_particles = (no_particles_x + 2 * border_thickness) * (
 
 ### time scale and solver #####################################################
 # start time
-t0 = 1.0
+t0 = 0.0
 
 # end time
-t1 = 31.0
+t1 = 5.0
 
 # number of steps
-no_steps = 300
+steps_per_sec = 15
 
 # DO NOT TOUCH
-# number of time steps
+# number of time steps and step size
+no_steps = int(steps_per_sec * (t1 - t0))
 dt = (t1 - t0) / no_steps
 
 # # calculate how far apart particles are
@@ -85,27 +86,46 @@ gravity = np.array([0, -0.81])
 compared_files = np.array(
     [
         # "heat_equation_analytical/solutions/solution_3x3_r1_5",
-        "heat_equation_analytical/solutions/solution_5x5_r1_5",
-        "heat_equation_analytical/solutions/solution_10x10_r1_5",
-        "heat_equation_analytical/solutions/solution_15x15_r1_5",
-        "heat_equation_analytical/solutions/solution_20x20_r1_5",
-        # "heat_equation/solutions/solution_3x3_r1_5",
+        # "heat_equation_analytical/solutions/solution_5x5_r1_5",
+        # "heat_equation_analytical/solutions/solution_10x10_r1_5",
+        # "heat_equation_analytical/solutions/solution_15x15_r1_5",
+        # "heat_equation_analytical/solutions/solution_20x20_r1_5",
+        # # "heat_equation/solutions/solution_3x3_r1_5",
         "heat_equation/solutions/solution_5x5_r1_5",
         "heat_equation/solutions/solution_10x10_r1_5",
-        "heat_equation/solutions/solution_15x15_r1_5",
+        # "heat_equation/solutions/solution_15x15_r1_5",
         "heat_equation/solutions/solution_20x20_r1_5",
+        # "heat_equation/solutions/solution_40x40_r1_5",
     ]
 )
 # points at which the solution should be compared (in steps)
-snapshots = np.array([
-    10,
-    100,
-    299,
-])
+snapshots = np.array(
+    [
+        10,
+        100,
+        299,
+    ]
+)
+
 
 # for visualize kernel command
 # options: "gauss", "wendland", everything you decide to add (:
 kernel_choice = "gauss"
+
+
+# DO NOT TOUCH - recomputes values after no_particles has been changed
+def recompute():
+    # positions without border, spacing between particles
+    x_positions, dx = np.linspace(-border, border, no_particles_x, retstep=True)
+    y_positions, dy = np.linspace(-border, border, no_particles_y, retstep=True)
+
+    # number of total particles
+    no_particles = (no_particles_x + 2 * border_thickness) * (
+        no_particles_y + 2 * border_thickness
+    )
+
+    # actual kernel support length based on kernel scaling
+    kernel_length = kernel_scaling * (dx + dy) / 2
 
 
 ### sim result data class #####################################################
