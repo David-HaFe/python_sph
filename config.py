@@ -10,7 +10,7 @@ no_particles_y = 15
 
 # interval where the x and y dimension are contained
 # the result looks like this
-#                  +border
+#                +border
 #         x    A    x +border
 #              |
 #         -----+---->
@@ -96,6 +96,12 @@ compared_files = np.array(
         "heat_equation/solutions/solution_20x20_r1_5",
     ]
 )
+# points at which the solution should be compared (in steps)
+snapshots = np.array([
+    10,
+    100,
+    299,
+])
 
 # for visualize kernel command
 # options: "gauss", "wendland", everything you decide to add (:
