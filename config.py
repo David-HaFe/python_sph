@@ -37,12 +37,12 @@ def set_border(x, y):
         result = 1.0
 
     # border on the right, put sine there
-    elif (x > border):
-        result = sin(pi/(4*border) * y + pi/4)
+    elif x > border:
+        result = sin(pi / (4 * border) * y + pi / 4)
 
     # border at the top, put another sine there
-    elif (y > border):
-        result = sin(pi/(4*border) * x + pi/4)
+    elif y > border:
+        result = sin(pi / (4 * border) * x + pi / 4)
 
     # this should never occur
     else:
@@ -50,6 +50,7 @@ def set_border(x, y):
 
     diagnostics.log_string(f"at {x},{y}: {result}")
     return result
+
 
 # DO NOT TOUCH
 # positions without border, spacing between particles

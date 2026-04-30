@@ -12,6 +12,7 @@ from config import (
 
 from utils.diagnostics import diagnostics
 
+
 # takes the limits and wraps a border of a given strength around everything
 def generate_border(
     r_0,
@@ -30,7 +31,7 @@ def generate_border(
     for _, x in enumerate(x_positions):
         for _, y in enumerate(y_positions):
             r_0.extend([x, -border - y])
-            attribute.extend([set_border(x, - border - y)])
+            attribute.extend([set_border(x, -border - y)])
             p_0.extend([1])
             is_border_particle.extend([True])
 
@@ -50,7 +51,7 @@ def generate_border(
     for _, y in enumerate(y_positions):
         for _, x in enumerate(x_positions):
             r_0.extend([-border - x, y])
-            attribute.extend([set_border(- border - x, y)])
+            attribute.extend([set_border(-border - x, y)])
             p_0.extend([1])
             is_border_particle.extend([True])
 
@@ -60,4 +61,3 @@ def generate_border(
             is_border_particle.extend([True])
 
     return r_0, attribute, p_0, is_border_particle
-

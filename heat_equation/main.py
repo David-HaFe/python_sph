@@ -10,6 +10,7 @@ from tqdm import tqdm
 import heat_equation.dynamics as heat_equation
 import heat_equation_analytical.dynamics as heat_equation_analytical
 
+from solvers.ruku_4 import ruku_4
 from utils.diagnostics import diagnostics
 from kernels.gauss import gauss
 from config import (
@@ -19,6 +20,7 @@ from config import (
     no_particles,
     t0,
     t1,
+    dt,
     no_steps,
     border,
 )
@@ -69,22 +71,35 @@ def main():
     pbar = 0
     # with tqdm(total=t_span[1], unit="t") as pbar:
     diagnostics.time_ode()
-    sol = solve_ivp(
-        fun=lambda t, y: heat_equation.dynamics(
+    sol = ruku_4(
+        function=lambda t, y: heat_equation.dynamics(
             t,
             y,
             is_border_particle,
+            t_span,
             pbar,
-            t_eval,
         ),
-        t_span=t_span,
-        y0=y_0,
-        method="RK23",
-        rtol=1e-3,
-        atol=1e-3,
-        t_eval=t_eval,
+        initial_condition=y_0,
+        t_start=t0,
+        t_end=t1,
+        dt=dt,
     )
-    diagnostics.time_ode()
+    # sol = solve_ivp(
+    #     fun=lambda t, y: heat_equation.dynamics(
+    #         t,
+    #         y,
+    #         is_border_particle,
+    #         pbar,
+    #         t_eval,
+    #     ),
+    #     t_span=t_span,
+    #     y0=y_0,
+    #     method="RK23",
+    #     rtol=1e-3,
+    #     atol=1e-3,
+    #     t_eval=t_eval,
+    # )
+    # diagnostics.time_ode()
 
     t = sol.t
     x = sol.y[0 : 2 * no_particles : 2, :].T
