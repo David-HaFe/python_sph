@@ -2,10 +2,12 @@
 
 import numpy as np
 from dataclasses import dataclass
+from math import pi, sin
+from utils.diagnostics import diagnostics
 
 ### grid ######################################################################
 # number of particles in the x and y dimension
-no_particles_x = 40
+no_particles_x = 10
 no_particles_y = no_particles_x
 
 # interval where the x and y dimension are contained
@@ -21,7 +23,33 @@ border = 2
 
 # number of layers that the border has, spaced with same spacing as
 # inside particles
-border_thickness = 0
+border_thickness = 1
+
+
+# can be used to throw an arbitrary border condition onto the border
+def set_border(x, y):
+    # bottom or left border, set to 0
+    if (x <= -border) or (y <= -border):
+        result = 0.0
+
+    # edge at then end, set to 1
+    elif (x > border) and (y > border):
+        result = 1.0
+
+    # border on the right, put sine there
+    elif (x > border):
+        result = sin(pi/(4*border) * y + pi/4)
+
+    # border at the top, put another sine there
+    elif (y > border):
+        result = sin(pi/(4*border) * x + pi/4)
+
+    # this should never occur
+    else:
+        result = -100
+
+    diagnostics.log_string(f"at {x},{y}: {result}")
+    return result
 
 # DO NOT TOUCH
 # positions without border, spacing between particles
@@ -39,7 +67,7 @@ no_particles = (no_particles_x + 2 * border_thickness) * (
 t0 = 0.0
 
 # end time
-t1 = 5.0
+t1 = 20.0
 
 # number of steps
 steps_per_sec = 15
@@ -91,19 +119,38 @@ compared_files = np.array(
         # "heat_equation_analytical/solutions/solution_15x15_r1_5",
         # "heat_equation_analytical/solutions/solution_20x20_r1_5",
         # # "heat_equation/solutions/solution_3x3_r1_5",
-        "heat_equation/solutions/solution_5x5_r1_5",
-        "heat_equation/solutions/solution_10x10_r1_5",
+        # "heat_equation/solutions/solution_5x5_r1_5",
+        # "heat_equation/solutions/solution_10x10_r1_5",
         # "heat_equation/solutions/solution_15x15_r1_5",
-        "heat_equation/solutions/solution_20x20_r1_5",
+        # "heat_equation/solutions/solution_20x20_r1_5",
         # "heat_equation/solutions/solution_40x40_r1_5",
+        "heat_equation/solutions/solution_2x2_r1_5",
+        "heat_equation_analytical/solutions/solution_2x2_r1_5",
+        "heat_equation/solutions/solution_4x4_r1_5",
+        "heat_equation_analytical/solutions/solution_4x4_r1_5",
+        "heat_equation/solutions/solution_8x8_r1_5",
+        "heat_equation_analytical/solutions/solution_8x8_r1_5",
+        "heat_equation/solutions/solution_16x16_r1_5",
+        "heat_equation_analytical/solutions/solution_16x16_r1_5",
+        "heat_equation/solutions/solution_32x32_r1_5",
+        "heat_equation_analytical/solutions/solution_32x32_r1_5",
+        # "heat_equation/solutions/solution_3x3_r1_5",
+        # "heat_equation_analytical/solutions/solution_3x3_r1_5",
+        # "heat_equation/solutions/solution_5x5_r1_5",
+        # "heat_equation_analytical/solutions/solution_5x5_r1_5",
+        # "heat_equation/solutions/solution_9x9_r1_5",
+        # "heat_equation_analytical/solutions/solution_9x9_r1_5",
+        # "heat_equation/solutions/solution_17x17_r1_5",
+        # "heat_equation_analytical/solutions/solution_17x17_r1_5",
     ]
 )
+
 # points at which the solution should be compared (in steps)
 snapshots = np.array(
     [
         10,
-        100,
-        299,
+        40,
+        74,
     ]
 )
 

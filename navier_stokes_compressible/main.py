@@ -37,13 +37,8 @@ def main():
             # add wall particle flag
             is_border_particle.extend([False])
 
-    border_velocity = [0, 0]
-    r_0, v_0, rho_0, is_border_particle = generate_border(
-        r_0,
-        v_0,
-        rho_0,
-        border_velocity,
-        is_border_particle,
+    r_0, rho_0, p_0, is_border_particle = generate_border(
+        r_0, rho_0, p_0, is_border_particle,
     )
 
     r_0 = np.array(r_0, dtype=float)

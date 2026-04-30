@@ -19,8 +19,6 @@ from config import (
 # takes n csv files and calculates the MSE between all combinations of them
 def compare_MSE():
     errors = np.zeros((compared_files.size, compared_files.size))
-    plot_errors = []
-    plot_no_particles = []
 
     # derive names for table from file names
     file_names = []
@@ -33,13 +31,18 @@ def compare_MSE():
 
     width = max(len(file) for file in file_names)
 
-    print()
-    print(" " * (width + 3), end="")
-    print(" | ".join(f"{file_name:<{width}}" for file_name in file_names))
-
     grid_points = np.linspace(-border, border, 21)
 
     for frame in snapshots:
+        print()
+        print(f"run for step {frame}")
+        print(" " * (width + 3), end="")
+        print(" | ".join(f"{file_name:<{width}}" for file_name in file_names))
+
+        plot_errors = []
+        plot_no_particles = []
+        mse = []
+
         for index_1, file_1 in enumerate(compared_files):
             result_1 = get_values_from_npz(file_1)
             points_1 = griddata(
@@ -83,11 +86,12 @@ def compare_MSE():
             print(" | ".join(f"{error:<{width}.5f}" for error in errors[index_1]))
 
         # convergence plot
-        plt.plot(plot_no_particles, plot_errors, "-x")
+        plt.clf()
+        plt.plot(np.log2(plot_no_particles), np.log2(plot_errors), "-x")
 
         plt.legend()
-        plt.xlabel("number of particles")
-        plt.ylabel("error")
+        plt.xlabel("log2 number of particles")
+        plt.ylabel("log2 error")
         plt.title(f"errors at step {frame}")
         plt.savefig(f"comparisons/error_graph_{frame}.png")
 

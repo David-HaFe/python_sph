@@ -5,6 +5,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from math import sin, cos, pi
 from random import uniform, seed
+from tqdm import tqdm
 
 import heat_equation.dynamics as heat_equation
 import heat_equation_analytical.dynamics as heat_equation_analytical
@@ -40,9 +41,9 @@ def main():
         for _, x in enumerate(x_positions):
             r_0.extend([x, y])
             # T_0.extend([0.1 * cos(8 * pi * x) + noise(0.05)])
-            T_0.extend([noise(0.1)])
+            # T_0.extend([noise(0.1)])
             # T_0.extend([0.3 * sin(14 * x) + 0.3 * cos(14 * y) + noise(0.03)])
-            # T_0.extend([heat_equation_analytical.dynamics(t0, x, y)])
+            T_0.extend([heat_equation_analytical.dynamics(t0, x, y) + noise(0.01)])
             # T_0.extend([5 * gauss(np.zeros(2), np.array([x, y]), 1.5 * border)])
             is_border_particle.extend([False])
 
@@ -51,7 +52,7 @@ def main():
     # just pass through and ignore afterwards
     dummy_pressure = []
     r_0, T_0, _, is_border_particle = generate_border(
-        r_0, T_0, dummy_pressure, base_temp, is_border_particle
+        r_0, T_0, dummy_pressure, is_border_particle
     )
 
     r_0 = np.array(r_0, dtype=float)
@@ -65,9 +66,17 @@ def main():
     t_eval = np.linspace(t0, t1, num=no_steps)
 
     # solve
+    pbar = 0
+    # with tqdm(total=t_span[1], unit="t") as pbar:
     diagnostics.time_ode()
     sol = solve_ivp(
-        fun=lambda t, y: heat_equation.dynamics(t, y, is_border_particle),
+        fun=lambda t, y: heat_equation.dynamics(
+            t,
+            y,
+            is_border_particle,
+            pbar,
+            t_eval,
+        ),
         t_span=t_span,
         y0=y_0,
         method="RK23",

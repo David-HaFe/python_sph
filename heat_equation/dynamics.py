@@ -9,9 +9,10 @@ from kernels.gauss import gauss, nabla, laplace
 from config import no_particles, heat_alpha
 
 
-def dynamics(t, y, is_border_particle):
+def dynamics(t, y, is_border_particle, pbar, t_span):
     diagnostics.time_dynamics()
 
+    # pbar.update(t - pbar.n)
     y_dot = np.zeros(np.size(y))
     r_dot = np.zeros((no_particles, 2))
     T_dot = np.zeros((no_particles, 1))
