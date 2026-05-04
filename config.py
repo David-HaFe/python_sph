@@ -7,7 +7,7 @@ from utils.diagnostics import diagnostics
 
 ### grid ######################################################################
 # number of particles in the x and y dimension
-no_particles_x = 9
+no_particles_x = 10
 no_particles_y = no_particles_x
 
 # interval where the x and y dimension are contained
@@ -21,9 +21,37 @@ no_particles_y = no_particles_x
 #      -border
 border = 2
 
+# choose which boundary condition type to choose
+use_neumann = True
+use_dirichlet = False
+# use_dirichlet = not use_neumann
+# assert use_neumann != use_dirichlet
+
 # number of layers that the border has, spaced with same spacing as
 # inside particles
-border_thickness = 1
+if use_dirichlet:
+    border_thickness = 1
+else:
+    # DO NOT TOUCH
+    # border has to be 0 for neumann boundary condition
+    border_thickness = 0
+
+
+# neumann boundary definition
+def set_border_gradient(x, y):
+    # at x border
+    if abs(x) > abs(y):
+        normal_vector = np.array([np.sign(x), 0])
+
+    # at y border
+    elif abs(x) < abs(y):
+        normal_vector = np.array([0, np.sign(y)])
+
+    # at edge
+    else:
+        normal_vector = np.array([np.sign(x), np.sign(y)])
+
+    return normal_vector
 
 
 # can be used to throw an arbitrary border condition onto the border
@@ -95,7 +123,7 @@ kernel_length = kernel_scaling * (dx + dy) / 2
 
 ### physical properties #######################################################
 # heat dissipation constant
-heat_alpha = 0.05
+heat_alpha = 0.01
 
 # mass
 m = 1

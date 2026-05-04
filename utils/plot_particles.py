@@ -10,6 +10,7 @@ from config import (
     playback_speed,
 )
 
+
 # this file allows to plot the positions of particles over time
 def plot_particles(t, x, y, is_border_particle, file_prefix):
 

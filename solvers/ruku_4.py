@@ -31,7 +31,7 @@ def ruku_4(
         k[:, 4] = function(time + dt, y + dt * k[:, 3])
 
         # final answer
-        y = y + dt * ((k[:, 1] + k[:, 4]) / 6 + (k[:, 2] + k[:, 3]) / 3)
-        solution[:, index] = y
+        y += (dt / 6) * (k[:, 1] + 2 * k[:, 2] + 2 * k[:, 3] + k[:, 4])
+        solution[:, index + 1] = y
 
     return SimpleNamespace(t=times, y=solution)

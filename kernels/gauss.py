@@ -2,7 +2,12 @@ import numpy as np
 import scipy as sp
 
 from utils.diagnostics import diagnostics
-from config import kernel_length, no_particles
+from config import (
+    kernel_length,
+    no_particles,
+    use_neumann,
+    set_border_gradient,
+)
 
 alpha = 6.25  # don't change this, otherwise kernel looks not very good
 # compute this once for speed
@@ -52,9 +57,18 @@ def _solve_least_squares_gauss(
             b[count] = function_i - function_j
             count += 1
 
+    # append neumannn boundary condition
+    if use_neumann:
+        normal_vector = set_border_gradient(r_i[0], r_i[1])
+        D[count] = [normal_vector[0], normal_vector[1], 0, 0, 0]
+        W[count] = 1
+        b[count] = 0
+        count += 1
+
     D = D[:count]
     W = W[:count]
     b = b[:count]
+
     # D = []
     # W = []
     # b = []

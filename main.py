@@ -87,7 +87,7 @@ if args.heat_equation:
 
     file_prefix = "heat_equation"
     if not args.no_plot:
-        plot_temperature_map(sim_result, file_prefix)
+        # plot_temperature_map(sim_result, file_prefix)
         plot_temperature_surface(sim_result, file_prefix)
 
     if not args.no_npz:
@@ -98,7 +98,7 @@ if args.heat_equation_analytical:
 
     file_prefix = "heat_equation_analytical"
     if not args.no_plot:
-        plot_temperature_map(sim_result, file_prefix)
+        # plot_temperature_map(sim_result, file_prefix)
         plot_temperature_surface(sim_result, file_prefix)
 
     if not args.no_npz:
