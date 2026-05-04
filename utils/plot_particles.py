@@ -5,6 +5,10 @@ import matplotlib.animation as animation
 from utils.diagnostics import diagnostics
 from utils.file_naming import get_file_name
 
+from config import (
+    steps_per_sec,
+    playback_speed,
+)
 
 # this file allows to plot the positions of particles over time
 def plot_particles(t, x, y, is_border_particle, file_prefix):
@@ -27,5 +31,5 @@ def plot_particles(t, x, y, is_border_particle, file_prefix):
 
     name = get_file_name(file_prefix, "position_plot", "mp4")
 
-    ani.save(name, writer="ffmpeg", fps=30)
+    ani.save(name, writer="ffmpeg", fps=int(steps_per_sec * playback_speed))
     diagnostics.time_position_plot()

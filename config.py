@@ -7,7 +7,7 @@ from utils.diagnostics import diagnostics
 
 ### grid ######################################################################
 # number of particles in the x and y dimension
-no_particles_x = 10
+no_particles_x = 9
 no_particles_y = no_particles_x
 
 # interval where the x and y dimension are contained
@@ -72,6 +72,9 @@ t1 = 20.0
 
 # number of steps
 steps_per_sec = 15
+
+# playback speed of the animation
+playback_speed = 3
 
 # DO NOT TOUCH
 # number of time steps and step size

@@ -1,3 +1,5 @@
+
+
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
@@ -12,6 +14,7 @@ from config import (
     no_particles_y,
     kernel_scaling,
     steps_per_sec,
+    playback_speed,
 )
 
 
@@ -62,7 +65,7 @@ def plot_temperature_surface(sim_result, file_prefix):
 
     name = get_file_name(file_prefix, "heat_surface", "mp4")
 
-    ani.save(name, writer="ffmpeg", fps=steps_per_sec)
+    ani.save(name, writer="ffmpeg", fps=int(steps_per_sec * playback_speed))
     diagnostics.time_surface_plot()
 
 
@@ -109,5 +112,5 @@ def plot_temperature_map(sim_result, file_prefix):
 
     name = get_file_name(file_prefix, "heat_map", "mp4")
 
-    ani.save(name, writer="ffmpeg", fps=steps_per_sec)
+    ani.save(name, writer="ffmpeg", fps=int(steps_per_sec * playback_speed))
     diagnostics.time_surface_plot()
