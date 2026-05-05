@@ -22,9 +22,9 @@ no_particles_y = no_particles_x
 border = 2
 
 # choose which boundary condition type to choose
-use_neumann = True
-use_dirichlet = False
-# use_dirichlet = not use_neumann
+use_neumann = False
+use_dirichlet = True
+
 # assert use_neumann != use_dirichlet
 
 # number of layers that the border has, spaced with same spacing as

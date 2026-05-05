@@ -69,30 +69,10 @@ def _solve_least_squares_gauss(
     W = W[:count]
     b = b[:count]
 
-    # D = []
-    # W = []
-    # b = []
-    # for j, (r_j, function_j) in enumerate(zip(r, function)):
-    #     kernel = gauss(r_i, r_j)
-    #     if kernel > 0:
-    #         D.append(
-    #             [
-    #                 r_j[0] - r_i[0],
-    #                 r_j[1] - r_i[1],
-    #                 (r_j[0] - r_i[0]) * (r_j[0] - r_i[0]) * 0.5,
-    #                 (r_j[0] - r_i[0]) * (r_j[1] - r_i[1]),
-    #                 (r_j[1] - r_i[1]) * (r_j[1] - r_i[1]) * 0.5,
-    #             ]
-    #         )
-    #         b.extend([function_i - function_j])
-    #         W.extend([np.sqrt(kernel)])
-    #
-    # D = np.array(D)
-    # b = np.array(b)
-    # W = np.array(W)
-    # # W = np.diag(W)
+    D_transpose_W = D.T * W[None, :]
+    coefficients = np.linalg.solve(-D_transpose_W @ D, D_transpose_W @ b)
 
-    coefficients = np.linalg.lstsq(-W[:, None] * D, b)[0]
+    # coefficients = np.linalg.lstsq(-W[:, None] * D, b)[0]
     # coefficients = np.linalg.lstsq(-W @ D, b)[0]
 
     # diagnostics.time_least_squares()
