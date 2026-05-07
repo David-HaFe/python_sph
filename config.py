@@ -123,7 +123,7 @@ kernel_length = kernel_scaling * (dx + dy) / 2
 
 ### physical properties #######################################################
 # heat dissipation constant
-heat_alpha = 0.01
+heat_alpha = 0.05
 
 # mass
 m = 1

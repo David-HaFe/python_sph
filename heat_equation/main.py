@@ -34,7 +34,7 @@ def noise(magnitude):
     return uniform(-magnitude, magnitude)
 
 
-def main(use_manufacured_solution: bool):
+def main(use_manufactured_solution: bool):
     r_0 = []
     T_0 = []
     is_border_particle = []
@@ -46,14 +46,14 @@ def main(use_manufacured_solution: bool):
             # T_0.extend([0.1 * cos(8 * pi * x) + noise(0.05)])
             # T_0.extend([noise(0.1)])
             # T_0.extend([0.3 * sin(14 * x) + 0.3 * cos(14 * y) + noise(0.03)])
-            # T_0.extend(
-            #     [
-            #         4 * heat_equation_analytical.dynamics(t0, 0.5 * x + 2, 0.5 * y + 2)
-            #         + noise(0.01)
-            #     ]
-            # )
+            T_0.extend(
+                [
+                    4 * heat_equation_analytical.dynamics(t0, 0.5 * x + 2, 0.5 * y + 2)
+                    + noise(0.01)
+                ]
+            )
             # T_0.extend([5 * gauss(np.zeros(2), np.array([x, y]), 1.5 * border)])
-            T_0.extend([manufactured_solution.solution(x, y, 0)])
+            # T_0.extend([manufactured_solution.solution(x, y, 0)])
             is_border_particle.extend([False])
 
     base_temp = [0]
@@ -79,39 +79,18 @@ def main(use_manufacured_solution: bool):
     # with tqdm(total=t_span[1], unit="t") as pbar:
     diagnostics.time_ode()
 
-    if not use_manufacured_solution:
-        dynamics = lambda t, y: heat_equation.dynamics(
-            t, y, is_border_particle, t_span, pbar,
-        )
-    else:
-        dynamics = lambda t, y: heat_equation.dynamics(
-            t, y, is_border_particle, t_span, pbar,
-        ) + manufactured_solution.source_term_heat_equation(t, y)
-
-
     sol = ruku_4(
-        function=dynamics,
+        function=lambda t, y: heat_equation.dynamics(
+            t,
+            y,
+            is_border_particle,
+            use_manufactured_solution,
+        ),
         initial_condition=y_0,
         t_start=t0,
         t_end=t1,
         dt=dt,
     )
-    # sol = solve_ivp(
-    #     fun=lambda t, y: heat_equation.dynamics(
-    #         t,
-    #         y,
-    #         is_border_particle,
-    #         pbar,
-    #         t_eval,
-    #     ),
-    #     t_span=t_span,
-    #     y0=y_0,
-    #     method="RK23",
-    #     rtol=1e-3,
-    #     atol=1e-3,
-    #     t_eval=t_eval,
-    # )
-    # diagnostics.time_ode()
 
     t = sol.t
     x = sol.y[0 : 2 * no_particles : 2, :].T

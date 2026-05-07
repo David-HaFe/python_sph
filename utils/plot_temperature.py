@@ -20,18 +20,17 @@ def plot_temperature_surface(sim_result, file_prefix):
     diagnostics.time_surface_plot()
     fig = plt.figure()
     ax = fig.add_subplot(111, projection="3d")
-    grid_points = 50
 
     # xi, yi don't change, just calculate once and continue
     xi = np.linspace(
         sim_result.x[1, :].min(),
         sim_result.x[1, :].max(),
-        grid_points,
+        no_particles_x * 3,
     )
     yi = np.linspace(
         sim_result.y[1, :].min(),
         sim_result.y[1, :].max(),
-        grid_points,
+        no_particles_y * 3,
     )
     XI, YI = np.meshgrid(xi, yi)
     z_min = np.nanmin(sim_result.data_1)
@@ -71,17 +70,16 @@ def plot_temperature_map(sim_result, file_prefix):
     diagnostics.time_surface_plot()
 
     fig, ax = plt.subplots()
-    grid_points = 50
 
     xi = np.linspace(
         sim_result.x[1, :].min(),
         sim_result.x[1, :].max(),
-        grid_points,
+        no_particles_x * 3,
     )
     yi = np.linspace(
         sim_result.y[1, :].min(),
         sim_result.y[1, :].max(),
-        grid_points,
+        no_particles_y * 3,
     )
     XI, YI = np.meshgrid(xi, yi)
 

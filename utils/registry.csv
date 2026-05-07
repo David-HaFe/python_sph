@@ -1,10 +1,10 @@
-registered at: ,2026-05-07 11:23:22.722364
+registered at: ,2026-05-07 14:26:34.117208
 logged at,name,log content
-0.779,x_positions,"[-2.44444444 -2.         -1.55555556 -1.11111111 -0.66666667 -0.22222222
+0.4599,x_positions,"[-2.44444444 -2.         -1.55555556 -1.11111111 -0.66666667 -0.22222222
   0.22222222  0.66666667  1.11111111  1.55555556  2.          2.44444444]"
-0.7794,y_positions,[0.44444444]
-0.7796,x_positions,[0.44444444]
-0.7797,y_positions,"[-2.         -1.55555556 -1.11111111 -0.66666667 -0.22222222  0.22222222
+0.4603,y_positions,[0.44444444]
+0.4606,x_positions,[0.44444444]
+0.4607,y_positions,"[-2.         -1.55555556 -1.11111111 -0.66666667 -0.22222222  0.22222222
   0.66666667  1.11111111  1.55555556  2.        ]"
-228.5409,heat_equation/solutions/solution_10x10_r1_5.npz
-324.2652,heat_equation_manufactured/solutions/solution_10x10_r1_5.npz
+170.7538,heat_equation/solutions/solution_10x10_r1_5.npz
+217.0086,heat_equation_manufactured/solutions/solution_10x10_r1_5.npz

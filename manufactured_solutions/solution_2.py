@@ -14,9 +14,10 @@ from config import (
     no_particles,
     x_positions,
     y_positions,
+    heat_alpha,
 )
 
-a = 3
+scaling = 3
 def main():
     times = np.linspace(t0, t1, no_steps)
 
@@ -45,15 +46,9 @@ def main():
 
 
 def solution(x: float, y: float, t: float = 0):
-    return np.cos(a * np.sqrt(x**2 + y**2))
+    return np.cos(scaling * np.sqrt(x**2 + y**2))
 
 
-def source_term_heat_equation(t: float, y: float):
-    r = y[: 2 * no_particles]
-    r = r.reshape(-1, 2)
-    x = r[:, 0]
-    y = r[:, 1]
-
+def source_term_heat_equation(t: float, x: float, y: float):
     norm = np.linalg.norm([x, y])
-
-    return -a / norm * np.sin(a * norm) - a**2 * np.cos(a * norm)
+    return heat_alpha * (- scaling / norm * np.sin(scaling * norm) - scaling**2 * np.cos(scaling * norm))
