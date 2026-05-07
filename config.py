@@ -145,6 +145,8 @@ gravity = np.array([0, -0.81])
 # .npz shall not be written out
 compared_files = np.array(
     [
+        "heat_equation/solutions/solution_10x10_r1_5",
+        "heat_equation_manufactured/solutions/solution_10x10_r1_5",
         # "heat_equation_analytical/solutions/solution_3x3_r1_5",
         # "heat_equation_analytical/solutions/solution_5x5_r1_5",
         # "heat_equation_analytical/solutions/solution_10x10_r1_5",
@@ -156,16 +158,16 @@ compared_files = np.array(
         # "heat_equation/solutions/solution_15x15_r1_5",
         # "heat_equation/solutions/solution_20x20_r1_5",
         # "heat_equation/solutions/solution_40x40_r1_5",
-        "heat_equation/solutions/solution_2x2_r1_5",
-        "heat_equation_analytical/solutions/solution_2x2_r1_5",
-        "heat_equation/solutions/solution_4x4_r1_5",
-        "heat_equation_analytical/solutions/solution_4x4_r1_5",
-        "heat_equation/solutions/solution_8x8_r1_5",
-        "heat_equation_analytical/solutions/solution_8x8_r1_5",
-        "heat_equation/solutions/solution_16x16_r1_5",
-        "heat_equation_analytical/solutions/solution_16x16_r1_5",
-        "heat_equation/solutions/solution_32x32_r1_5",
-        "heat_equation_analytical/solutions/solution_32x32_r1_5",
+        # "heat_equation/solutions/solution_2x2_r1_5",
+        # "heat_equation_analytical/solutions/solution_2x2_r1_5",
+        # "heat_equation/solutions/solution_4x4_r1_5",
+        # "heat_equation_analytical/solutions/solution_4x4_r1_5",
+        # "heat_equation/solutions/solution_8x8_r1_5",
+        # "heat_equation_analytical/solutions/solution_8x8_r1_5",
+        # "heat_equation/solutions/solution_16x16_r1_5",
+        # "heat_equation_analytical/solutions/solution_16x16_r1_5",
+        # "heat_equation/solutions/solution_32x32_r1_5",
+        # "heat_equation_analytical/solutions/solution_32x32_r1_5",
         # "heat_equation/solutions/solution_3x3_r1_5",
         # "heat_equation_analytical/solutions/solution_3x3_r1_5",
         # "heat_equation/solutions/solution_5x5_r1_5",
@@ -183,6 +185,7 @@ snapshots = np.array(
         10,
         40,
         74,
+        299,
     ]
 )
 
