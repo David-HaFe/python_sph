@@ -1,13 +1,11 @@
-
-
 # code for the solution function
 #
-# T(t, x, y) = (x² + y²) cos(t)
+# T(t, x, y) = cos(a · √(x² + y²) )
 
 import numpy as np
 from itertools import product
 
-import manufactured_solutions.solution_1.dynamics.solution as manufactured_solution
+from config import heat_alpha
 from config import (
     sim_result,
     t0,
@@ -18,6 +16,7 @@ from config import (
     y_positions,
 )
 
+a = 3
 def main():
     times = np.linspace(t0, t1, no_steps)
 
@@ -29,9 +28,7 @@ def main():
         for particle_index, (x, y) in enumerate(product(x_positions, y_positions)):
             x_sol[t_index][particle_index] = float(x)
             y_sol[t_index][particle_index] = float(y)
-            T_sol[t_index][particle_index] = float(
-                manufactured_solution.solution(t, x, y)
-            )
+            T_sol[t_index][particle_index] = float(solution(x, y, t))
 
     data_2_dummy = np.zeros((no_steps, no_particles))
     is_border_particle = np.full(no_particles, False)
@@ -47,3 +44,16 @@ def main():
     return result
 
 
+def solution(x: float, y: float, t: float = 0):
+    return np.cos(a * np.sqrt(x**2 + y**2))
+
+
+def source_term_heat_equation(t: float, y: float):
+    r = y[: 2 * no_particles]
+    r = r.reshape(-1, 2)
+    x = r[:, 0]
+    y = r[:, 1]
+
+    norm = np.linalg.norm([x, y])
+
+    return -a / norm * np.sin(a * norm) - a**2 * np.cos(a * norm)

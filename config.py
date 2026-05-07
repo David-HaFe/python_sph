@@ -38,7 +38,7 @@ else:
 
 
 # neumann boundary definition
-def set_border_gradient(x, y):
+def set_neumann(x, y):
     # at x border
     if abs(x) > abs(y):
         normal_vector = np.array([np.sign(x), 0])
@@ -55,7 +55,7 @@ def set_border_gradient(x, y):
 
 
 # can be used to throw an arbitrary border condition onto the border
-def set_border(x, y):
+def set_dirichlet(x, y):
     # bottom or left border, set to 0
     if (x <= -border) or (y <= -border):
         result = 0.0

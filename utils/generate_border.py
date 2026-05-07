@@ -5,10 +5,12 @@ from config import (
     no_particles_y,
     border_thickness,
     border,
-    set_border,
+    # set_border,
     dx,
     dy,
 )
+
+from manufactured_solutions.solution_2 import solution as set_border
 
 from utils.diagnostics import diagnostics
 

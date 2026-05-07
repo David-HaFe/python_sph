@@ -10,6 +10,7 @@ import heat_equation.main as heat_equation
 import heat_equation_analytical.main as heat_equation_analytical
 import navier_stokes_incompressible.main as navier_stokes_incompressible
 import navier_stokes_compressible.main as navier_stokes_compressible
+import manufactured_solutions.solution_2 as manufactured_solution_2
 
 from utils.visualize_kernel import visualize_kernel
 from utils.compare import compare_MSE, compare_scatter
@@ -37,6 +38,11 @@ parser.add_argument(
 
 parser.add_argument(
     "--heat_equation_analytical",
+    action="store_true",
+)
+
+parser.add_argument(
+    "--heat_equation_manufactured",
     action="store_true",
 )
 
@@ -83,7 +89,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 if args.heat_equation:
-    sim_result = heat_equation.main()
+    sim_result = heat_equation.main(args.heat_equation_manufactured)
 
     file_prefix = "heat_equation"
     if not args.no_plot:
@@ -97,6 +103,17 @@ if args.heat_equation_analytical:
     sim_result = heat_equation_analytical.main()
 
     file_prefix = "heat_equation_analytical"
+    if not args.no_plot:
+        # plot_temperature_map(sim_result, file_prefix)
+        plot_temperature_surface(sim_result, file_prefix)
+
+    if not args.no_npz:
+        export_to_npz(sim_result, file_prefix)
+
+if args.heat_equation_manufactured:
+    sim_result = manufactured_solution_2.main()
+
+    file_prefix = "heat_equation_manufactured"
     if not args.no_plot:
         # plot_temperature_map(sim_result, file_prefix)
         plot_temperature_surface(sim_result, file_prefix)

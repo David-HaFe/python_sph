@@ -6,7 +6,7 @@ from config import (
     kernel_length,
     no_particles,
     use_neumann,
-    set_border_gradient,
+    set_neumann,
 )
 
 alpha = 6.25  # don't change this, otherwise kernel looks not very good
