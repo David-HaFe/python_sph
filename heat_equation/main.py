@@ -104,6 +104,7 @@ def main(
             t,
             y,
             manufactured_solution.solution,
+            # heat_equation_analytical.dynamics,
             is_border_particle,
         ),
         initial_condition=y_0,

@@ -9,7 +9,7 @@ manufactured_solution_no = "manufactured_solutions.solution_3"
 
 ### grid ######################################################################
 # number of particles in the x and y dimension
-no_particles_x = 9
+no_particles_x = 16
 no_particles_y = no_particles_x
 
 # interval where the x and y dimension are contained
@@ -34,7 +34,7 @@ use_neumann = False
 # number of layers that the border has, spaced with same spacing as
 # inside particles
 if use_dirichlet:
-    border_thickness = 3
+    border_thickness = 1
 else:
     # DO NOT TOUCH
     # border has to be 0 if dirichlet is not used
@@ -109,17 +109,17 @@ no_particles = (no_particles_x + 2 * border_thickness) * (
 t0 = 0.0
 
 # end time
-t1 = 3.0
+t1 = 10.0
 
 # number of steps
 steps_per_sec = 20
 
 # playback speed of the animation
-playback_speed = 3
+playback_speed = 1
 
 # DO NOT TOUCH
 # number of time steps and step size
-no_steps = int(steps_per_sec * (t1 - t0))
+no_steps = int(steps_per_sec * (t1 - t0)) + 1
 dt = (t1 - t0) / no_steps
 
 # # calculate how far apart particles are
@@ -136,7 +136,7 @@ kernel_length = kernel_scaling * (dx + dy) / 2
 
 ### physical properties #######################################################
 # heat dissipation constant
-heat_alpha = 0.2
+heat_alpha = 0.1
 
 # mass
 m = 1
@@ -158,6 +158,9 @@ gravity = np.array([0, -0.81])
 # .npz shall not be written out
 compared_files = np.array(
     [
+        "heat_equation/solutions/solution_16x16_r1_5_dt0_05",
+        "heat_equation_manufactured/solutions/solution_16x16_r1_5_dt0_05",
+
         # "heat_equation/solutions/solution_11x11_r1_5_dt0_1",
         # "heat_equation_manufactured/solutions/solution_11x11_r1_5_dt0_1",
         # "heat_equation/solutions/solution_11x11_r1_5_dt0_05",
@@ -172,14 +175,14 @@ compared_files = np.array(
         # "heat_equation_manufactured/solutions/solution_11x11_r1_5_dt0_05",
         # "heat_equation/solutions/solution_21x21_r2_0_dt0_05",
         # "heat_equation_manufactured/solutions/solution_21x21_r2_0_dt0_05",
-        "heat_equation/solutions/solution_11x11_r1_5_dt0_05",
-        "heat_equation_manufactured/solutions/solution_11x11_r1_5_dt0_05",
-        "heat_equation/solutions/solution_11x11_r2_0_dt0_05",
-        "heat_equation_manufactured/solutions/solution_11x11_r2_0_dt0_05",
-        "heat_equation/solutions/solution_11x11_r3_0_dt0_05",
-        "heat_equation_manufactured/solutions/solution_11x11_r3_0_dt0_05",
-        "heat_equation/solutions/solution_11x11_r4_5_dt0_05",
-        "heat_equation_manufactured/solutions/solution_11x11_r4_5_dt0_05",
+        # "heat_equation/solutions/solution_11x11_r1_5_dt0_05",
+        # "heat_equation_manufactured/solutions/solution_11x11_r1_5_dt0_05",
+        # "heat_equation/solutions/solution_11x11_r2_0_dt0_05",
+        # "heat_equation_manufactured/solutions/solution_11x11_r2_0_dt0_05",
+        # "heat_equation/solutions/solution_11x11_r3_0_dt0_05",
+        # "heat_equation_manufactured/solutions/solution_11x11_r3_0_dt0_05",
+        # "heat_equation/solutions/solution_11x11_r4_5_dt0_05",
+        # "heat_equation_manufactured/solutions/solution_11x11_r4_5_dt0_05",
     ]
 )
 

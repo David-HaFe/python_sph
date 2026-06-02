@@ -60,8 +60,5 @@ def dynamics(t, y, is_border_particle, use_manufactured_solution):
     T_dot = T_dot.reshape(-1, order="C")
     y_dot = np.concatenate((r_dot, T_dot))
 
-    sys.stdout.write(f"\r\033[Ksimulating @ {t}")
-    sys.stdout.flush()
-
     diagnostics.time_dynamics()
     return y_dot

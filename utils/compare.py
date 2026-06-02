@@ -2,6 +2,8 @@
 import numpy as np
 import pandas as pd
 import sys
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from scipy.interpolate import griddata
@@ -107,15 +109,15 @@ def compare_MSE():
             case "step":
                 plt.xlabel("step size")
                 plt.loglog(plot_step_size, plot_errors, "-x")
-                plt.savefig(f"comparisons/error_step_{second}.png")
+                plt.savefig(f"comparisons/error_step_{second}.png", dpi=300)
             case "grid":
                 plt.xlabel("grid dimension")
                 plt.loglog(plot_no_particles, plot_errors, "-x")
-                plt.savefig(f"comparisons/error_grid_{second}.png")
+                plt.savefig(f"comparisons/error_grid_{second}.png", dpi=300)
             case "radius":
                 plt.xlabel("relative kernel radius")
                 plt.loglog(plot_kernel_radius, plot_errors, "-x")
-                plt.savefig(f"comparisons/error_radius_{second}.png")
+                plt.savefig(f"comparisons/error_radius_{second}.png", dpi=300)
 
 
 def compare_scatter():
@@ -150,7 +152,7 @@ def compare_scatter():
                     ax.cla()
                     ax.set_xlabel("x")
                     ax.set_ylabel("y")
-                    ax.set_zlabel("data")
+                    ax.set_zlabel("T")
                     ax.set_zlim(data_min, data_max)
                     ax.set_title(f"t = {result_1.t[frame]:.2f}")
                     ax.scatter(
@@ -158,7 +160,7 @@ def compare_scatter():
                         result_1.y[frame],
                         result_1.data_1[frame],
                         c="blue",
-                        label=file_1,
+                        label="numerical",
                         alpha=0.5,
                         s=2,
                     )
@@ -167,7 +169,7 @@ def compare_scatter():
                         result_2.y[frame],
                         result_2.data_1[frame],
                         c="red",
-                        label=file_2,
+                        label="manufactured",
                         alpha=0.5,
                         s=2,
                     )
@@ -179,7 +181,7 @@ def compare_scatter():
                     fig, update, frames=len(result_1.t), interval=100
                 )
                 name = f"comparisons/{index_1}_{index_2}.mp4"
-                ani.save(name, writer="ffmpeg", fps=30)
+                ani.save(name, writer="ffmpeg", fps=30, dpi=300)
 
     diagnostics.time_scatter()
 

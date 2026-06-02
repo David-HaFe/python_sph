@@ -1,5 +1,7 @@
 import numpy as np
 from types import SimpleNamespace
+from utils.diagnostics import diagnostics
+import sys
 
 
 def ruku_4(
@@ -25,10 +27,14 @@ def ruku_4(
     k = np.empty((np.size(initial_condition), 5))
     half_dt = dt * 0.5
 
+    diagnostics.log_full_np_array(times)
     # iterate up to the last entry of times, not including it, and also start
     # walking index at 1
     try:
         for index, time in enumerate(times[:-1], start=1):
+            sys.stdout.write(f"\r\033[Ksimulating @ {time}")
+            sys.stdout.flush()
+
             k[:, 1] = dynamics(time, y)
             k[:, 2] = dynamics(time + half_dt, y + half_dt * k[:, 1])
             k[:, 3] = dynamics(time + half_dt, y + half_dt * k[:, 2])

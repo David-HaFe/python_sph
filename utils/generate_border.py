@@ -16,7 +16,8 @@ from config import (
 # this is a bit hacky in order to accomodate the manufactured solution
 # set_dirichlet = importlib.import_module(manufactured_solution_no).solution
 def set_dirichlet(x, y):
-    return [0, 0]
+    # return [0, 0]
+    return [0]
 
 
 from utils.diagnostics import diagnostics
@@ -81,7 +82,8 @@ def update_border(t, y, border_values, is_border_particle):
 
     for a, r_a in enumerate(r):
         if is_border_particle[a]:
-            T[a] = border_values(r_a[0], r_a[1], t)
+            # T[a] = border_values(t, r_a[0], r_a[1]) # for analytical
+            T[a] = border_values(r_a[0], r_a[1], t) # for manufactured
 
     r = r.reshape(-1, order="C")
     y = np.concatenate((r, T))
