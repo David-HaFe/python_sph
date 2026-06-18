@@ -44,7 +44,6 @@ def equation(t, y, dt, is_border_particle):
                     function=p,
                     add_incompressibility=True,
                 )
-                diagnostics.log_full_np_array(p_i_dot_test)
 
                 # p_i_test = p_i_test + dt * (nabla_p[0] + nabla_p[1])
                 p_i_test = p_i_test + dt * p_i_dot_test

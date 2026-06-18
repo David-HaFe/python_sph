@@ -55,15 +55,15 @@ def _solve_least_squares_gauss(
 
     for j, (r_j, function_j) in enumerate(zip(r, function)):
         kernel = gauss(r_i, r_j)
-        if kernel > 0:
+        if kernel > 0 and not((r_i[0] == r_j[0]) and (r_i[1] == r_j[1])):
             dr = r_j - r_i
             D[count] = [dr[0], dr[1], 0.5 * dr[0] ** 2, dr[0] * dr[1], 0.5 * dr[1] ** 2]
-            W[count] = np.sqrt(kernel)
+            W[count] = kernel
             b[count] = np.squeeze(function_i - function_j)
             count += 1
 
     # append neumannn boundary condition, since we found a border point
-    if use_neumann and (abs(r_i[0]) == border) or (abs(r_i[1]) == border):
+    if use_neumann and ((abs(r_i[0]) == border) or (abs(r_i[1]) == border)):
 
         # this may be two dimensional in case of an edge point
         normal_vector = set_neumann(r_i[0], r_i[1])
@@ -120,10 +120,21 @@ def _solve_least_squares_gauss(
     # coefficients = np.linalg.lstsq(-W @ D, b)[0]
 
     # check if gradient is too steep
-    if use_neumann:
+    # if use_neumann;
+    if True:
         if abs(r_i[0]) == border:
+            diagnostics.log_full_np_array(r_i)
+            diagnostics.log_full_np_array(D)
+            diagnostics.log_full_np_array(W)
+            diagnostics.log_full_np_array(b)
+            diagnostics.log_full_np_array(coefficients)
             assert abs(coefficients[0]) < 1e-7
         if abs(r_i[1]) == border:
+            diagnostics.log_full_np_array(r_i)
+            diagnostics.log_full_np_array(D)
+            diagnostics.log_full_np_array(W)
+            diagnostics.log_full_np_array(b)
+            diagnostics.log_full_np_array(coefficients)
             assert abs(coefficients[1]) < 1e-7
 
     # diagnostics.time_least_squares()

@@ -37,8 +37,6 @@ def generate_border(
         no_particles_x + 2 * border_thickness,
     )
     y_positions = np.linspace(dy, border_thickness * dy, border_thickness)
-    diagnostics.log_full_np_array(x_positions)
-    diagnostics.log_full_np_array(y_positions)
     for _, x in enumerate(x_positions):
         for _, y in enumerate(y_positions):
             r_0.extend([x, -border - y])
@@ -57,8 +55,6 @@ def generate_border(
         +border,
         no_particles_y,
     )
-    diagnostics.log_full_np_array(x_positions)
-    diagnostics.log_full_np_array(y_positions)
     for _, y in enumerate(y_positions):
         for _, x in enumerate(x_positions):
             r_0.extend([-border - x, y])
@@ -83,7 +79,8 @@ def update_border(t, y, border_values, is_border_particle):
     for a, r_a in enumerate(r):
         if is_border_particle[a]:
             # T[a] = border_values(t, r_a[0], r_a[1]) # for analytical
-            T[a] = border_values(r_a[0], r_a[1], t) # for manufactured
+            # T[a] = border_values(r_a[0], r_a[1], t) # for manufactured
+            T[a] = 0
 
     r = r.reshape(-1, order="C")
     y = np.concatenate((r, T))

@@ -2,10 +2,11 @@
 import numpy as np
 import pandas as pd
 import sys
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from matplotlib.ticker import ScalarFormatter, FuncFormatter, NullFormatter
 from scipy.interpolate import griddata
 import re
 
@@ -18,6 +19,22 @@ from config import (
     snapshots,
 )
 
+# font size
+plt.rcParams.update({
+    'font.size': 14,
+    'axes.titlesize': 16,
+    'axes.labelsize': 14,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
+})
+
+# # Thicker axis frame
+# for spine in plt.gca().spines.values():
+#     spine.set_linewidth(2)
+
+# Thicker tick marks
+plt.tick_params(axis='both', width=2, length=6)
 
 # takes n csv files and calculates the MSE between all combinations of them
 def compare_MSE():
@@ -105,19 +122,42 @@ def compare_MSE():
         plt.ylabel("error")
         plt.title(f"errors at {second} s")
 
+        def x_log_formatter(x, pos):
+            return f"{x:g}"
+        def y_log_formatter(x, pos):
+            return f"{x:.2f}"
+        plt.minorticks_off()
+
         match compared_parameter:
             case "step":
                 plt.xlabel("step size")
                 plt.loglog(plot_step_size, plot_errors, "-x")
+                plt.gca().xaxis.set_minor_formatter(NullFormatter())
+                plt.gca().xaxis.set_major_formatter(FuncFormatter(x_log_formatter))
+                # plt.gca().yaxis.set_major_formatter(FuncFormatter(y_log_formatter))
+                plt.xticks([0.0125, 0.025, 0.05, 0.1])
+                plt.tight_layout()
                 plt.savefig(f"comparisons/error_step_{second}.png", dpi=300)
             case "grid":
                 plt.xlabel("grid dimension")
                 plt.loglog(plot_no_particles, plot_errors, "-x")
+                plt.gca().xaxis.set_minor_formatter(NullFormatter())
+                plt.gca().xaxis.set_major_formatter(FuncFormatter(x_log_formatter))
+                # plt.gca().yaxis.set_major_formatter(FuncFormatter(y_log_formatter))
+                plt.xticks([6, 11, 21])
+                plt.tight_layout()
                 plt.savefig(f"comparisons/error_grid_{second}.png", dpi=300)
             case "radius":
                 plt.xlabel("relative kernel radius")
                 plt.loglog(plot_kernel_radius, plot_errors, "-x")
+                plt.gca().xaxis.set_minor_formatter(NullFormatter())
+                plt.gca().xaxis.set_major_formatter(FuncFormatter(x_log_formatter))
+                # plt.gca().yaxis.set_major_formatter(FuncFormatter(y_log_formatter))
+                plt.xticks([1.5, 2, 3, 4.5])
+                plt.tight_layout()
                 plt.savefig(f"comparisons/error_radius_{second}.png", dpi=300)
+
+        plt.close()
 
 
 def compare_scatter():

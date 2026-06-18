@@ -42,19 +42,24 @@ def dynamics(t, y, is_border_particle, use_manufactured_solution):
             T_dot[a] = np.zeros(1)
 
     # iterate over all a
-    with ThreadPoolExecutor() as executor:
-        list(executor.map(compute_particle, range(no_particles)))
+    # with ThreadPoolExecutor() as executor:
+    #     list(executor.map(compute_particle, range(no_particles)))
 
-    # for a, (r_a, T_a) in enumerate(zip(r, T)):
-    #     if not is_border_particle[a]:
-    #         temperature_diff = heat_alpha * laplace(r_a, T_a, r, T)
-    #
-    #         r_dot[a] = np.zeros(2)
-    #         T_dot[a] = temperature_diff
-    #     else:
-    #         r_dot[a] = np.zeros(2)
-    #         T_dot[a] = np.zeros(1)
-    #         # T_dot[a] = np.array([np.sin(t)])
+    for a, (r_a, T_a) in enumerate(zip(r, T)):
+        if not is_border_particle[a]:
+            temperature_diff = heat_alpha * laplace(
+                r_i=r_a,
+                function_i=T_a,
+                r=r,
+                function=T,
+            )
+
+            r_dot[a] = np.zeros(2)
+            T_dot[a] = temperature_diff
+        else:
+            r_dot[a] = np.zeros(2)
+            T_dot[a] = np.zeros(1)
+            # T_dot[a] = np.array([np.sin(t)])
 
     r_dot = r_dot.reshape(-1, order="C")
     T_dot = T_dot.reshape(-1, order="C")

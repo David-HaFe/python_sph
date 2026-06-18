@@ -42,6 +42,9 @@ def plot_temperature_surface(sim_result, file_prefix):
 
     def update(frame):
         ax.cla()
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
+        ax.set_zlabel("T")
         ax.set_zlim(2 * z_min, 2 * z_max)
         ax.set_xlim(-border - 0.3, border + 0.3)
         ax.set_ylim(-border - 0.3, border + 0.3)
@@ -68,7 +71,7 @@ def plot_temperature_surface(sim_result, file_prefix):
 
     name = get_file_name(file_prefix, "heat_surface", "mp4")
 
-    ani.save(name, writer="ffmpeg", fps=int(steps_per_sec * playback_speed))
+    ani.save(name, writer="ffmpeg", fps=int(steps_per_sec * playback_speed), dpi=300)
     diagnostics.time_surface_plot()
 
 
